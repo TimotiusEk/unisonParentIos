@@ -1,142 +1,40 @@
 import React from 'react';
-// import Icon from 'react-native-vector-icons/Ionicons';
-import {ImageBackground, View, Text, Image, StatusBar} from 'react-native';
-import AppIntroSlider from 'react-native-app-intro-slider';
+import {
+    createAppContainer,
+    createSwitchNavigator
+} from "react-navigation";
+import AppIntroScreen from "./components/screens/AppIntroScreen";
+import {createStackNavigator} from "react-navigation-stack";
+import LoginScreen from "./components/screens/LoginScreen";
+import Icon from 'react-native-vector-icons/Ionicons'
 
-// slides = [...]
 
-export default class App extends React.Component {
-    _renderItem = ({item, index}) => {
-        if (index === 0) {
-            return (
-                <View style={{
-                    backgroundColor: '#343434',
-                    flex: 1,
-                    paddingTop: '20%'
-                }}>
-                    <Image source={require('./assets/images/welcome-page-bg-a.png')}
-                           style={{height: 340, resizeMode: 'contain', alignSelf: 'center', marginTop: StatusBar.currentHeight}}/>
-                    <Text style={{
-                        color: 'white',
-                        fontFamily: 'Poppins-Bold',
-                        fontSize: 24,
-                        marginTop: 8,
-                        marginLeft: 30
-                    }}>
-                        Manage and supervise{'\n'}your children's activities
-                    </Text>
-                    <View style={{width: 76, height: 1, marginLeft: 30, backgroundColor: '#eeeeee', marginTop: 10}}/>
-
-                    <Text style={{
-                        marginTop: 16,
-                        fontSize: 18,
-                        color: 'white',
-                        fontFamily: 'Poppins-Regular',
-                        marginLeft: 30
-                    }}>With a goal drive approach</Text>
-                </View>
-            );
-        } else if (index === 1) {
-            return (
-                <ImageBackground
-                    source={require('./assets/images/welcome-page-b-bg.jpg')}
-                    style={{flex: 1, resizeMode: 'cover', paddingTop: '20%'}}
-                >
-                    <Image source={require('./assets/images/welcome-page-bg-b.png')}
-                           style={{height: 360, resizeMode: 'contain', alignSelf: 'center', marginTop: StatusBar.currentHeight}}/>
-
-                    <Text style={{
-                        color: 'white',
-                        fontFamily: 'Poppins-Bold',
-                        fontSize: 24,
-                        marginTop: 8,
-                        marginLeft: 30
-                    }}>
-                        Find a tutor as easy{'\n'}as a click of a button
-                    </Text>
-                </ImageBackground>
-            )
-        } else {
-            return (
-                <View style={{flex: 1, backgroundColor: '#335CCC', paddingTop: '30%'}}>
-                    <Image source={require('./assets/images/bg_welcome_c.png')}
-                           style={{height: 320, resizeMode: 'contain', alignSelf: 'center', marginTop: StatusBar.currentHeight}}/>
-
-                    <Text style={{
-                        color: 'white',
-                        fontFamily: 'Poppins-Bold',
-                        fontSize: 24,
-                        marginTop: 8,
-                        marginLeft: 30
-                    }}>
-                        One integrated app{'\n'}for digital{'\n'}education solution
-                    </Text>
-                </View>
-            )
+export default function App() {
+    const LoginStack = createStackNavigator({
+            LoginScreen,
+            // RegisterScreen,
+            // ForgotPasswordScreen
+        },
+        {
+            headerMode: "none",
+            defaultNavigationOptions: {
+                tabBarVisible: false
+            },
+            initialRouteName: "LoginScreen"
         }
-    }
-    // _renderNextButton = () => {
-    //   return (
-    //       <View style={styles.buttonCircle}>
-    //         <Ion
-    //             name="md-arrow-round-forward"
-    //             color="rgba(255, 255, 255, .9)"
-    //             size={24}
-    //         />
-    //       </View>
-    //   );
-    // };
-    // _renderDoneButton = () => {
-    //   return (
-    //       <View style={styles.buttonCircle}>
-    //         <Ion
-    //             name="md-checkmark"
-    //             color="rgba(255, 255, 255, .9)"
-    //             size={24}
-    //         />
-    //       </View>
-    //   );
-    // };
-    render() {
-        return (
-            <View style={{flex: 1}}>
-                <StatusBar translucent={true} backgroundColor={'transparent'}/>
+    );
 
-            <AppIntroSlider
-                dotStyle={{backgroundColor: 'white', width: 9, height: 9}}
-                activeDotStyle={{width: 17, height: 9, backgroundColor: 'white'}}
-                data={[
-                    {},
-                    {},
-                    {}
-                ]}
-                showSkipButton
-                renderSkipButton={() => {
-                    return (
-                        <View style={{marginTop: 14, marginLeft: 10}}>
-                            <Text style={{color: 'white', fontFamily: 'Montserrat-Regular', fontSize: 15}}>SKIP</Text>
-                        </View>
-                    )
-                }}
-                renderNextButton={() => {
-                    return (
-                        <View style={{marginTop: 14, marginRight: 10}}>
-                            <Text style={{color: 'white', fontFamily: 'Montserrat-Regular', fontSize: 15}}>NEXT</Text>
-                        </View>
-                    )
-                }}
-                renderDoneButton={() => {
-                    return (
-                        <View style={{marginTop: 14}}>
-                            <Text style={{color: 'white', fontFamily: 'Montserrat-Regular', fontSize: 15}}>GET STARTED</Text>
-                        </View>
-                    )
-                }}
-                renderItem={this._renderItem}
-                // renderDoneButton={this._renderDoneButton}
-                // renderNextButton={this._renderNextButton}
-            />
-            </View>
-        );
-    }
+    const MainSwitch = createSwitchNavigator({
+        AppIntroScreen,
+        LoginStack,
+    }, {
+        initialRouteName: "AppIntroScreen",
+        backBehavior: 'none'
+    });
+
+    const AppContainer = createAppContainer(MainSwitch);
+
+    Icon.loadFont();
+
+    return <AppContainer/>
 }
