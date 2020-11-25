@@ -1,8 +1,10 @@
-import {Image, StyleSheet, TextInput, Text, View, TouchableOpacity} from "react-native";
+import {Image, StyleSheet, TextInput, Text, View, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback} from "react-native";
 import React, {useState} from "react";
 import AppIntroSlider from "react-native-app-intro-slider";
 import {TextInputLayout} from 'rn-textinputlayout';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Collapsible from "react-native-collapsible";
+import HttpRequest from "../../util/HttpRequest";
 
 export default function LoginScreen(props) {
     const styles = StyleSheet.create({
@@ -26,6 +28,37 @@ export default function LoginScreen(props) {
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setPasswordVisible] = useState(false);
     const [isValidating, setValidating] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('')
+    const [isLoading, setLoading] = useState(false);
+
+    const attemptLogin = async () => {
+        if(!username || !password) setValidating(true)
+        else {
+            setLoading(true);
+
+            new Promise(
+                await HttpRequest.set("/login/apps", 'POST', JSON.stringify({
+                    username,
+                    password,
+                }))
+            ).then(res => {
+                setLoading(false)
+
+               /**
+                * todo: REDIRECT AFTER LOGIN SUCCESSFULLY
+                */
+            }).catch(err => {
+                setLoading(false)
+                setErrorMsg(err.msg ? err.msg : err)
+
+                setTimeout(() => {
+                    setErrorMsg('')
+                }, 3000)
+            })
+        }
+
+    }
+
     return (
         <View style={{flex: 1}}>
             <Image source={require('../../assets/images/ic_login_header.png')}
@@ -41,6 +74,16 @@ export default function LoginScreen(props) {
                     Login into my account
                 </Text>
 
+                <Collapsible collapsed={errorMsg.length === 0}>
+                    <View style={{backgroundColor: 'red', marginTop: 5, paddingLeft: 15, paddingRight: 15, height: 55,
+                        justifyContent: 'center'
+                    }}>
+                        <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+                            {errorMsg}
+                        </Text>
+                    </View>
+                </Collapsible>
+
                 <TextInputLayout
                     style={styles.inputLayout}
                     hintColor={isValidating && username.length === 0 ? 'red' : 'grey'}
@@ -48,11 +91,10 @@ export default function LoginScreen(props) {
                 >
                     <TextInput
                         onChangeText={(username) => {
-                            setValidating(false)
                             setUsername(username)
                         }}
                         style={styles.textInput}
-                        placeholder={'Username'}
+                        placeholder={'Name'}
                     />
                 </TextInputLayout>
                 <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
@@ -86,28 +128,30 @@ export default function LoginScreen(props) {
                     </Text>
 
                     <TouchableOpacity>
-                            <Text style={{fontFamily: 'Avenir-Heavy', color: '#0033A8', alignSelf: 'flex-end', marginTop: 25, marginBottom: 20}}>
+                            <Text style={{fontFamily: 'Avenir-Heavy', color: '#0033A8', alignSelf: 'flex-end', marginTop: 15, marginBottom: 25}}>
                                 Forgot Password?
                             </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => {
-                        setValidating(true)
-                    }}>
-                        <View style={{backgroundColor: '#0033A8', alignItems: 'center', paddingTop: 17, paddingBottom: 17, borderRadius: 5}}>
-                        <Text style={{fontFamily: 'Montserrat-Bold', color: 'white'}}>
-                            Log In
-                        </Text>
+                    <TouchableOpacity onPress={attemptLogin}>
+                        <View style={{backgroundColor: '#0033A8', alignItems: 'center', paddingTop: 19, paddingBottom: 19, borderRadius: 5}}>
+
+                            {isLoading ?
+                                <ActivityIndicator size="small" color="#ffffff"/> :
+                                <Text style={{fontFamily: 'Montserrat-Bold', color: 'white'}}>
+                                    Log In
+                                </Text>
+                            }
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableWithoutFeedback onPress={() => props.navigation.navigate('RegisterScreen')}>
                         <View style={{alignItems: 'center', marginTop: 30}}>
                             <Text style={{fontSize: 18, color: '#77869E', fontFamily: 'Avenir-Heavy'}}>
                                 Don't Have Account? <Text style={{color: '#101010'}}>Register</Text>
                             </Text>
                         </View>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
 
