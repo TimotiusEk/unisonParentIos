@@ -19,7 +19,7 @@ export default function ChooseGenderScreen(props) {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
             <Image source={require('../../assets/images/ic_header_blue.png')}
                    style={{width: 309, height: 109, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 

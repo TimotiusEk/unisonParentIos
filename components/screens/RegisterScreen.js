@@ -47,7 +47,7 @@ export default function RegisterScreen(props) {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
             <Image source={require('../../assets/images/ic_header_blue.png')}
                    style={{width: 309, height: 109, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
@@ -57,7 +57,9 @@ export default function RegisterScreen(props) {
                 fontSize: 24,
                 textAlign: 'center',
                 marginTop: 8
-            }}>Registrasi</Text>
+            }}>
+                Registrasi
+            </Text>
             <Text style={{color: '#818181', fontFamily: 'Poppins-Regular', textAlign: 'center', marginTop: 8}}>Enter
                 your mobile number</Text>
 
@@ -68,6 +70,7 @@ export default function RegisterScreen(props) {
                     focusColor={isValidating && errorMsg.length !== 0 ? 'red' : 'blue'}
                 >
                     <TextInput
+                        keyboardType={'numeric'}
                         style={{
                             ...styles.textInput,
                         }}
@@ -83,7 +86,7 @@ export default function RegisterScreen(props) {
                     {isValidating && errorMsg.length !== 0 ? errorMsg : null}
                 </Text>
 
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ReadTermAndConditionScreen')}>
                     <Text style={{marginTop: 24, textAlign: 'center', color: '#707070', fontFamily: 'Poppins-Regular'}}>By
                         registering, you agree to <Text style={{fontFamily: 'Poppins-Medium', color: '#0274BC'}}>the
                             terms and conditions</Text> that apply</Text>

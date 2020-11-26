@@ -44,6 +44,8 @@ export default function LoginScreen(props) {
             ).then(res => {
                 setLoading(false)
 
+                props.navigation.navigate('HomeScreen')
+
                /**
                 * todo: REDIRECT AFTER LOGIN SUCCESSFULLY
                 */
@@ -60,7 +62,7 @@ export default function LoginScreen(props) {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
             <Image source={require('../../assets/images/ic_login_header.png')}
                    style={{width: 308, height: 99, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
@@ -94,7 +96,7 @@ export default function LoginScreen(props) {
                             setUsername(username)
                         }}
                         style={styles.textInput}
-                        placeholder={'Name'}
+                        placeholder={'Username'}
                     />
                 </TextInputLayout>
                 <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
@@ -127,7 +129,7 @@ export default function LoginScreen(props) {
                         {isValidating && password.length === 0 ? 'Password is mandatory.' : null}
                     </Text>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ForgotPasswordSwitch')}>
                             <Text style={{fontFamily: 'Avenir-Heavy', color: '#0033A8', alignSelf: 'flex-end', marginTop: 15, marginBottom: 25}}>
                                 Forgot Password?
                             </Text>

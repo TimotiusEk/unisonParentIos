@@ -3,6 +3,7 @@ import Collapsible from "react-native-collapsible";
 import React, {useState} from "react";
 import {TextInputLayout} from "rn-textinputlayout";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export default function RegistrationInfoScreen (props) {
     const [isValidating, setValidating] = useState(false);
@@ -45,10 +46,15 @@ export default function RegistrationInfoScreen (props) {
                 }, 3000)
             }
         } else {
-            console.log('NEXT')
-            /**
-             * todo: REDIRECT HERE
-             */
+            props.navigation.navigate('ChildRegistrationScreen', {
+                mobileNo: props.navigation.getParam('mobileNo'),
+                gender: props.navigation.getParam('gender'),
+                name,
+                email,
+                address,
+                password,
+                ktpNo
+            })
         }
     }
 
@@ -59,7 +65,7 @@ export default function RegistrationInfoScreen (props) {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
             <Image source={require('../../assets/images/ic_header_blue.png')}
                    style={{width: 309, height: 109, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
@@ -89,7 +95,7 @@ export default function RegistrationInfoScreen (props) {
                     </View>
                 </Collapsible>
 
-            <ScrollView contentContainerStyle={{flexGrow: 1, paddingLeft: 36, paddingRight: 36, paddingBottom: 20}}>
+            <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1, paddingLeft: 36, paddingRight: 36, paddingBottom: 20}}>
                 <TextInputLayout
                     style={styles.inputLayout}
                     hintColor={isValidating && name.length === 0 ? 'red' : 'grey'}
@@ -113,6 +119,7 @@ export default function RegistrationInfoScreen (props) {
                     focusColor={isValidating && (email.length === 0 || !validateEmail(email)) ? 'red' : 'blue'}
                 >
                     <TextInput
+                        keyboardType={'email-address'}
                         onChangeText={(email) => {
                             setEmail(email)
                         }}
@@ -130,9 +137,12 @@ export default function RegistrationInfoScreen (props) {
                     focusColor={'blue'}
                 >
                     <TextInput
+                        keyboardType={'numeric'}
                         value={ktpNo}
                         onChangeText={(ktpNo) => {
-                            if(!isNaN(ktpNo)) setKtpNo(ktpNo)
+                            const re = /^[0-9\b]+$/;
+
+                            if(re.test(ktpNo)) setKtpNo(ktpNo)
                         }}
                         style={styles.textInput}
                         placeholder={'No. KTP'}
@@ -165,12 +175,13 @@ export default function RegistrationInfoScreen (props) {
                     focusColor={isValidating && (password.length === 0 || password.length < 6) ? 'red' : 'blue'}
                 >
                     <TextInput
+                        secureTextEntry={!isPasswordVisible}
                         onChangeText={(password) => {
                             setPassword(password)
                         }}
                         style={styles.textInput}
                         placeholder={'Password'}
-                        secureTextEntry={!isPasswordVisible}
+                        textContentType="oneTimeCode"
                     />
                 </TextInputLayout>
 
@@ -188,12 +199,13 @@ export default function RegistrationInfoScreen (props) {
                     focusColor={isValidating && (confirmPassword.length === 0 || password !== confirmPassword) ? 'red' : 'blue'}
                 >
                     <TextInput
+                        secureTextEntry={!isConfirmPasswordVisible}
+                        textContentType="oneTimeCode"
                         onChangeText={(confirmPassword) => {
                             setConfirmPassword(confirmPassword)
                         }}
                         style={styles.textInput}
                         placeholder={'Confirm Password'}
-                        secureTextEntry={!isConfirmPasswordVisible}
                     />
                 </TextInputLayout>
 
@@ -204,7 +216,7 @@ export default function RegistrationInfoScreen (props) {
                 <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
                     {isValidating && confirmPassword.length === 0 ? 'Confirm password is mandatory.' : isValidating && password !== confirmPassword ? 'The password confirmation does not match.' : null}
                 </Text>
-            </ScrollView>
+            </KeyboardAwareScrollView>
             {/*<View style={{height: 60}}>*/}
             {/*    <Collapsible collapsed={true}>*/}
             {/*        <View style={{*/}
