@@ -1,8 +1,19 @@
 import {Image, ImageBackground, StatusBar, Text, View} from "react-native";
-import React from "react";
+import React, {useEffect} from "react";
 import AppIntroSlider from "react-native-app-intro-slider";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default function AppIntroScreen (props)  {
+    useEffect(() => {
+        redirectIfUserFinishedIntro();
+    }, [])
+
+    const redirectIfUserFinishedIntro = async () => {
+        const isUserFinishedIntro = await AsyncStorage.getItem('isUserFinishedIntro');
+
+        if(isUserFinishedIntro === 'true') props.navigation.navigate('LoginScreen')
+    }
+
     const _renderItem = ({item, index}) => {
         if (index === 0) {
             return (
@@ -86,7 +97,11 @@ export default function AppIntroScreen (props)  {
                     {}
                 ]}
                 showSkipButton
-                onDone={() => props.navigation.navigate('LoginScreen')}
+                onDone={async () => {
+                    await AsyncStorage.setItem('isUserFinishedIntro', 'true')
+
+                    props.navigation.navigate('LoginScreen')
+                }}
                 renderSkipButton={() => {
                     return (
                         <View style={{marginTop: 14, marginLeft: 10}}>

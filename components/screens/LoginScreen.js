@@ -1,6 +1,6 @@
 import {Image, StyleSheet, TextInput, Text, View, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback} from "react-native";
-import React, {useState} from "react";
-import AppIntroSlider from "react-native-app-intro-slider";
+import React, {useState, useEffect} from "react";
+import AsyncStorage from "@react-native-community/async-storage";
 import {TextInputLayout} from 'rn-textinputlayout';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Collapsible from "react-native-collapsible";
@@ -31,6 +31,16 @@ export default function LoginScreen(props) {
     const [errorMsg, setErrorMsg] = useState('')
     const [isLoading, setLoading] = useState(false);
 
+    useEffect(() => {
+        redirectIfLoggedIn()
+    }, [])
+
+    const redirectIfLoggedIn = async () => {
+        const user = await AsyncStorage.getItem('user');
+
+        if(user) props.navigation.navigate('HomeStack')
+    }
+
     const attemptLogin = async () => {
         if(!username || !password) setValidating(true)
         else {
@@ -41,14 +51,12 @@ export default function LoginScreen(props) {
                     username,
                     password,
                 }))
-            ).then(res => {
+            ).then(async (res) => {
                 setLoading(false)
 
-                props.navigation.navigate('HomeScreen')
+                await AsyncStorage.setItem('user', JSON.stringify(res.data))
 
-               /**
-                * todo: REDIRECT AFTER LOGIN SUCCESSFULLY
-                */
+                props.navigation.navigate('HomeScreen')
             }).catch(err => {
                 setLoading(false)
                 setErrorMsg(err.msg ? err.msg : err)
