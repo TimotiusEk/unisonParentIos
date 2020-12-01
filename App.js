@@ -23,6 +23,7 @@ import ResetPasswordScreen from "./components/screens/ResetPasswordScreen";
 import HomeScreen from "./components/screens/HomeScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
 import Toast from 'react-native-toast-message';
+import NotificationScreen from "./components/screens/NotificationScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -54,7 +55,8 @@ export default function App() {
 
     const HomeStack = createStackNavigator({
             HomeScreen,
-            ProfileScreen
+            ProfileScreen,
+            NotificationScreen
         },
         {
             headerMode: "none",

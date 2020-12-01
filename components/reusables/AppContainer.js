@@ -66,7 +66,7 @@ export default function AppContainer(props) {
                            style={{height: 74 / 2, width: 239 / 2}}/>
                     <View style={{flex: 1}}/>
                     <Entypo name={'shopping-cart'} size={22} color={'#757575'} style={{marginRight: 30}}/>
-                    <MaterialIcons name={'notifications-none'} size={27} color={'#9DA2B9'}/>
+                    <MaterialIcons name={'notifications-none'} size={27} color={'#9DA2B9'} onPress={() => props.navigation.navigate('NotificationScreen')}/>
                 </View>
             </View>
             {props.children}
