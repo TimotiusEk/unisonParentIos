@@ -36,21 +36,26 @@ export default function AppContainer(props) {
                 paddingBottom: 15
             }}>
                 {!minimal && <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 15}}>
-                    <View style={{
-                        backgroundColor: '#e0f4ff',
-                        flex: 1,
-                        paddingVertical: 10,
-                        paddingHorizontal: 15,
-                        borderRadius: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center'
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            props.navigation.navigate('SearchLearningMaterialScreen')
                     }}>
-                        <Text style={{color: '#9D9D9E', fontFamily: 'Montserrat-Regular', flex: 1}}>
-                            Search Material Learning
-                        </Text>
+                        <View style={{
+                            backgroundColor: '#e0f4ff',
+                            flex: 1,
+                            paddingVertical: 10,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <Text style={{color: '#9D9D9E', fontFamily: 'Montserrat-Regular', flex: 1}}>
+                                Search Material Learning
+                            </Text>
 
-                        <Feather name={'search'} color={'#D3D3D3'} size={23}/>
-                    </View>
+                            <Feather name={'search'} color={'#D3D3D3'} size={23}/>
+                        </View>
+                    </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ProfileScreen')}>
                         <Image
@@ -66,7 +71,8 @@ export default function AppContainer(props) {
                            style={{height: 74 / 2, width: 239 / 2}}/>
                     <View style={{flex: 1}}/>
                     <Entypo name={'shopping-cart'} size={22} color={'#757575'} style={{marginRight: 30}}/>
-                    <MaterialIcons name={'notifications-none'} size={27} color={'#9DA2B9'} onPress={() => props.navigation.navigate('NotificationScreen')}/>
+                    <MaterialIcons name={'notifications-none'} size={27} color={'#9DA2B9'}
+                                   onPress={() => props.navigation.navigate('NotificationScreen')}/>
                 </View>
             </View>
             {props.children}

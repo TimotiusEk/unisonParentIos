@@ -7,7 +7,8 @@ import {
     TouchableWithoutFeedback,
     TextInput,
     StyleSheet,
-    TouchableOpacity, ActivityIndicator
+    TouchableOpacity, ActivityIndicator,
+    Modal
 } from "react-native";
 import AppContainer from "../reusables/AppContainer";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -20,6 +21,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import {TextInputLayout} from "rn-textinputlayout";
 import Dialog from "react-native-dialog";
 import Toast from 'react-native-toast-message';
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export default function ProfileScreen(props) {
     const styles = StyleSheet.create({
@@ -55,6 +57,18 @@ export default function ProfileScreen(props) {
     const [isUpdateSuccessModalShown, setUpdateSuccessModal] = useState(false);
     const [redirect, setRedirect] = useState(false);
 
+    const [changePassword, setChangePassword] = useState(false);
+
+    const [currentPassword, setCurrentPassword] = useState(false);
+    const [newPassword, setNewPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState(false);
+
+    const [isCurrentPasswordVisible, setCurrentPasswordVisible] = useState(false);
+    const [isNewPasswordVisible, setNewPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isLoadingShown, setLoadingShown] = useState(false);
+
     useEffect(() => {
         getUserData()
     }, [])
@@ -73,20 +87,29 @@ export default function ProfileScreen(props) {
         let myChildren = await AsyncStorage.getItem('myChildren');
 
         if (!myChildren) {
-            new Promise(
-                await HttpRequest.set("/students/mychildren", 'POST', JSON.stringify({
-                    access_token: user.access_token
-                }))
-            ).then(async (res) => {
-                setMyChildren(res.data)
-
-                await AsyncStorage.setItem('myChildren', JSON.stringify(res.data))
-            }).catch(err => console.log(err))
+            getMyChildren()
         } else {
             setMyChildren(JSON.parse(myChildren))
         }
 
         setUser(user);
+    }
+
+    const getMyChildren = async () => {
+        new Promise(
+            await HttpRequest.set("/students/mychildren", 'POST', JSON.stringify({
+                access_token: user.access_token
+            }))
+        ).then(async (res) => {
+            setLoadingShown(false)
+
+            setMyChildren(res.data)
+
+            await AsyncStorage.setItem('myChildren', JSON.stringify(res.data))
+        }).catch(err => {
+            setLoadingShown(false)
+            console.log(err)
+        })
     }
 
     const logout = async () => {
@@ -96,40 +119,77 @@ export default function ProfileScreen(props) {
     }
 
     const attemptSubmit = async () => {
-        if(!username || !email || !hp || !address) {
-            setValidating(true);
+        if (changePassword) {
+            setErrorMsg('');
+
+            if (!currentPassword || !newPassword || !confirmPassword || newPassword.length < 6 || confirmPassword.length < 6 || newPassword !== confirmPassword) {
+                setValidating(true)
+            } else {
+                setLoading(true)
+
+                new Promise(
+                    await HttpRequest.set("/users/changepassword", 'POST', JSON.stringify({
+                        access_token: user.access_token,
+                        old_password: currentPassword,
+                        new_password: newPassword,
+                    }))
+                ).then(res => {
+                    console.log('res', res)
+
+                    rbSheetRef.current.close()
+
+                    setLoading(false)
+
+                    setRedirect(true)
+                }).catch(err => {
+                    setLoading(false)
+                    if (err.msg) setErrorMsg(err.msg);
+                    console.log('err', err)
+                })
+            }
         } else {
-            setLoading(true)
+            if (!username || !email || !hp || !address) {
+                setValidating(true);
+            } else {
+                setLoading(true)
 
-            new Promise(
-                await HttpRequest.set("/users/mobileupdateprofile", 'POST', JSON.stringify({
-                    access_token: user.access_token,
-                    address,
-                    hp,
-                    username,
-                    email
-                }))
-            ).then(res => {
-                rbSheetRef.current.close()
+                new Promise(
+                    await HttpRequest.set("/users/mobileupdateprofile", 'POST', JSON.stringify({
+                        access_token: user.access_token,
+                        address,
+                        hp,
+                        username,
+                        email
+                    }))
+                ).then(res => {
+                    rbSheetRef.current.close()
 
-                setLoading(false)
+                    setLoading(false)
 
-                setRedirect(true)
-            }).catch(err => {
-                setLoading(false)
-                console.log('err', err)
-            })
+                    setRedirect(true)
+                }).catch(err => {
+                    setLoading(false)
+                    console.log('err', err)
+                })
+            }
         }
     }
 
     return (
         <AppContainer minimal>
             <ScrollView>
+                <Modal visible={isLoadingShown} transparent={true}>
+                    <View
+                        style={{flex: 1, backgroundColor: '#00000040', alignItems: 'center', justifyContent: 'center'}}>
+                        <ActivityIndicator size="small" color="#ffffff"/>
+                    </View>
+                </Modal>
+
                 <Dialog.Container visible={isUpdateSuccessModalShown}>
                     <Dialog.Title style={{fontFamily: 'Poppins-Regular', fontSize: 17}}>Successful!</Dialog.Title>
 
                     <Dialog.Description style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>
-                        You have successfully updated your profile.
+                        {changePassword ? 'You have successfully changed password. Please use your new passwords when logging in' : 'You have successfully updated your profile.'}
                     </Dialog.Description>
 
                     <Dialog.Button label="OK" style={{fontFamily: 'Poppins-Regular'}}
@@ -142,7 +202,9 @@ export default function ProfileScreen(props) {
 
                 <RBSheet
                     onClose={() => {
-                        if(redirect) setUpdateSuccessModal(true)
+                        setTimeout(() => {
+                            if (redirect) setUpdateSuccessModal(true)
+                        }, 250)
                     }}
                     ref={rbSheetRef}
                     closeOnDragDown={true}
@@ -155,9 +217,134 @@ export default function ProfileScreen(props) {
                     }}
                 >
                     <View style={{flex: 1, paddingTop: 10}}>
-                        <Text style={{textAlign: 'center', fontFamily: 'Montserrat-Bold', marginBottom: 20}}>Change Profile</Text>
+                        <Text style={{textAlign: 'center', fontFamily: 'Montserrat-Bold', marginBottom: 20}}>
+                            {changePassword ? 'Change Password' : 'Change Profile'}
+                        </Text>
 
-                        <View style={{backgroundColor: 'white', justifyContent: 'center', marginHorizontal: 15, paddingHorizontal: 15, borderRadius: 10}}>
+                        {changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            paddingBottom: 30
+                        }}>
+                            <TextInputLayout
+                                style={styles.inputLayout}
+                                hintColor={isValidating && (currentPassword.length === 0 && errorMsg) ? 'red' : 'grey'}
+                                focusColor={isValidating && (currentPassword.length === 0 && errorMsg) ? 'red' : 'blue'}
+                            >
+                                <TextInput
+                                    onChangeText={(password) => {
+                                        setCurrentPassword(password)
+                                    }}
+                                    secureTextEntry={!isCurrentPasswordVisible}
+                                    style={styles.textInput}
+                                    placeholder={'Current Password'}
+
+                                />
+                            </TextInputLayout>
+                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                                {errorMsg ? errorMsg : isValidating && currentPassword.length === 0 ? 'Current password is mandatory.' : null}
+                            </Text>
+
+                            <TouchableOpacity style={{alignSelf: 'flex-end', marginTop: -50, marginRight: 10}}
+                                              onPress={() => setCurrentPasswordVisible(!isCurrentPasswordVisible)}>
+                                <Ionicons name={isCurrentPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
+                            </TouchableOpacity>
+                        </View>
+                        }
+
+                        {
+                            changePassword &&
+                            <View style={{alignSelf: 'flex-end', paddingHorizontal: 15, marginVertical: 15}}>
+                                <TouchableWithoutFeedback>
+                                    <Text style={{color: 'grey', fontFamily: 'Avenir'}}>Forgot Password?</Text>
+                                </TouchableWithoutFeedback>
+                            </View>
+                        }
+
+                        {changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            paddingBottom: 30
+                        }}>
+                            <TextInputLayout
+                                style={styles.inputLayout}
+                                hintColor={isValidating && (newPassword.length === 0 || newPassword.length < 6 || newPassword !== confirmPassword) ? 'red' : 'grey'}
+                                focusColor={isValidating && (newPassword.length === 0 || newPassword.length < 6 || newPassword !== confirmPassword) ? 'red' : 'blue'}
+                            >
+                                <TextInput
+                                    onChangeText={(password) => {
+                                        setNewPassword(password)
+                                    }}
+                                    secureTextEntry={!isNewPasswordVisible}
+                                    style={styles.textInput}
+                                    placeholder={'New Password'}
+
+                                />
+                            </TextInputLayout>
+                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                                {isValidating && newPassword.length === 0 ? 'New password is mandatory.' : isValidating && newPassword.length < 6 ? 'New password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
+                            </Text>
+
+                            <TouchableOpacity style={{alignSelf: 'flex-end', marginTop: -50, marginRight: 10}}
+                                              onPress={() => setNewPasswordVisible(!isNewPasswordVisible)}>
+                                <Ionicons name={isNewPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
+                            </TouchableOpacity>
+                        </View>
+                        }
+
+                        {changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            paddingBottom: 30,
+                            marginTop: 15,
+                            marginBottom: 60
+                        }}>
+                            <TextInputLayout
+                                style={styles.inputLayout}
+                                hintColor={isValidating && (confirmPassword.length === 0 || confirmPassword.length < 6 || newPassword !== confirmPassword) ? 'red' : 'grey'}
+                                focusColor={isValidating && (confirmPassword.length === 0 || confirmPassword.length < 6 || newPassword !== confirmPassword) ? 'red' : 'blue'}
+                            >
+                                <TextInput
+                                    onChangeText={(password) => {
+                                        setConfirmPassword(password)
+                                    }}
+                                    secureTextEntry={!isConfirmPasswordVisible}
+                                    style={styles.textInput}
+                                    placeholder={'Confirmation Password'}
+
+                                />
+                            </TextInputLayout>
+                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                                {isValidating && confirmPassword.length === 0 ? 'Confirmation password is mandatory.' : isValidating && confirmPassword.length < 6 ? 'Confirmation password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
+                            </Text>
+
+                            <TouchableOpacity style={{alignSelf: 'flex-end', marginTop: -50, marginRight: 10}}
+                                              onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)}>
+                                <Ionicons name={isConfirmPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
+                            </TouchableOpacity>
+                        </View>
+                        }
+
+                        {!changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10
+                        }}>
                             <TextInputLayout
                                 style={styles.inputLayout}
                                 hintColor={isValidating && username.length === 0 ? 'red' : 'grey'}
@@ -176,8 +363,17 @@ export default function ProfileScreen(props) {
                                 {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
                             </Text>
                         </View>
+                        }
 
-                        <View style={{backgroundColor: 'white', justifyContent: 'center', marginHorizontal: 15, paddingHorizontal: 15, borderRadius: 10, marginTop: 15}}>
+                        {!changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            marginTop: 15
+                        }}>
                             <TextInputLayout
                                 style={styles.inputLayout}
                                 hintColor={isValidating && email.length === 0 ? 'red' : 'grey'}
@@ -197,8 +393,17 @@ export default function ProfileScreen(props) {
                                 {isValidating && email.length === 0 ? 'Email is mandatory.' : null}
                             </Text>
                         </View>
+                        }
 
-                        <View style={{backgroundColor: 'white', justifyContent: 'center', marginHorizontal: 15, paddingHorizontal: 15, borderRadius: 10, marginTop: 15}}>
+                        {!changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            marginTop: 15
+                        }}>
                             <TextInputLayout
                                 style={styles.inputLayout}
                                 hintColor={isValidating && hp.length === 0 ? 'red' : 'grey'}
@@ -208,7 +413,7 @@ export default function ProfileScreen(props) {
                                     onChangeText={(hp) => {
                                         const re = /^[0-9\b]+$/;
 
-                                        if(re.test(hp)) setHp(hp)
+                                        if (re.test(hp)) setHp(hp)
                                     }}
                                     keyboardType={'numeric'}
                                     style={styles.textInput}
@@ -220,8 +425,17 @@ export default function ProfileScreen(props) {
                                 {isValidating && hp.length === 0 ? 'Mobile Phone is mandatory.' : null}
                             </Text>
                         </View>
+                        }
 
-                        <View style={{backgroundColor: 'white', justifyContent: 'center', marginHorizontal: 15, paddingHorizontal: 15, borderRadius: 10, marginTop: 15}}>
+                        {!changePassword &&
+                        <View style={{
+                            backgroundColor: 'white',
+                            justifyContent: 'center',
+                            marginHorizontal: 15,
+                            paddingHorizontal: 15,
+                            borderRadius: 10,
+                            marginTop: 15
+                        }}>
                             <TextInputLayout
                                 style={styles.inputLayout}
                                 hintColor={isValidating && address.length === 0 ? 'red' : 'grey'}
@@ -240,9 +454,18 @@ export default function ProfileScreen(props) {
                                 {isValidating && address.length === 0 ? 'Address is mandatory.' : null}
                             </Text>
                         </View>
+                        }
 
                         <TouchableOpacity onPress={attemptSubmit}>
-                            <View style={{backgroundColor: '#0033A8', alignItems: 'center', paddingTop: 19, paddingBottom: 19, borderRadius: 15, marginHorizontal: 15, marginTop: 25}}>
+                            <View style={{
+                                backgroundColor: '#0033A8',
+                                alignItems: 'center',
+                                paddingTop: 19,
+                                paddingBottom: 19,
+                                borderRadius: 15,
+                                marginHorizontal: 15,
+                                marginTop: 25
+                            }}>
 
                                 {isLoading ?
                                     <ActivityIndicator size="small" color="#ffffff"/> :
@@ -461,6 +684,7 @@ export default function ProfileScreen(props) {
                 </View>
 
                 <TouchableWithoutFeedback onPress={() => {
+                    setChangePassword(false)
                     rbSheetRef.current.open()
                 }}>
                     <View>
@@ -490,6 +714,8 @@ export default function ProfileScreen(props) {
                 </TouchableWithoutFeedback>
 
                 <TouchableWithoutFeedback onPress={() => {
+                    setChangePassword(true)
+                    rbSheetRef.current.open()
                 }}>
                     <View>
                         <View style={{
@@ -518,6 +744,9 @@ export default function ProfileScreen(props) {
                 </TouchableWithoutFeedback>
 
                 <TouchableWithoutFeedback onPress={() => {
+                    setLoadingShown(true)
+
+                    getMyChildren()
                 }}>
                     <View>
                         <View style={{

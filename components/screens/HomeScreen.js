@@ -110,6 +110,7 @@ export default function HomeScreen(props) {
                     <View style={{flexDirection: 'row'}}>
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback onPress={() => {
+                                props.navigation.navigate('LearningActivitiesScreen')
                             }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View style={{
