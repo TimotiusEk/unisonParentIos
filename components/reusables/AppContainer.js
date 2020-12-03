@@ -41,7 +41,7 @@ export default function AppContainer(props) {
                             props.navigation.navigate('SearchLearningMaterialScreen')
                     }}>
                         <View style={{
-                            backgroundColor: '#e0f4ff',
+                            backgroundColor: '#edeef0',
                             flex: 1,
                             paddingVertical: 10,
                             paddingHorizontal: 15,
