@@ -26,6 +26,7 @@ import Toast from 'react-native-toast-message';
 import NotificationScreen from "./components/screens/NotificationScreen";
 import LearningActivitiesScreen from "./components/screens/LearningActivitiesScreen";
 import SearchLearningMaterialScreen from "./components/screens/SearchLearningMaterialScreen";
+import LearningMaterialDetailScreen from "./components/screens/LearningMaterialDetailScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -60,7 +61,8 @@ export default function App() {
             ProfileScreen,
             NotificationScreen,
             LearningActivitiesScreen,
-            SearchLearningMaterialScreen
+            SearchLearningMaterialScreen,
+            LearningMaterialDetailScreen
         },
         {
             headerMode: "none",

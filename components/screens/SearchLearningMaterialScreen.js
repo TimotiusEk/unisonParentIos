@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {View, Text, TextInput, ScrollView, ImageBackground, Image} from "react-native"
+import {View, Text, TextInput, ScrollView, ImageBackground, Image, TouchableWithoutFeedback} from "react-native"
 import AppContainer from "../reusables/AppContainer";
 import {TextInputLayout} from "rn-textinputlayout";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -28,7 +28,7 @@ export default function SearchLearningMaterialScreen(props) {
             }))
         ).then((res) => {
             setLoading(false)
-            if(res.data.length === 0) {
+            if (res.data.length === 0) {
                 setNoData(true)
             } else {
                 setNoData(false)
@@ -154,155 +154,171 @@ export default function SearchLearningMaterialScreen(props) {
                     </View> :
                     noData ?
                         <View style={{marginTop: 80, marginLeft: 56}}>
-                            <Image source={require('../../assets/images/ic_empty.png')} style={{width: 84, height: 84}}/>
+                            <Image source={require('../../assets/images/ic_empty.png')}
+                                   style={{width: 84, height: 84}}/>
 
                             <Text style={{fontFamily: 'Montserrat-Bold'}}>None of Your Data {'\n'}at this time</Text>
-                            <Text style={{fontFamily: 'Montserrat-Bold', color: '#939598', marginTop: 3}}>There is no data in this moment</Text>
+                            <Text style={{fontFamily: 'Montserrat-Bold', color: '#939598', marginTop: 3}}>There is no
+                                data in this moment</Text>
                         </View> :
-                    <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 300}}>
-                        {
-                            materials.map(material => {
-                                return (
-                                    <View style={{
-                                        marginTop: 36,
-                                        marginHorizontal: 25,
-                                        backgroundColor: '#fafafa',
-                                        height: 200,
-                                        elevation: 3,
-                                        borderRadius: 10,
-                                        shadowColor: '#000',
-                                        shadowOffset: {width: 0, height: 2},
-                                        shadowOpacity: 0.25,
-                                        shadowRadius: 2,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <ImageBackground source={{uri: material.image_path}}
-                                                         imageStyle={{borderRadius: 10}}
-                                                         style={{width: '100%', height: '100%', resizeMode: 'cover'}}>
-                                            <View style={{flex: 1, backgroundColor: '#00000099', borderRadius: 10}}>
-                                                <View style={{
-                                                    backgroundColor: 'white',
-                                                    alignSelf: 'flex-end',
-                                                    flexDirection: 'row',
-                                                    padding: 5,
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    borderRadius: 8,
-                                                    marginTop: 8,
-                                                    marginEnd: 8
-                                                }}>
-                                                    <Ionicons name={'star'} color={'#fdcb03'} size={17}/>
-
-                                                    <Text style={{
-                                                        marginLeft: 10,
-                                                        fontSize: 12,
-                                                        fontFamily: 'Montserrat-Regular'
-                                                    }}>
-                                                        {material.average ? material.average : '0.0'}
-                                                    </Text>
-                                                </View>
-
-                                                <View style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    bottom: 0,
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                }}>
-                                                    <View style={{
-                                                        width: 45,
-                                                        height: 45,
-                                                        borderRadius: 25,
-                                                        backgroundColor: '#1d200b',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                    }}>
-                                                        <Ionicons name={'play'} color={'white'} size={22}/>
-                                                    </View>
-                                                </View>
-
-                                                <View style={{flex: 1, flexDirection: 'row'}}>
+                        <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 300}}>
+                            {
+                                materials.map(material => {
+                                    return (
+                                        <TouchableWithoutFeedback onPress={() => props.navigation.navigate('LearningMaterialDetailScreen', {material})}>
+                                            <View style={{
+                                                marginTop: 36,
+                                                marginHorizontal: 25,
+                                                backgroundColor: '#fafafa',
+                                                height: 200,
+                                                elevation: 3,
+                                                borderRadius: 10,
+                                                shadowColor: '#000',
+                                                shadowOffset: {width: 0, height: 2},
+                                                shadowOpacity: 0.25,
+                                                shadowRadius: 2,
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                <ImageBackground source={{uri: material.image_path}}
+                                                                 imageStyle={{borderRadius: 10}}
+                                                                 style={{
+                                                                     width: '100%',
+                                                                     height: '100%',
+                                                                     resizeMode: 'cover'
+                                                                 }}>
                                                     <View style={{
                                                         flex: 1,
-                                                        justifyContent: 'flex-end',
-                                                        marginLeft: 15,
-                                                        marginBottom: 5
+                                                        backgroundColor: '#00000099',
+                                                        borderRadius: 10
                                                     }}>
                                                         <View style={{
+                                                            backgroundColor: 'white',
+                                                            alignSelf: 'flex-end',
                                                             flexDirection: 'row',
+                                                            padding: 5,
                                                             alignItems: 'center',
-                                                            marginBottom: 5
+                                                            justifyContent: 'center',
+                                                            borderRadius: 8,
+                                                            marginTop: 8,
+                                                            marginEnd: 8
                                                         }}>
-                                                            <Text style={{
-                                                                color: 'white',
-                                                                fontFamily: 'Montserrat-Medium'
-                                                            }}>
-                                                                {material.author}
-                                                            </Text>
-
-                                                            <View style={{
-                                                                width: 6,
-                                                                height: 6,
-                                                                borderRadius: 40,
-                                                                backgroundColor: 'white',
-                                                                marginHorizontal: 6
-                                                            }}/>
+                                                            <Ionicons name={'star'} color={'#fdcb03'} size={17}/>
 
                                                             <Text style={{
-                                                                color: 'white',
-                                                                fontFamily: 'Montserrat-Medium'
+                                                                marginLeft: 10,
+                                                                fontSize: 12,
+                                                                fontFamily: 'Montserrat-Regular'
                                                             }}>
-                                                                {moment(material.created_at).format('DD MMM YYYY')}
+                                                                {material.average ? material.average : '0.0'}
                                                             </Text>
                                                         </View>
 
-                                                        <Text style={{
-                                                            fontFamily: 'Montserrat-Bold',
-                                                            color: 'white',
-                                                            fontSize: 16,
-                                                            marginEnd: 16,
-                                                            marginBottom: 4
-                                                        }} numberOfLines={2}>
-                                                            {material.title}
-                                                        </Text>
-
-                                                        <Text style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: 'white',
-                                                            marginEnd: 16,
-                                                            marginBottom: 4
+                                                        <View style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            bottom: 0,
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
                                                         }}>
-                                                            {material.subtitle}
-                                                        </Text>
+                                                            <View style={{
+                                                                width: 45,
+                                                                height: 45,
+                                                                borderRadius: 25,
+                                                                backgroundColor: '#1d200b',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}>
+                                                                <Ionicons name={'play'} color={'white'} size={22}/>
+                                                            </View>
+                                                        </View>
 
-                                                        <Text style={{
-                                                            fontFamily: 'Montserrat-Regular',
-                                                            color: 'white',
-                                                            marginEnd: 16,
-                                                            marginBottom: 4
-                                                        }} numberOfLines={1}>
-                                                            {material.description}
-                                                        </Text>
-                                                    </View>
+                                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                                            <View style={{
+                                                                flex: 1,
+                                                                justifyContent: 'flex-end',
+                                                                marginLeft: 15,
+                                                                marginBottom: 5
+                                                            }}>
+                                                                <View style={{
+                                                                    flexDirection: 'row',
+                                                                    alignItems: 'center',
+                                                                    marginBottom: 5
+                                                                }}>
+                                                                    <Text style={{
+                                                                        color: 'white',
+                                                                        fontFamily: 'Montserrat-Medium'
+                                                                    }}>
+                                                                        {material.author}
+                                                                    </Text>
 
-                                                    <View style={{justifyContent: 'flex-end', marginRight: 15, marginBottom: 15}}>
-                                                        <Text style={{
-                                                            color: 'white', fontFamily: 'Montserrat-Bold'
-                                                        }}>
-                                                            {material.price === 0 ? 'Free' : 'Rp' + numberWithCommas(material.price)}
-                                                        </Text>
+                                                                    <View style={{
+                                                                        width: 6,
+                                                                        height: 6,
+                                                                        borderRadius: 40,
+                                                                        backgroundColor: 'white',
+                                                                        marginHorizontal: 6
+                                                                    }}/>
+
+                                                                    <Text style={{
+                                                                        color: 'white',
+                                                                        fontFamily: 'Montserrat-Medium'
+                                                                    }}>
+                                                                        {moment(material.created_at).format('DD MMM YYYY')}
+                                                                    </Text>
+                                                                </View>
+
+                                                                <Text style={{
+                                                                    fontFamily: 'Montserrat-Bold',
+                                                                    color: 'white',
+                                                                    fontSize: 16,
+                                                                    marginEnd: 16,
+                                                                    marginBottom: 4
+                                                                }} numberOfLines={2}>
+                                                                    {material.title}
+                                                                </Text>
+
+                                                                <Text style={{
+                                                                    fontFamily: 'Montserrat-Regular',
+                                                                    color: 'white',
+                                                                    marginEnd: 16,
+                                                                    marginBottom: 4
+                                                                }}>
+                                                                    {material.subtitle}
+                                                                </Text>
+
+                                                                <Text style={{
+                                                                    fontFamily: 'Montserrat-Regular',
+                                                                    color: 'white',
+                                                                    marginEnd: 16,
+                                                                    marginBottom: 4
+                                                                }} numberOfLines={1}>
+                                                                    {material.description}
+                                                                </Text>
+                                                            </View>
+
+                                                            <View style={{
+                                                                justifyContent: 'flex-end',
+                                                                marginRight: 15,
+                                                                marginBottom: 15
+                                                            }}>
+                                                                <Text style={{
+                                                                    color: 'white', fontFamily: 'Montserrat-Bold'
+                                                                }}>
+                                                                    {material.price === 0 ? 'Free' : 'Rp' + numberWithCommas(material.price)}
+                                                                </Text>
+                                                            </View>
+                                                        </View>
                                                     </View>
-                                                </View>
+                                                </ImageBackground>
                                             </View>
-                                        </ImageBackground>
-                                    </View>
-                                )
-                            })
-                        }
-                    </ScrollView>
+                                        </TouchableWithoutFeedback>
+                                    )
+                                })
+                            }
+                        </ScrollView>
                 }
             </View>
         </AppContainer>
