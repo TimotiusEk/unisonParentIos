@@ -27,6 +27,7 @@ import NotificationScreen from "./components/screens/NotificationScreen";
 import LearningActivitiesScreen from "./components/screens/LearningActivitiesScreen";
 import SearchLearningMaterialScreen from "./components/screens/SearchLearningMaterialScreen";
 import LearningMaterialDetailScreen from "./components/screens/LearningMaterialDetailScreen";
+import LearningMaterialScreen from "./components/screens/LearningMaterialScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -62,7 +63,8 @@ export default function App() {
             NotificationScreen,
             LearningActivitiesScreen,
             SearchLearningMaterialScreen,
-            LearningMaterialDetailScreen
+            LearningMaterialDetailScreen,
+            LearningMaterialScreen
         },
         {
             headerMode: "none",
@@ -90,6 +92,7 @@ export default function App() {
     Feather.loadFont();
     FontAwesome.loadFont();
     MaterialCommunityIcons.loadFont();
+
 
     return (
         <AppContainer/>

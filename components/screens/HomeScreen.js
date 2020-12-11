@@ -45,15 +45,6 @@ export default function HomeScreen(props) {
         }).catch(err => console.log('err', err))
     }
 
-    const _renderItem = (item) => {
-        return (
-            <View style={{paddingHorizontal: 15}}>
-                <Image source={{uri: item.item.image_path}}
-                       style={{width: '100%', height: 200, resizeMode: 'contain'}}/>
-            </View>
-        )
-    }
-
     return (
         <AppContainer navigation={props.navigation}>
             <ScrollView style={{paddingTop: 30}}>
@@ -68,13 +59,22 @@ export default function HomeScreen(props) {
 
                 <Carousel
                     data={ads}
-                    renderItem={_renderItem}
+                    renderItem={(item) => {
+                        return (
+                            <View style={{paddingHorizontal: 15}}>
+                                <Image source={{uri: item.item.image_path}}
+                                       style={{width: '100%', height: 200, resizeMode: 'contain'}}/>
+                            </View>
+                        )
+                    }}
                     sliderWidth={Dimensions.get('window').width}
                     itemWidth={Dimensions.get('window').width}
-                    onSnapToItem={(index) => setActiveSlide(index)}
                     loop={true}
-                    lockScrollWhileSnapping={true}
-                    autoplayInterval={1000}
+                    useNativeDriver
+                    autoplay={true}
+                    autoplayDelay={3000}
+                    autoplayInterval={3000}
+                    onSnapToItem={(idx) => setActiveSlide(idx)}
                 />
 
                 <Pagination
@@ -219,6 +219,7 @@ export default function HomeScreen(props) {
                     <View style={{flexDirection: 'row', marginTop: 30}}>
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback onPress={() => {
+                                props.navigation.navigate('LearningMaterialScreen')
                             }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View style={{
