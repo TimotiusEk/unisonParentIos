@@ -259,7 +259,10 @@ export default function ProfileScreen(props) {
                         {
                             changePassword &&
                             <View style={{alignSelf: 'flex-end', paddingHorizontal: 15, marginVertical: 15}}>
-                                <TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback onPress={() => {
+                                    rbSheetRef.current.close();
+                                    props.navigation.navigate('ForgotPasswordSwitch')
+                                }}>
                                     <Text style={{color: 'grey', fontFamily: 'Avenir'}}>Forgot Password?</Text>
                                 </TouchableWithoutFeedback>
                             </View>

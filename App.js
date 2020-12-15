@@ -66,7 +66,8 @@ export default function App() {
             SearchLearningMaterialScreen,
             LearningMaterialDetailScreen,
             LearningMaterialScreen,
-            ReadPdfScreen
+            ReadPdfScreen,
+            ForgotPasswordSwitch
         },
         {
             headerMode: "none",
