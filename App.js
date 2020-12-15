@@ -28,6 +28,7 @@ import LearningActivitiesScreen from "./components/screens/LearningActivitiesScr
 import SearchLearningMaterialScreen from "./components/screens/SearchLearningMaterialScreen";
 import LearningMaterialDetailScreen from "./components/screens/LearningMaterialDetailScreen";
 import LearningMaterialScreen from "./components/screens/LearningMaterialScreen";
+import ReadPdfScreen from "./components/screens/ReadPdfScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -64,7 +65,8 @@ export default function App() {
             LearningActivitiesScreen,
             SearchLearningMaterialScreen,
             LearningMaterialDetailScreen,
-            LearningMaterialScreen
+            LearningMaterialScreen,
+            ReadPdfScreen
         },
         {
             headerMode: "none",

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {
     View,
     StyleSheet,
@@ -7,15 +7,20 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    TextInput, ActivityIndicator
 } from "react-native";
 import ReactNativeParallaxHeader from 'react-native-parallax-header';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Collapsible from "react-native-collapsible";
 import AsyncStorage from "@react-native-community/async-storage";
 import HttpRequest from "../../util/HttpRequest";
+import RBSheet from "react-native-raw-bottom-sheet";
+import {Rating} from "react-native-ratings";
 
 export default function LearningMaterialDetailScreen(props) {
+    const rbSheetRef = useRef(null);
+
     const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 
     const IS_IPHONE_X = SCREEN_HEIGHT === 812 || SCREEN_HEIGHT === 896;
@@ -26,6 +31,10 @@ export default function LearningMaterialDetailScreen(props) {
     const [material, setMaterial] = useState({});
     const [ratings, setRatings] = useState([]);
     const [isDescriptionCollapse, setDescriptionCollapse] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [review, setReview] = useState('');
+    const [isSubmittingReview, setSubmittingReview] = useState(false)
+    const [reviewError, setReviewError] = useState('');
 
     const title = () => {
         return (
@@ -36,30 +45,32 @@ export default function LearningMaterialDetailScreen(props) {
                     resizeMode: 'contain',
                     marginTop: STATUS_BAR_HEIGHT
                 }}/>
-                <View style={{
-                    backgroundColor: '#033AA8',
-                    borderRadius: 24,
-                    flexDirection: 'row',
-                    width: 95,
-                    paddingVertical: 7,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    marginTop: -20
-                }}>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ReadPdfScreen', {material})}>
                     <View style={{
-                        width: 18,
-                        height: 18,
-                        backgroundColor: 'white',
+                        backgroundColor: '#033AA8',
+                        borderRadius: 24,
+                        flexDirection: 'row',
+                        width: 95,
+                        paddingVertical: 7,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: 30
+                        alignSelf: 'center',
+                        marginTop: -20
                     }}>
-                        <Ionicons name={'play'} color={'#033AA8'} size={10}/>
-                    </View>
+                        <View style={{
+                            width: 18,
+                            height: 18,
+                            backgroundColor: 'white',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 30
+                        }}>
+                            <Ionicons name={'play'} color={'#033AA8'} size={10}/>
+                        </View>
 
-                    <Text style={{fontFamily: 'Montserrat-Regular', color: 'white', marginLeft: 6}}>Read</Text>
-                </View>
+                        <Text style={{fontFamily: 'Montserrat-Regular', color: 'white', marginLeft: 6}}>Read</Text>
+                    </View>
+                </TouchableWithoutFeedback>
             </View>
         );
     };
@@ -122,15 +133,127 @@ export default function LearningMaterialDetailScreen(props) {
             }))
         ).then((res) => {
             setRatings(res.data);
-            console.log('res', res)
+
+            res.data.map(review => {
+                if (review.reviewer_name === user.name) {
+                    console.log(review)
+                    setRating(review.rating)
+                    setReview(review.review)
+                }
+            })
         }).catch(err => {
             console.log('err', err)
         })
     }
 
+    const submitReview = async () => {
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
+
+        setReviewError('')
+
+        if (!rating) {
+            setReviewError('Ratings cannot be empty!')
+        } else if (!review) {
+            setReviewError('Review cannot be empty!')
+        } else {
+            setSubmittingReview(true)
+
+            new Promise(await HttpRequest.set('/userRekanan/materi/review/save', 'POST', JSON.stringify({
+                user_rekanan_materi_id: material.id,
+                access_token: user.access_token,
+                rating,
+                review
+            }))).then(res => {
+                if (res.result) {
+                    setSubmittingReview(false);
+                    rbSheetRef.current.close();
+                    getRatings()
+                }
+            }).catch(err => console.log(err))
+        }
+    }
+
     const renderContent = () => {
         return (
             <ScrollView contentContainerStyle={{marginTop: 40, paddingHorizontal: 16}}>
+                <RBSheet
+                    onClose={() => {
+
+                    }}
+                    ref={rbSheetRef}
+                    closeOnDragDown={true}
+                    height={315}
+                    openDuration={250}
+                >
+                    <View style={{padding: 16}}>
+                        <Text style={{
+                            fontFamily: 'Montserrat-SemiBold',
+                            color: '#3E3F68'
+                        }}>
+                            Leave A Review
+                        </Text>
+
+                        <View style={{marginTop: 16, flexDirection: 'row', alignItems: 'center'}}>
+                            <Text
+                                style={{
+                                    fontFamily: 'Montserrat-SemiBold',
+                                    color: '#3E3F68',
+                                    marginRight: 16
+                                }}>
+                                Ratings
+                            </Text>
+
+                            <Rating
+                                onFinishRating={(rating) => {
+                                    setRating(rating)
+                                }}
+                                imageSize={26} startingValue={rating}/>
+                        </View>
+
+                        <View style={{
+                            borderWidth: 1,
+                            borderColor: '#3e67d6',
+                            marginTop: 20,
+                            borderRadius: 4,
+                            padding: 12,
+                            height: 100
+                        }}>
+                            <TextInput
+                                multiline={true}
+                                numberOfLines={4}
+                                value={review}
+                                onChangeText={(review) => setReview(review)}
+                                style={{fontFamily: 'Montserrat-Regular'}}
+                                placeholder={'Write your experience'}/>
+                        </View>
+
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+                            {reviewError ?
+                                <Text style={{fontFamily: 'Montserrat-Regular', marginTop: 6, color: 'red'}}>
+                                    {reviewError}
+                                </Text> : isSubmittingReview ?
+                                    <ActivityIndicator size="small" color="#3E3F68" style={{marginTop: 6}}/> : null
+                            }
+                            <TouchableOpacity onPress={submitReview} disabled={isSubmittingReview}>
+                                <View style={{
+                                    marginLeft: 8,
+                                    backgroundColor: isSubmittingReview ? '#3e67d666' : '#3e67d6',
+                                    alignSelf: 'flex-end',
+                                    borderRadius: 16,
+                                    marginTop: 8,
+                                    paddingVertical: 8,
+                                    paddingHorizontal: 24
+                                }}>
+                                    <Text style={{fontFamily: 'Montserrat-Regular', color: 'white', fontSize: 15}}>
+                                        {isSubmittingReview ? 'Loading' : 'Add Review'}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </RBSheet>
+
                 <Text style={{fontFamily: 'Montserrat-Bold', textAlign: 'center', fontSize: 18}}>{material.title}</Text>
                 <Text style={{
                     fontFamily: 'Montserrat-Regular',
@@ -201,7 +324,7 @@ export default function LearningMaterialDetailScreen(props) {
                     </TouchableWithoutFeedback>
                 </View>
 
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => rbSheetRef.current.open()}>
                     <View style={{
                         borderWidth: 2,
                         borderColor: '#033AA8',
@@ -241,9 +364,16 @@ export default function LearningMaterialDetailScreen(props) {
 
                                             <Ionicons name={'star'} color={'#fdcb03'} size={20}/>
 
-                                            <Text style={{fontFamily: 'Montserrat-Regular', fontSize: 12, marginLeft: 10}}>{rating.rating.toFixed(1)}</Text>
+                                            <Text style={{
+                                                fontFamily: 'Montserrat-Regular',
+                                                fontSize: 12,
+                                                marginLeft: 10
+                                            }}>{rating.rating.toFixed(1)}</Text>
                                         </View>
-                                        <Text style={{color: '#818181', fontFamily: 'Poppins-Regular'}}>{rating.review}</Text>
+                                        <Text style={{
+                                            color: '#818181',
+                                            fontFamily: 'Poppins-Regular'
+                                        }}>{rating.review}</Text>
                                     </View>
                                 </View>
                             )
@@ -255,6 +385,8 @@ export default function LearningMaterialDetailScreen(props) {
     };
 
     useEffect(() => {
+        console.log('material', props.navigation.getParam('material'))
+
         setMaterial(props.navigation.getParam('material'))
         getRatings();
     }, [])
