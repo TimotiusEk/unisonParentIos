@@ -39,7 +39,7 @@ export default function AppContainer(props) {
                     <TouchableWithoutFeedback
                         onPress={() => {
                             props.navigation.navigate('SearchLearningMaterialScreen')
-                    }}>
+                        }}>
                         <View style={{
                             backgroundColor: '#edeef0',
                             flex: 1,
@@ -70,7 +70,8 @@ export default function AppContainer(props) {
                     <Image source={require('../../assets/images/logo_one_line.png')}
                            style={{height: 74 / 2, width: 239 / 2}}/>
                     <View style={{flex: 1}}/>
-                    <Entypo name={'shopping-cart'} size={22} color={'#757575'} style={{marginRight: 30}}/>
+                    <Entypo name={'shopping-cart'} size={22} color={'#757575'} style={{marginRight: 30}}
+                            onPress={() => props.navigation.navigate('CartScreen')}/>
                     <MaterialIcons name={'notifications-none'} size={27} color={'#9DA2B9'}
                                    onPress={() => props.navigation.navigate('NotificationScreen')}/>
                 </View>

@@ -45,7 +45,7 @@ export default function SearchLearningMaterialScreen(props) {
     }
 
     return (
-        <AppContainer minimal>
+        <AppContainer minimal navigation={props.navigation}>
             <View>
                 <View style={{
                     backgroundColor: '#3e67d6',

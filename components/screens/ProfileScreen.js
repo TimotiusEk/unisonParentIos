@@ -176,7 +176,7 @@ export default function ProfileScreen(props) {
     }
 
     return (
-        <AppContainer minimal>
+        <AppContainer minimal navigation={props.navigation}>
             <ScrollView>
                 <Modal visible={isLoadingShown} transparent={true}>
                     <View

@@ -11,6 +11,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Entypo from 'react-native-vector-icons/Entypo'
 import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import Fontisto from 'react-native-vector-icons/Fontisto'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import RegisterScreen from "./components/screens/RegisterScreen";
 import ChooseGenderScreen from "./components/screens/ChooseGenderScreen";
@@ -29,6 +30,10 @@ import SearchLearningMaterialScreen from "./components/screens/SearchLearningMat
 import LearningMaterialDetailScreen from "./components/screens/LearningMaterialDetailScreen";
 import LearningMaterialScreen from "./components/screens/LearningMaterialScreen";
 import ReadPdfScreen from "./components/screens/ReadPdfScreen";
+import MyOrderScreen from "./components/screens/MyOrderScreen";
+import CartScreen from "./components/screens/CartScreen";
+import AttendanceScreen from "./components/screens/AttendanceScreen";
+import ReportScreen from "./components/screens/ReportScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -67,7 +72,11 @@ export default function App() {
             LearningMaterialDetailScreen,
             LearningMaterialScreen,
             ReadPdfScreen,
-            ForgotPasswordSwitch
+            ForgotPasswordSwitch,
+            MyOrderScreen,
+            CartScreen,
+            AttendanceScreen,
+            ReportScreen
         },
         {
             headerMode: "none",
@@ -95,7 +104,7 @@ export default function App() {
     Feather.loadFont();
     FontAwesome.loadFont();
     MaterialCommunityIcons.loadFont();
-
+    Fontisto.loadFont();
 
     return (
         <AppContainer/>

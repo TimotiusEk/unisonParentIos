@@ -5,7 +5,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 export default function LearningActivitiesScreen(props) {
     return (
-        <AppContainer>
+        <AppContainer navigation={props.navigation}>
             <ScrollView>
                 <View style={{
                     flexDirection: 'row',

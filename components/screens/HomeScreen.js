@@ -139,8 +139,7 @@ export default function HomeScreen(props) {
                         </View>
 
                         <View style={{flex: 1}}>
-                            <TouchableWithoutFeedback onPress={() => {
-                            }}>
+                            <TouchableWithoutFeedback onPress={() => props.navigation.navigate('AttendanceScreen')}>
                                 <View style={{alignItems: 'center'}}>
                                     <View style={{
                                         backgroundColor: '#E9E9E9',
@@ -169,6 +168,7 @@ export default function HomeScreen(props) {
 
                         <View style={{flex: 1}}>
                             <TouchableWithoutFeedback onPress={() => {
+                                props.navigation.navigate('ReportScreen')
                             }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View style={{
@@ -249,6 +249,7 @@ export default function HomeScreen(props) {
 
                         <View style={{flex: 1}}>
                             <TouchableWithoutFeedback onPress={() => {
+                                props.navigation.navigate('MyOrderScreen')
                             }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View style={{
