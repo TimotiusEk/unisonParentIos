@@ -34,6 +34,10 @@ import MyOrderScreen from "./components/screens/MyOrderScreen";
 import CartScreen from "./components/screens/CartScreen";
 import AttendanceScreen from "./components/screens/AttendanceScreen";
 import ReportScreen from "./components/screens/ReportScreen";
+import ExamScreen from "./components/screens/ExamScreen";
+import AgendaScreen from "./components/screens/AgendaScreen";
+import AssignmentScreen from "./components/screens/AssignmentScreen";
+import BehavioralRecordScreen from "./components/screens/BehavioralRecordScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -76,7 +80,11 @@ export default function App() {
             MyOrderScreen,
             CartScreen,
             AttendanceScreen,
-            ReportScreen
+            ReportScreen,
+            ExamScreen,
+            AgendaScreen,
+            AssignmentScreen,
+            BehavioralRecordScreen
         },
         {
             headerMode: "none",

@@ -15,8 +15,25 @@ import Carousel from "react-native-snap-carousel";
 import AsyncStorage from "@react-native-community/async-storage";
 import HttpRequest from "../../util/HttpRequest";
 import RBSheet from "react-native-raw-bottom-sheet";
+import moment from "moment";
 
 export default function ReportScreen(props) {
+    const months = [
+        'January',
+        'February',
+        'Marcy',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'Oktober',
+        'November',
+        'December'
+    ]
+
+    const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
     const [activeSlide, setActiveSlide] = useState(0);
     const [myChildren, setMyChildren] = useState([]);
     const [selectedChild, setSelectedChild] = useState({});
@@ -63,7 +80,7 @@ export default function ReportScreen(props) {
     }
 
     return (
-        <View>
+        <View style={{flex: 1, paddingBottom: 10}}>
             <RBSheet
                 ref={rbSheetRef}
                 closeOnDragDown={true}
@@ -78,33 +95,33 @@ export default function ReportScreen(props) {
                         marginBottom: 15,
                         fontSize: 16
                     }}>
-                        {select === 'class' ? 'Class Children' : 'Subject'}
+                        {select === 'class' ? 'Class Children' : 'Choose Month'}
                     </Text>
 
                     <View style={{width: '100%', height: 1, backgroundColor: '#f3f3f3'}}/>
 
                     <ScrollView>
-                        {/*{*/}
-                        {/*    select === 'subject' && subjects.map(subject => {*/}
-                        {/*        return (*/}
-                        {/*            <>*/}
-                        {/*                <TouchableWithoutFeedback onPress={() => {*/}
-                        {/*                    setSelectedSubject(subject)*/}
+                        {
+                            select === 'month' && months.map(month => {
+                                return (
+                                    <>
+                                        <TouchableWithoutFeedback onPress={() => {
+                                            setSelectedMonth(month)
 
-                        {/*                    rbSheetRef.current.close();*/}
-                        {/*                }}>*/}
-                        {/*                    <View style={{padding: 15}}>*/}
-                        {/*                        <Text style={{fontFamily: 'Montserrat-Regular', fontSize: 16}}>*/}
-                        {/*                            {subject.subject}*/}
-                        {/*                        </Text>*/}
-                        {/*                    </View>*/}
-                        {/*                </TouchableWithoutFeedback>*/}
+                                            rbSheetRef.current.close();
+                                        }}>
+                                            <View style={{padding: 15}}>
+                                                <Text style={{fontFamily: 'Montserrat-Regular', fontSize: 16}}>
+                                                    {month}
+                                                </Text>
+                                            </View>
+                                        </TouchableWithoutFeedback>
 
-                        {/*                <View style={{width: '100%', height: 1, backgroundColor: '#f3f3f3'}}/>*/}
-                        {/*            </>*/}
-                        {/*        )*/}
-                        {/*    })*/}
-                        {/*}*/}
+                                        <View style={{width: '100%', height: 1, backgroundColor: '#f3f3f3'}}/>
+                                    </>
+                                )
+                            })
+                        }
 
                         {
                             select === 'class' && myChildren.map(child => {
@@ -150,9 +167,9 @@ export default function ReportScreen(props) {
             <View style={{
                 backgroundColor: '#3e67d6',
                 paddingTop: 50,
-                paddingBottom: 70,
+                paddingBottom: 90,
                 borderBottomLeftRadius: 24,
-                marginBottom: -40
+                marginBottom: -60
             }}>
                 <View style={{
                     flexDirection: 'row',
@@ -209,7 +226,7 @@ export default function ReportScreen(props) {
                 renderItem={(item) => {
                     if (item.index === 0) {
                         return (
-                            <View>
+                            <ScrollView>
                                 <View style={{
                                     backgroundColor: 'white',
                                     borderRadius: 12,
@@ -351,12 +368,81 @@ export default function ReportScreen(props) {
                                         please keep maintain the score until the last semester
                                     </Text>
                                 </View>
-                            </View>
+
+                                <View style={{
+                                    backgroundColor: 'white',
+                                    borderRadius: 12,
+                                    marginHorizontal: 15,
+                                    padding: 8,
+                                    marginTop: 16
+                                }}>
+                                    <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 12}}>
+                                        Tips
+                                    </Text>
+
+                                    <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 12}}>
+                                        Now you can view your children's digital report
+                                    </Text>
+                                </View>
+
+                                <View style={{flexDirection: 'row', marginTop: 20, marginHorizontal: 30}}>
+                                    <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 12, flex: 1}}>
+                                        This Month
+                                    </Text>
+
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        setSelect('month')
+                                        rbSheetRef.current.open();
+                                    }}>
+                                        <Text style={{
+                                            backgroundColor: 'white',
+                                            fontFamily: 'Montserrat-Regular',
+                                            paddingHorizontal: 12,
+                                            fontSize: 12,
+                                            paddingVertical: 7,
+                                            borderRadius: 100
+                                        }}>
+                                            {selectedMonth}
+                                        </Text>
+                                    </TouchableWithoutFeedback>
+                                </View>
+
+                                <Text style={{fontFamily: 'Montserrat-Bold', textAlign: 'center', marginTop: 25}}>
+                                    None Of Your Data{'\n'}at this time
+                                </Text>
+                            </ScrollView>
                         )
                     } else {
                         return (
-                            <View>
-                                <Text>{item.index}</Text>
+                            <View style={{paddingLeft: 30, paddingRight: 15, flex: 1}}>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={{flex: 1}}>
+                                        <Text style={{fontFamily: 'Montserrat-Bold', color: 'white'}}>Class
+                                            Period</Text>
+                                        <Text style={{
+                                            fontFamily: 'Montserrat-Regular',
+                                            color: 'white'
+                                        }}>{selectedChild.year}</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        backgroundColor: 'white',
+                                        fontFamily: 'Montserrat-Regular',
+                                        paddingHorizontal: 12,
+                                        fontSize: 12,
+                                        paddingVertical: 7,
+                                        borderRadius: 100,
+                                        alignSelf: 'flex-start'
+                                    }}>
+                                        {selectedChild.class_name}
+                                    </Text>
+                                </View>
+
+                                <View style={{marginTop: 22, flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                    <Text style={{fontFamily: 'Montserrat-Bold', textAlign: 'center'}}>
+                                        None Of Your Data{'\n'}at this time
+                                    </Text>
+                                </View>
                             </View>
                         )
                     }

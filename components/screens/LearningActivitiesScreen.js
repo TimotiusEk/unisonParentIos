@@ -27,7 +27,7 @@ export default function LearningActivitiesScreen(props) {
                     </Text>
                 </View>
 
-                <TouchableWithoutFeedback onPress={() => {}}>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ExamScreen')}>
                     <View
                         style={{
                             backgroundColor: '#B9C0DA',
@@ -54,7 +54,7 @@ export default function LearningActivitiesScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => {}}>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('AgendaScreen')}>
                     <View
                         style={{
                             backgroundColor: '#627FC1',
@@ -82,7 +82,7 @@ export default function LearningActivitiesScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => {}}>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('AssignmentScreen')}>
                     <View
                         style={{
                             backgroundColor: '#1D3461',
@@ -109,7 +109,7 @@ export default function LearningActivitiesScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => {}}>
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('BehavioralRecordScreen')}>
                     <View
                         style={{
                             backgroundColor: '#091540',
