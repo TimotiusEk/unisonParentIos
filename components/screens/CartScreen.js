@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import {Text, View, TouchableOpacity, ScrollView, Image, TouchableWithoutFeedback} from "react-native";
+import {Text, View, TouchableOpacity, ScrollView, Image, TouchableWithoutFeedback, Platform, StatusBar} from "react-native";
 import React, {useState} from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -12,8 +12,9 @@ export default function CartScreen(props) {
                 backgroundColor: 'white', shadowColor: '#000',
                 shadowOffset: {width: 0, height: 0},
                 shadowOpacity: 0.15,
+                elevation: 3,
                 shadowRadius: 5,
-                paddingTop: 60,
+                paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight - 18,
                 flexDirection: 'row', alignItems: 'center', paddingVertical: 12
             }}>
                 <MaterialCommunityIcons name={'arrow-left'} size={28}

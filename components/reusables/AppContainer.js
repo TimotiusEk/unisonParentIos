@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Image, View, Text, TouchableWithoutFeedback} from "react-native";
+import {Image, View, Text, TouchableWithoutFeedback, Platform, StatusBar} from "react-native";
 import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -28,9 +28,10 @@ export default function AppContainer(props) {
             <View style={{
                 backgroundColor: 'white', shadowColor: '#000',
                 shadowOffset: {width: 0, height: 0},
+                elevation: 3,
                 shadowOpacity: 0.15,
                 shadowRadius: 5,
-                paddingTop: 60,
+                paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight - 10,
                 paddingLeft: 15,
                 paddingRight: 15,
                 paddingBottom: 15
