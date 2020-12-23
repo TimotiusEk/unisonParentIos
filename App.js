@@ -13,6 +13,7 @@ import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import RegisterScreen from "./components/screens/RegisterScreen";
 import ChooseGenderScreen from "./components/screens/ChooseGenderScreen";
 import RegistrationInfoScreen from "./components/screens/RegistrationInfoScreen";
@@ -38,6 +39,8 @@ import ExamScreen from "./components/screens/ExamScreen";
 import AgendaScreen from "./components/screens/AgendaScreen";
 import AssignmentScreen from "./components/screens/AssignmentScreen";
 import BehavioralRecordScreen from "./components/screens/BehavioralRecordScreen";
+import WebViewScreen from "./components/screens/WebViewScreen";
+import AudioPlayerScreen from "./components/screens/AudioPlayerScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -84,7 +87,9 @@ export default function App() {
             ExamScreen,
             AgendaScreen,
             AssignmentScreen,
-            BehavioralRecordScreen
+            BehavioralRecordScreen,
+            WebViewScreen,
+            AudioPlayerScreen
         },
         {
             headerMode: "none",
@@ -113,6 +118,7 @@ export default function App() {
     FontAwesome.loadFont();
     MaterialCommunityIcons.loadFont();
     Fontisto.loadFont();
+    AntDesign.loadFont();
 
     return (
         <AppContainer/>
