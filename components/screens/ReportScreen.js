@@ -16,6 +16,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import HttpRequest from '../../util/HttpRequest';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import moment from 'moment';
+import RNFetchBlob from 'rn-fetch-blob';
+import {Platform} from 'react-native';
+const {config, fs} = RNFetchBlob;
 
 export default function ReportScreen(props) {
   const months = [
@@ -33,7 +36,7 @@ export default function ReportScreen(props) {
     'December',
   ];
 
-  const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
+  const [selectedMonth, setSelectedMonth] = useState(moment().format('M'));
   const [activeSlide, setActiveSlide] = useState(0);
   const [myChildren, setMyChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState({});
@@ -41,17 +44,58 @@ export default function ReportScreen(props) {
   const [select, setSelect] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const carouselRef = useRef(null);
+  const [reportData, setReportData] = useState([]);
+  const [reportHistory, setReportHistory] = useState([]);
 
-  const getReport = () => {
-      console.log('get report');
-  }
-  
+  const getReport = async () => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    new Promise(
+      await HttpRequest.set(
+        '/exams/report',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          student_id: selectedChild.student_id,
+          month: selectedMonth,
+        }),
+      ),
+    )
+      .then((res) => {
+        setReportData(res.msg);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getReportHistory = async () => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    new Promise(
+      await HttpRequest.set(
+        '/exams/report/all',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          student_id: selectedChild.student_id,
+          pages: 1,
+        }),
+      ),
+    )
+      .then((res) => {
+        setReportHistory(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
-      if(myChildren.length === 0) getMyChildren();
+    if (myChildren.length === 0) getMyChildren();
 
-      if(selectedChild.student_name) {
-        getReport();
-      }
+    if (selectedChild.student_name) {
+      getReport();
+      getReportHistory();
+    }
   }, [selectedChild, selectedMonth]);
 
   const getMyChildren = async () => {
@@ -84,8 +128,6 @@ export default function ReportScreen(props) {
         });
     } else {
       if (JSON.parse(myChildren).length > 0) {
-        console.log('child', JSON.parse(myChildren)[0]);
-
         setSelectedChild(JSON.parse(myChildren)[0]);
       }
 
@@ -118,12 +160,12 @@ export default function ReportScreen(props) {
 
           <ScrollView>
             {select === 'month' &&
-              months.map((month) => {
+              months.map((month, idx) => {
                 return (
                   <>
                     <TouchableWithoutFeedback
                       onPress={() => {
-                        setSelectedMonth(month);
+                        setSelectedMonth(idx + 1);
 
                         rbSheetRef.current.close();
                       }}>
@@ -323,10 +365,14 @@ export default function ReportScreen(props) {
                         }}
                       />
 
-                      <View style={{flex: 1, marginVertical: 8}}>
+                      <View
+                        style={{
+                          flex: 1,
+                          marginVertical: 8,
+                          marginHorizontal: 8,
+                        }}>
                         <Text
                           style={{
-                            marginHorizontal: 8,
                             fontFamily: 'Montserrat-Bold',
                             fontSize: 16,
                           }}>
@@ -335,7 +381,8 @@ export default function ReportScreen(props) {
 
                         <Text
                           style={{
-                            marginHorizontal: 8,
+                            marginTop: 2,
+                            marginBottom: 8,
                             fontFamily: 'Montserrat-Medium',
                             fontSize: 12,
                             color: '#818181',
@@ -358,28 +405,68 @@ export default function ReportScreen(props) {
                     </View>
                   </TouchableWithoutFeedback>
 
-                  <TouchableWithoutFeedback>
-                    <View
-                      style={{
-                        opacity: 0,
-                        alignSelf: 'flex-end',
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        borderRadius: 16,
-                        marginEnd: 16,
-                        marginBottom: 8,
-                        backgroundColor: '#e3e3e3',
+                  {Array.isArray(reportHistory) && reportHistory.length > 0 && (
+                    <TouchableWithoutFeedback
+                      onPress={async () => {
+                        let user = await AsyncStorage.getItem('user');
+                        user = JSON.parse(user);
+
+                        const date = new Date();
+
+                        let PictureDir =
+                          Platform.OS === 'ios'
+                            ? fs.dirs.DocumentDir
+                            : fs.dirs.PictureDir;
+                        let options = {
+                          fileCache: true,
+                          path: PictureDir + `/Unison Report Class ${selectedChild.student_name}.pdf`,
+                          addAndroidDownloads: {
+                            useDownloadManager: true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
+                            notification: true,
+                            path:
+                              `Unison Report Class ${selectedChild.student_name}`,
+                            description: 'Downloading report',
+                          },
+                        };
+
+                        config(options)
+                          .fetch(
+                            'GET',
+                            `https://api.unison.id/reports/parent/${selectedChild.school_id}/${selectedChild.student_id}/${selectedChild.year_id}/${user.parent_id}`,
+                          )
+                          .then((res) => {
+                            if (Platform.OS === "ios") {
+                              console.log(res.data)
+
+                              RNFetchBlob.ios.openDocument(res.data);
+                            }
+                          
+                          })
+                          .catch((err) => console.log('err', err));
+
+                        // console.log(`/${selectedChild.school_id}/${selectedChild.student_id}/${selectedChild.year_id}/${user.parent_id}`)
                       }}>
-                      <Text
+                      <View
                         style={{
-                          color: '#3e67d6',
-                          fontFamily: 'Avenir',
-                          fontWeight: '500',
+                          alignSelf: 'flex-end',
+                          paddingHorizontal: 16,
+                          paddingVertical: 8,
+                          borderRadius: 16,
+                          marginEnd: 16,
+                          marginBottom: 8,
+                          backgroundColor: '#e3e3e3',
                         }}>
-                        Download Report
-                      </Text>
-                    </View>
-                  </TouchableWithoutFeedback>
+                        <Text
+                          style={{
+                            color: '#3e67d6',
+                            fontFamily: 'Avenir',
+                            fontWeight: '500',
+                          }}>
+                          Download Report
+                        </Text>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  )}
                 </View>
 
                 <View
@@ -410,7 +497,12 @@ export default function ReportScreen(props) {
                           fontSize: 12,
                           marginTop: 2,
                         }}>
-                        December
+                        {Array.isArray(reportData.report) &&
+                        reportData.report.length > 0
+                          ? moment(reportData.report[0].exam_date).format(
+                              'DD MMM YYYY',
+                            )
+                          : months[selectedMonth - 1]}
                       </Text>
                     </View>
 
@@ -422,7 +514,7 @@ export default function ReportScreen(props) {
                         fontFamily: 'Montserrat-Bold',
                         alignSelf: 'center',
                       }}>
-                      0
+                      {reportData.average ? reportData.average : 0}
                     </Text>
                   </View>
 
@@ -439,7 +531,7 @@ export default function ReportScreen(props) {
                           fontSize: 24,
                           fontFamily: 'Montserrat-Bold',
                         }}>
-                        0
+                        {reportData.averageExam ? reportData.averageExam : 0}
                       </Text>
 
                       <Text
@@ -458,7 +550,9 @@ export default function ReportScreen(props) {
                           fontSize: 24,
                           fontFamily: 'Montserrat-Bold',
                         }}>
-                        0
+                        {reportData.averageAssignment
+                          ? reportData.averageAssignment
+                          : 0}
                       </Text>
 
                       <Text
@@ -556,8 +650,7 @@ export default function ReportScreen(props) {
                   }}>
                   <Text
                     style={{
-                      fontFamily: 'Montserrat-Bold',
-                      fontSize: 12,
+                      fontFamily: 'Poppins-Bold',
                       flex: 1,
                     }}>
                     This Month
@@ -581,20 +674,75 @@ export default function ReportScreen(props) {
 
                           fontSize: 12,
                         }}>
-                        {selectedMonth}
+                        {months[selectedMonth - 1]}
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>
                 </View>
 
-                <Text
-                  style={{
-                    fontFamily: 'Montserrat-Bold',
-                    textAlign: 'center',
-                    marginTop: 25,
-                  }}>
-                  None Of Your Data{'\n'}at this time
-                </Text>
+                {Array.isArray(reportData.report) &&
+                reportData.report.length > 0 ? (
+                  reportData.report.map((report) => {
+                    return (
+                      <View style={{marginHorizontal: 32, marginTop: 16}}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text style={{fontFamily: 'Poppins-Bold', flex: 1}}>
+                            {report.description}
+                          </Text>
+
+                          <Text
+                            style={{
+                              fontFamily: 'Poppins-Regular',
+                              fontSize: 12,
+                            }}>
+                            {moment(report.exam_date).format('DD MMM YYYY')}
+                          </Text>
+                        </View>
+
+                        <View style={{flexDirection: 'row'}}>
+                          <Text
+                            style={{
+                              fontFamily: 'Poppins-Regular',
+                              fontSize: 12,
+                              flex: 1,
+                            }}>
+                            {report.type}
+                          </Text>
+
+                          <Text
+                            style={{
+                              fontFamily: 'Poppins-Bold',
+                              fontSize: 24,
+                              color:
+                                report.score && report.score >= 65
+                                  ? '#3e67d6'
+                                  : 'red',
+                            }}>
+                            {report.score ? report.score : 0}
+                            {'.0'}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            height: 1,
+                            marginTop: 8,
+                            backgroundColor: '#D3D3D3',
+                          }}
+                        />
+                      </View>
+                    );
+                  })
+                ) : (
+                  <Text
+                    style={{
+                      fontFamily: 'Montserrat-Bold',
+                      textAlign: 'center',
+                      marginTop: 25,
+                    }}>
+                    None Of Your Data{'\n'}at this time
+                  </Text>
+                )}
               </ScrollView>
             );
           } else {
@@ -615,35 +763,122 @@ export default function ReportScreen(props) {
                     </Text>
                   </View>
 
-                  <Text
+                  <View
                     style={{
                       backgroundColor: 'white',
-                      fontFamily: 'Montserrat-Regular',
                       paddingHorizontal: 12,
-                      fontSize: 12,
                       paddingVertical: 7,
                       borderRadius: 100,
                       alignSelf: 'flex-start',
                     }}>
-                    {selectedChild.class_name}
-                  </Text>
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Regular',
+
+                        fontSize: 12,
+                      }}>
+                      {selectedChild.class_name}
+                    </Text>
+                  </View>
                 </View>
 
-                <View
-                  style={{
-                    marginTop: 22,
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
+                {Array.isArray(reportHistory) && reportHistory.length > 0 ? (
+                  <ScrollView contentContainerStyle={{paddingTop: 40}}>
+                    {reportHistory.map((report) => {
+                      return (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            elevation: 3,
+                            backgroundColor: 'white',
+                            shadowColor: '#000',
+                            shadowOffset: {width: 0, height: 2},
+                            shadowOpacity: 0.25,
+                            shadowRadius: 2,
+                            marginTop: 12,
+                            borderRadius: 5,
+                          }}>
+                          <View
+                            style={{
+                              width: 48,
+                              height: 48,
+                              backgroundColor: '#3e67d6',
+                              borderRadius: 100,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              marginHorizontal: 8,
+                              marginVertical: 12,
+                            }}>
+                            <Image
+                              source={require('../../assets/images/img_history_report.png')}
+                              style={{width: 24, height: 24}}
+                            />
+                          </View>
+
+                          <View
+                            style={{marginStart: 18, marginEnd: 8, flex: 1}}>
+                            <Text
+                              style={{
+                                fontFamily: 'Poppins-Bold',
+                                marginTop: 8,
+                                marginEnd: 8,
+                              }}>
+                              {report.description}
+                            </Text>
+
+                            <Text style={{fontFamily: 'Poppins-Regular'}}>
+                              {moment(report.exam_date).format('DD MMM YYYY')}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              marginHorizontal: 4,
+                              marginVertical: 2,
+                              width: 88,
+                            }}>
+                            <Text
+                              style={{
+                                textAlign: 'center',
+                                fontFamily: 'Poppins-Regular',
+                              }}>
+                              {report.type}
+                            </Text>
+
+                            <Text
+                              style={{
+                                textAlign: 'center',
+                                fontFamily: 'Poppins-Bold',
+                                fontSize: 24,
+                                color:
+                                  report.score && report.score >= 65
+                                    ? '#3e67d6'
+                                    : 'red',
+                              }}>
+                              {report.score ? report.score : 0}
+                              {'.0'}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </ScrollView>
+                ) : (
+                  <View
                     style={{
-                      fontFamily: 'Montserrat-Bold',
-                      textAlign: 'center',
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}>
-                    None Of Your Data{'\n'}at this time
-                  </Text>
-                </View>
+                    <Text
+                      style={{
+                        fontFamily: 'Montserrat-Bold',
+                        textAlign: 'center',
+                      }}>
+                      None Of Your Data{'\n'}at this time
+                    </Text>
+                  </View>
+                )}
               </View>
             );
           }

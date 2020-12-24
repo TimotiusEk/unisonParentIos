@@ -29,10 +29,55 @@ export default function ExamScreen(props) {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
   const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
+  const [exams, setExams] = useState([]);
 
   useEffect(() => {
-    getMyChildren();
-  }, []);
+    if (selectedChild.student_id) getExam();
+    else getMyChildren();
+  }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
+
+  const getExam = async () => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    console.log('exam body', {
+      access_token: user.access_token,
+      class_id: selectedChild.class_id,
+      pages: 1,
+      subject_id: selectedSubject.subject_id,
+      student_id: selectedChild.student_id,
+      start_date: selectedStartDate
+        ? moment(selectedStartDate).format('YYYY-MM-DD')
+        : moment().format('YYYY-MM-DD'),
+      end_date: selectedEndDate
+        ? moment(selectedEndDate).format('YYYY-MM-DD')
+        : moment().format('YYYY-MM-DD'),
+    });
+
+    new Promise(
+      await HttpRequest.set(
+        '/exams/student',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          class_id: selectedChild.class_id,
+          subject_id: selectedSubject.subject_id,
+          student_id: selectedChild.student_id,
+          start_date: selectedStartDate
+            ? moment(selectedStartDate).format('YYYY-MM-DD')
+            : moment().format('YYYY-MM-DD'),
+          end_date: selectedEndDate
+            ? moment(selectedEndDate).format('YYYY-MM-DD')
+            : moment().format('YYYY-MM-DD'),
+        }),
+      ),
+    )
+      .then((res) => {
+        console.log('exams', res.data);
+        setExams(res.data);
+      })
+      .catch((err) => console.log('exam err', err));
+  };
 
   const getMyChildren = async () => {
     let user = await AsyncStorage.getItem('user');
@@ -496,6 +541,70 @@ export default function ExamScreen(props) {
             style={{width: 76, resizeMode: 'contain'}}
           />
         </View>
+
+        {exams.map((exam) => {
+          return (
+            <TouchableWithoutFeedback onPress={() => {
+              props.navigation.navigate('ExamDetailScreen', {exam})
+            }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  borderWidth: 1,
+                  borderColor: '#2DBBBBBB',
+                  borderRadius: 8,
+                  margin: 8,
+                }}>
+                <View style={{flex: 1, marginStart: 16, marginTop: 16}}>
+                  <Text style={{fontFamily: 'Avenir', fontWeight: '700'}}>
+                    {exam.exam}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: 'Avenir',
+                      marginTop: 8,
+                      marginBottom: 8,
+                      fontSize: 12,
+                      color: '#878787',
+                    }}>
+                    {exam.subject}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: '#f2f2f2',
+                    width: 28,
+                    height: 28,
+                    borderRadius: 14,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    marginStart: 8,
+                    marginEnd: 8,
+                  }}>
+                  <AntDesign name={'download'} size={20} />
+                </View>
+                <MaterialCommunityIcons
+                  name={'file-upload-outline'}
+                  size={24}
+                  style={{alignSelf: 'center', marginStart: 8, marginEnd: 8}}
+                />
+
+                <Text
+                  style={{
+                    fontFamily: 'Avenir',
+                    color: '#878787',
+                    fontSize: 12,
+                    marginTop: 10,
+                    marginEnd: 10,
+                  }}>
+                  {moment.utc(exam.exam_date).format('DD MMM')}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        })}
       </ScrollView>
     </AppContainer>
   );
