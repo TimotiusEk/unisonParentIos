@@ -32,8 +32,10 @@ export default function ExamScreen(props) {
   const [exams, setExams] = useState([]);
 
   useEffect(() => {
-    if (selectedChild.student_id) getExam();
-    else getMyChildren();
+    console.log('a')
+    if (selectedChild.student_id) {
+      if(selectedSubject.subject_id) getExam();
+    } else getMyChildren();
   }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
 
   const getExam = async () => {
@@ -585,11 +587,16 @@ export default function ExamScreen(props) {
                   }}>
                   <AntDesign name={'download'} size={20} />
                 </View>
-                <MaterialCommunityIcons
-                  name={'file-upload-outline'}
-                  size={24}
-                  style={{alignSelf: 'center', marginStart: 8, marginEnd: 8}}
-                />
+                <Image
+                            source={require('../../assets/images/ic_upload.png')}
+                            style={{
+                              width: 28,
+                              height: 28,
+                              marginTop: 16,
+                              marginEnd: 16,
+                              marginStart: 8,
+                            }}
+                          />
 
                 <Text
                   style={{

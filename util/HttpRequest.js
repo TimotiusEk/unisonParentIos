@@ -11,7 +11,11 @@ export default class HttpRequest {
                     'Content-Type': 'application/json',
                 }, body
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    // console.log('response', response)
+
+                    return response.json()
+                })
                 .then((data) => {
                     if(data.result) resolve(data)
                     else reject(data);

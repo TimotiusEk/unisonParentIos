@@ -69,7 +69,7 @@ export default function NotificationScreen(props) {
                                     </Text>
 
                                     <Text style={{color: 'grey', fontFamily: 'Avenir'}}>
-                                        {moment(notification.created_at).format('HH:mm, DD MMMM YYYY')}
+                                        {moment.utc(notification.created_at).format('HH:mm, DD MMMM YYYY')}
                                     </Text>
                                 </View>
 

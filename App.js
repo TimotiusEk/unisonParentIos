@@ -42,6 +42,7 @@ import BehavioralRecordScreen from "./components/screens/BehavioralRecordScreen"
 import WebViewScreen from "./components/screens/WebViewScreen";
 import AudioPlayerScreen from "./components/screens/AudioPlayerScreen";
 import ExamDetailScreen from './components/screens/ExamDetailScreen';
+import AssignmentDetailScreen from './components/screens/AssignmentDetailScreen';
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -91,7 +92,8 @@ export default function App() {
             BehavioralRecordScreen,
             WebViewScreen,
             AudioPlayerScreen,
-            ExamDetailScreen
+            ExamDetailScreen,
+            AssignmentDetailScreen
         },
         {
             headerMode: "none",

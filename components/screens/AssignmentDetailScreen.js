@@ -4,13 +4,19 @@ import {ScrollView, View, Text, Image} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-export default function ExamDetailScreen(props) {
-  const exam = props.navigation.getParam('exam');
+import moment from "moment";
+
+export default function AssignmentDetailScreen(props) {
+  const assignment = props.navigation.getParam('assignment');
+
+  useEffect(() => {
+      console.log(assignment)
+  }, []);
 
   return (
     <AppContainer navigation={props.navigation}>
       <ScrollView>
-        <View style={{backgroundColor: '#627FC1'}}>
+        <View style={{backgroundColor: '#1D3461'}}>
           <View
             style={{
               flexDirection: 'row',
@@ -19,7 +25,7 @@ export default function ExamDetailScreen(props) {
               // marginTop: 16,
               marginBottom: 16,
               paddingTop: 15,
-              backgroundColor: '#627FC1',
+              backgroundColor: '#1D3461',
             }}>
             <MaterialCommunityIcons
               name={'arrow-left'}
@@ -35,7 +41,7 @@ export default function ExamDetailScreen(props) {
                 marginLeft: 16,
                 color: 'white',
               }}>
-              Exam
+              Assignment
             </Text>
           </View>
 
@@ -43,7 +49,7 @@ export default function ExamDetailScreen(props) {
             style={{
               flexDirection: 'row',
               paddingStart: 16,
-              backgroundColor: '#627FC1',
+              backgroundColor: '#1D3461',
             }}>
             <MaterialCommunityIcons
               name={'arrow-left'}
@@ -60,11 +66,11 @@ export default function ExamDetailScreen(props) {
                 color: 'white',
                 flex: 1,
               }}>
-              {exam.exam}
+              {assignment.assignment}
             </Text>
 
             <Image
-              source={require('../../assets/images/ic_exam_activity.png')}
+              source={require('../../assets/images/ic_assignment.png')}
               style={{marginEnd: 8}}
             />
           </View>
@@ -95,10 +101,10 @@ export default function ExamDetailScreen(props) {
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              {!exam.file_path_student
-                ? 'No data'
-                : exam.file_path_student.split('/')[
-                    exam.file_path_student.split('/').length - 1
+              {!assignment.file_path_student
+                ? '-'
+                : assignment.file_path_student.split('/')[
+                    assignment.file_path_student.split('/').length - 1
                   ]}
             </Text>
           </View>
@@ -117,10 +123,10 @@ export default function ExamDetailScreen(props) {
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              {!exam.file_path_student2
+              {!assignment.file_path_student2
                 ? '-'
-                : exam.file_path_student2.split('/')[
-                    exam.file_path_student2.split('/').length - 1
+                : assignment.file_path_student2.split('/')[
+                    assignment.file_path_student2.split('/').length - 1
                   ]}
             </Text>
           </View>
@@ -139,10 +145,10 @@ export default function ExamDetailScreen(props) {
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              {!exam.file_path_student3
+              {!assignment.file_path_student3
                 ? '-'
-                : exam.file_path_student3.split('/')[
-                    exam.file_path_student3.split('/').length - 1
+                : assignment.file_path_student3.split('/')[
+                    assignment.file_path_student3.split('/').length - 1
                   ]}
             </Text>
           </View>
@@ -154,7 +160,7 @@ export default function ExamDetailScreen(props) {
               fontFamily: 'Montserrat-Bold',
               fontSize: 12,
             }}>
-            Exam Detail
+            Assignment Detail
           </Text>
 
           <View
@@ -170,7 +176,9 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{exam.exam_date}</Text>
+            <Text style={{fontFamily: 'Avenir'}}>
+              {moment.utc(assignment.assignment_date).format('DD MMM')}
+            </Text>
           </View>
 
           <View
@@ -179,15 +187,37 @@ export default function ExamDetailScreen(props) {
               alignItems: 'center',
               marginTop: 8,
             }}>
-            <MaterialCommunityIcons
-              name="clock-outline"
+            <Ionicons
+              name="link"
               style={{marginStart: 24, marginEnd: 16}}
               size={20}
               color="#9EA3BA"
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              {exam.start_time} - {exam.end_time}
+              {!assignment.file_path
+                ? 'No data'
+                : assignment.file_path.split('/')[
+                    assignment.file_path.split('/').length - 1
+                  ]}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 8,
+            }}>
+            <MaterialIcons
+              name="notifications-none"
+              style={{marginStart: 24, marginEnd: 16}}
+              size={20}
+              color="#9EA3BA"
+            />
+
+            <Text style={{fontFamily: 'Avenir'}}>
+              {assignment.end_date}
             </Text>
           </View>
 
@@ -205,10 +235,10 @@ export default function ExamDetailScreen(props) {
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              {!exam.file_path
-                ? '-'
-                : exam.file_path.split('/')[
-                    exam.file_path.split('/').length - 1
+              {!assignment.file_path
+                ? 'No data'
+                : assignment.file_path.split('/')[
+                    assignment.file_path.split('/').length - 1
                   ]}
             </Text>
           </View>
@@ -219,15 +249,15 @@ export default function ExamDetailScreen(props) {
               alignItems: 'center',
               marginTop: 8,
             }}>
-            <MaterialCommunityIcons
-              name="clipboard-text"
+            <MaterialIcons
+              name="people"
               style={{marginStart: 24, marginEnd: 16}}
               size={20}
               color="#9EA3BA"
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              Min Score : {exam.min_score}
+              {assignment.class_name}
             </Text>
           </View>
 
@@ -245,7 +275,7 @@ export default function ExamDetailScreen(props) {
             />
 
             <Text style={{fontFamily: 'Avenir'}}>
-              Score : {exam.score ? exam.score : 'No data'}
+             {assignment.type}
             </Text>
           </View>
 
@@ -272,7 +302,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{exam.subject}</Text>
+            <Text style={{fontFamily: 'Avenir'}}>{assignment.description}</Text>
           </View>
         </View>
       </ScrollView>

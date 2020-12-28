@@ -22,7 +22,7 @@ import Carousel from 'react-native-snap-carousel';
 
 export default function AgendaScreen(props) {
   const carouselRef = useRef(null);
-  const [activeSlide, setActiveSlide] = useState(-1);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const [myChildren, setMyChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState({});
@@ -35,10 +35,85 @@ export default function AgendaScreen(props) {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
   const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
+  const [assignments, setAssignments] = useState([]);
+  const [assignmentScores, setAssignmentScores] = useState([]);
+  const [error, setError] = useState(null);
+
+  const colors = [
+    '#B968C7',
+    '#FFB64D',
+    '#EF6392',
+    '#64B5F6',
+    '#D4E056',
+    '#9675CE',
+  ];
 
   useEffect(() => {
-    getMyChildren();
-  }, []);
+    if (selectedChild.student_id) {
+      if (selectedSubject.subject_id) {
+        getAssignment();
+        getAssignmentScore();
+      }
+    } else getMyChildren();
+  }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
+
+  const getAssignmentScore = async () => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    new Promise(
+      await HttpRequest.set(
+        '/assignments/student',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          class_id: selectedChild.class_id,
+          pages: 1,
+          subject_id: selectedSubject.subject_id,
+          student_id: selectedChild.student_id,
+        }),
+      ),
+    )
+      .then((res) => {
+        console.log('res', res);
+
+        setAssignmentScores(res.data);
+      })
+      .catch((err) => {
+        setError(err.msg)
+
+        setTimeout(() => {
+          setError(null)
+        }, 3000);
+      });
+  };
+
+  const getAssignment = async () => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    new Promise(
+      await HttpRequest.set(
+        '/assignments',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          class_id: selectedChild.class_id,
+          pages: 1,
+          // subject_id: selectedSubject.subject_id,
+          student_id: selectedChild.student_id,
+          start_date: selectedStartDate
+            ? moment(selectedStartDate).format('YYYY-MM-DD')
+            : moment().format('YYYY-MM-DD'),
+          end_date: selectedEndDate
+            ? moment(selectedEndDate).format('YYYY-MM-DD')
+            : moment().format('YYYY-MM-DD'),
+        }),
+      ),
+    )
+      .then((res) => setAssignments(res.data))
+      .catch((err) => console.log(err));
+  };
 
   const getMyChildren = async () => {
     let user = await AsyncStorage.getItem('user');
@@ -108,7 +183,7 @@ export default function AgendaScreen(props) {
   };
 
   return (
-    <AppContainer navigation={props.navigation}>
+    <AppContainer navigation={props.navigation} error={error}>
       <ScrollView>
         <RBSheet
           ref={rbSheetRef}
@@ -165,8 +240,6 @@ export default function AgendaScreen(props) {
                       setSelectedStartDate(selectedStartDateTemp);
                       setSelectedEndDate(selectedEndDateTemp);
                       rbSheetRef.current.close();
-                      console.log('start', selectedStartDateTemp);
-                      console.log('end', selectedEndDateTemp);
                     }}>
                     <View
                       style={{
@@ -408,7 +481,7 @@ export default function AgendaScreen(props) {
         <View
           style={{flexDirection: 'row', marginTop: 15, marginHorizontal: 15}}>
           <View style={{flex: 1}}>
-            <Text style={{fontFamily: 'Montserrat-Regular'}}>Agenda</Text>
+            <Text style={{fontFamily: 'Montserrat-Regular'}}>Assignment</Text>
             <Text
               style={{
                 color: '#425AC2',
@@ -495,38 +568,252 @@ export default function AgendaScreen(props) {
           ref={carouselRef}
           data={[{idx: 0}, {idx: 1}]}
           renderItem={(item) => {
-            console.log(item);
-
             if (item.index === 0) {
               return (
-                <ScrollView
-                  contentContainerStyle={{marginHorizontal: 36, marginTop: 25}}>
-                  <View>
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Bold',
-                        textAlign: 'center',
-                        marginTop: 20,
-                      }}>
-                      None Of Your Data{'\n'}at this time
-                    </Text>
-                  </View>
+                <ScrollView style={{marginTop: 25}}>
+                  {assignments.length === 0 ? (
+                    <View>
+                      <Text
+                        style={{
+                          fontFamily: 'Montserrat-Bold',
+                          textAlign: 'center',
+                          marginTop: 20,
+                        }}>
+                        None Of Your Data{'\n'}at this time
+                      </Text>
+                    </View>
+                  ) : (
+                    assignments.map((assignment) => {
+                      return (
+                        <TouchableWithoutFeedback onPress={() => props.navigation.navigate('AssignmentDetailScreen', {assignment})}>
+                          <View
+                            style={{
+                              shadowOffset: {width: 0, height: 0},
+                              elevation: 3,
+                              shadowOpacity: 0.15,
+                              shadowRadius: 5,
+                              backgroundColor: 'white',
+                              marginHorizontal: 15,
+                              borderRadius: 8,
+                              flexDirection: 'row',
+                              marginBottom: 15,
+                            }}>
+                            <View
+                              style={{
+                                width: 8,
+                                backgroundColor:
+                                  colors[
+                                    Math.floor(Math.random() * colors.length)
+                                  ],
+                                borderTopLeftRadius: 8,
+                                borderBottomLeftRadius: 8,
+                              }}
+                            />
+
+                            <View
+                              style={{
+                                alignItems: 'center',
+                                marginStart: 24,
+                                marginTop: 12,
+                                marginBottom: 20,
+                              }}>
+                              <Text
+                                style={{
+                                  fontFamily: 'Montserrat-Medium',
+                                  fontSize: 12,
+                                  color: '#878787',
+                                }}>
+                                {moment
+                                  .utc(assignment.assignment_date)
+                                  .format('DD MMM')}
+                              </Text>
+
+                              <Text
+                                style={{
+                                  fontFamily: 'Montserrat-Medium',
+                                  fontSize: 12,
+                                  color: '#878787',
+                                }}>
+                                -
+                              </Text>
+
+                              <Text
+                                style={{
+                                  fontFamily: 'Montserrat-Medium',
+                                  fontSize: 12,
+                                  color: '#878787',
+                                }}>
+                                {moment
+                                  .utc(assignment.end_date)
+                                  .format('DD MMM')}
+                              </Text>
+                            </View>
+
+                            <View
+                              style={{
+                                marginStart: 16,
+                                marginTop: 8,
+                                flex: 1,
+                              }}>
+                              <Text style={{fontFamily: 'Poppins-Bold'}}>
+                                {assignment.subject}
+                              </Text>
+
+                              <Text
+                                style={{
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 12,
+                                }}>
+                                {assignment.assignment}
+                              </Text>
+
+                              <Text
+                                style={{
+                                  fontFamily: 'Poppins-Regular',
+                                  fontSize: 12,
+                                }}>
+                                {assignment.file_path_student
+                                  ? 'Submit'
+                                  : 'Unsubmit'}
+                              </Text>
+                            </View>
+
+                            {assignment.file_path && (
+                              <View
+                                style={{
+                                  backgroundColor: '#f2f2f2',
+                                  width: 28,
+                                  height: 28,
+                                  borderRadius: 14,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  alignSelf: 'center',
+                                  marginStart: 8,
+                                  marginEnd: 8,
+                                }}>
+                                <AntDesign name={'download'} size={20} />
+                              </View>
+                            )}
+
+                            <Image
+                              source={require('../../assets/images/ic_upload.png')}
+                              style={{
+                                width: 28,
+                                height: 28,
+                                marginTop: 16,
+                                marginEnd: 16,
+                                marginStart: 8,
+                              }}
+                            />
+                          </View>
+                        </TouchableWithoutFeedback>
+                      );
+                    })
+                  )}
                 </ScrollView>
               );
             } else {
               return (
-                <ScrollView
-                  contentContainerStyle={{marginHorizontal: 36, marginTop: 25}}>
-                  <View>
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Bold',
-                        textAlign: 'center',
-                        marginTop: 20,
-                      }}>
-                      None Of Your Data{'\n'}at this time
-                    </Text>
-                  </View>
+                <ScrollView style={{marginTop: 25}}>
+                  {assignmentScores.length === 0 ? (
+                    <View>
+                      <Text
+                        style={{
+                          fontFamily: 'Montserrat-Bold',
+                          textAlign: 'center',
+                          marginTop: 20,
+                        }}>
+                        None Of Your Data{'\n'}at this time
+                      </Text>
+                    </View>
+                  ) : (
+                    assignmentScores.map((score) => {
+                      return (
+                        <View
+                          style={{
+                            borderColor: '#e0e0e0',
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            marginHorizontal: 15,
+                            flexDirection: 'row',
+                          }}>
+                          <View style={{flex: 1}}>
+                            <Text
+                              style={{
+                                marginStart: 16,
+                                marginTop: 16,
+                                fontFamily: 'Avenir',
+                                fontWeight: '700',
+                                fontSize: 12,
+                              }}>
+                              {score.assignment}
+                            </Text>
+
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginStart: 16,
+                                marginTop: 8,
+                              }}>
+                              <Text
+                                style={{
+                                  fontFamily: 'Avenir',
+                                  fontSize: 10,
+                                  color: '#818181',
+                                }}>
+                                {score.subject}
+                              </Text>
+                              <Text
+                                style={{
+                                  marginLeft: 24,
+                                  fontFamily: 'Avenir',
+                                  fontSize: 10,
+                                  color: '#818181',
+                                }}>
+                                {score.class_name}
+                              </Text>
+                            </View>
+                          </View>
+
+                          <View
+                            style={{
+                              marginTop: 16,
+                              marginEnd: 16,
+                              alignItems: 'flex-end',
+                              marginBottom: 16,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: 'Avenir',
+                                fontSize: 12,
+                                color: '#818181',
+                              }}>
+                              {moment
+                                .utc(score.assignment_date)
+                                .format('DD MMM')}
+                            </Text>
+
+                            <Text style={{fontFamily: 'Montserrat-Bold'}}>
+                              {score.score}
+                            </Text>
+                            <Text
+                              style={{
+                                fontFamily: 'Avenir',
+                                fontSize: 10,
+                                color:
+                                  score.score >= score.min_score
+                                    ? '#1541BB'
+                                    : 'red',
+                              }}>
+                              {score.score >= score.min_score
+                                ? 'Passed'
+                                : 'Not Passed'}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })
+                  )}
                 </ScrollView>
               );
             }
