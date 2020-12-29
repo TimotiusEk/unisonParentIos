@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
+  TextInput,
 } from 'react-native';
 import AppContainer from '../reusables/AppContainer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +17,10 @@ import moment from 'moment';
 import DateRangePicker from 'react-native-daterange-picker';
 import CalendarPicker from 'react-native-calendar-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Dialog from 'react-native-dialog';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'react-native-image-picker/src';
+import DocumentPicker from 'react-native-document-picker';
 
 export default function ExamScreen(props) {
   const [myChildren, setMyChildren] = useState([]);
@@ -23,6 +28,8 @@ export default function ExamScreen(props) {
   const [selectedSubject, setSelectedSubject] = useState({});
   const [isLoadingShown, setLoadingShown] = useState(false);
   const rbSheetRef = useRef(null);
+  const uploadRbSheetRef = useRef(null);
+  const selectUploadRbSheetRef = useRef(null);
   const [select, setSelect] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [selectedStartDate, setSelectedStartDate] = useState(null);
@@ -30,11 +37,15 @@ export default function ExamScreen(props) {
   const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
   const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
   const [exams, setExams] = useState([]);
+  const [isExamErrorModalShown, setExamErrorModalShown] = useState(false);
+  const [uploadFileIdx, setUploadFileIdx] = useState(null);
+  const [examId, setExamId] = useState(null);
+  const [note, setNote] = useState(null);
 
   useEffect(() => {
-    console.log('a')
+    console.log('a');
     if (selectedChild.student_id) {
-      if(selectedSubject.subject_id) getExam();
+      if (selectedSubject.subject_id) getExam();
     } else getMyChildren();
   }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
 
@@ -150,6 +161,276 @@ export default function ExamScreen(props) {
 
   return (
     <AppContainer navigation={props.navigation}>
+      <Dialog.Container visible={isExamErrorModalShown}>
+        <Dialog.Title style={{fontFamily: 'Poppins-Regular', fontSize: 17}}>
+          Message
+        </Dialog.Title>
+
+        <Dialog.Description
+          style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>
+          You are not allowed to view details yet exam!
+        </Dialog.Description>
+
+        <Dialog.Button
+          label="OK"
+          style={{fontFamily: 'Poppins-Regular'}}
+          onPress={() => {
+            setExamErrorModalShown(false);
+          }}
+        />
+      </Dialog.Container>
+
+      <RBSheet
+        ref={selectUploadRbSheetRef}
+        closeOnDragDown={true}
+        onClose={() => setUploadFileIdx(null)}
+        height={350}
+        openDuration={250}></RBSheet>
+
+      <RBSheet
+        ref={uploadRbSheetRef}
+        closeOnDragDown={true}
+        onClose={() => setUploadFileIdx(null)}
+        height={350}
+        openDuration={250}>
+        <View style={{margin: 8, padding: 8}}>
+          <Text
+            style={{
+              fontSize: 24,
+              fontFamily: 'Montserrat-Bold',
+            }}>
+            Upload File
+          </Text>
+
+          {uploadFileIdx === null && (
+            <View style={{flexDirection: 'row', marginTop: 16}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setUploadFileIdx(1);
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                  <Text
+                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    Upload File
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <Text
+                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                File 1 no data
+              </Text>
+            </View>
+          )}
+
+          {uploadFileIdx === null && (
+            <View style={{flexDirection: 'row', marginTop: 16}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setUploadFileIdx(2);
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                  <Text
+                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    Upload File
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <Text
+                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                File 2 no data
+              </Text>
+            </View>
+          )}
+
+          {uploadFileIdx === null && (
+            <View style={{flexDirection: 'row', marginTop: 16}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setUploadFileIdx(3);
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                  <Text
+                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    Upload File
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              <Text
+                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                File 3 no data
+              </Text>
+            </View>
+          )}
+
+          {uploadFileIdx ? (
+            <TextInput
+              placeholder={'Assignment Note'}
+              value={note}
+              onChangeText={(note) => setNote(note)}
+              style={{
+                borderBottomWidth: 1,
+                marginTop: 24,
+                fontFamily: 'Avenir',
+                fontWeight: '500',
+              }}
+            />
+          ) : null}
+
+          {uploadFileIdx ? (
+            <Text
+              style={{
+                marginTop: 16,
+                padding: 12,
+                fontSize: 18,
+                fontFamily: 'Avenir',
+              }}>
+              Choose your Photo or File
+            </Text>
+          ) : null}
+
+          {uploadFileIdx ? (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                ImagePicker.launchImageLibrary(
+                  {
+                    mediaType: 'photo',
+                  },
+                  async (response) => {
+                    const res = await fetch(response.uri);
+
+                    const blob = await res.blob();
+
+                    const file = new File([blob], response.fileName, {
+                      type: response.type,
+                    });
+
+                    let user = await AsyncStorage.getItem('user');
+                    user = JSON.parse(user);
+
+                    const data = new FormData();
+                    data.append('access_token', user.access_token);
+                    data.append('exam_id', examId);
+                    data.append('student_id', selectedChild.student_id);
+                    data.append('file', file);
+                    data.append('file1', uploadFileIdx === 1);
+                    data.append('file2', uploadFileIdx === 2);
+                    data.append('file3', uploadFileIdx === 3);
+                    data.append('note', note);
+
+                    fetch('https://api.unison.id/uploadResult/exam', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'multipart/form-data',
+                      },
+                      body: data,
+                    })
+                      .then((response) => response.json())
+                      .then((res) => console.log('res', res))
+                      .catch((err) => console.log('err', err));
+                  },
+                );
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 16,
+                  padding: 12,
+                  alignItems: 'center',
+                }}>
+                <MaterialCommunityIcons
+                  name="image"
+                  size={24}
+                  color={'#757575'}
+                  style={{marginRight: 16}}
+                />
+                <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                  Take from gallery
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          ) : null}
+
+          {uploadFileIdx ? (
+            <TouchableWithoutFeedback
+              onPress={async () => {
+                let user = await AsyncStorage.getItem('user');
+                user = JSON.parse(user);
+
+                try {
+                  const response = await DocumentPicker.pick({});
+
+                  const res = await fetch(response.uri);
+
+                  const blob = await res.blob();
+
+                  const file = new File([blob], response.name, {
+                    type: response.type,
+                  });
+
+                  const data = new FormData();
+                  data.append('access_token', user.access_token);
+                  data.append('exam_id', examId);
+                  data.append('student_id', selectedChild.student_id);
+                  data.append('file', file);
+                  data.append('file1', uploadFileIdx === 1);
+                  data.append('file2', uploadFileIdx === 2);
+                  data.append('file3', uploadFileIdx === 3);
+                  data.append('note', note);
+
+                  fetch('https://api.unison.id/uploadResult/exam', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                    body: data,
+                  })
+                    .then((response) => response.json())
+                    .then((res) => console.log('res', res))
+                    .catch((err) => console.log('err', err));
+                } catch (e) {
+                  console.log('e', e);
+                }
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 16,
+                  padding: 12,
+                  alignItems: 'center',
+                }}>
+                <Ionicons
+                  name="attach"
+                  size={24}
+                  color="#9EA3BA"
+                  style={{marginRight: 16}}
+                />
+                <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                  Upload File (apart from photos)
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          ) : null}
+        </View>
+      </RBSheet>
+
       <ScrollView>
         <RBSheet
           ref={rbSheetRef}
@@ -546,9 +827,15 @@ export default function ExamScreen(props) {
 
         {exams.map((exam) => {
           return (
-            <TouchableWithoutFeedback onPress={() => {
-              props.navigation.navigate('ExamDetailScreen', {exam})
-            }}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                console.log();
+                if (moment().isBefore(moment.utc(exam.start_time))) {
+                  setExamErrorModalShown(true);
+                } else {
+                  props.navigation.navigate('ExamDetailScreen', {exam});
+                }
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -587,16 +874,24 @@ export default function ExamScreen(props) {
                   }}>
                   <AntDesign name={'download'} size={20} />
                 </View>
-                <Image
-                            source={require('../../assets/images/ic_upload.png')}
-                            style={{
-                              width: 28,
-                              height: 28,
-                              marginTop: 16,
-                              marginEnd: 16,
-                              marginStart: 8,
-                            }}
-                          />
+                <TouchableWithoutFeedback
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    setNote(null);
+                    setExamId(exam.exam_id);
+                    uploadRbSheetRef.current.open();
+                  }}>
+                  <Image
+                    source={require('../../assets/images/ic_upload.png')}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      marginTop: 16,
+                      marginEnd: 16,
+                      marginStart: 8,
+                    }}
+                  />
+                </TouchableWithoutFeedback>
 
                 <Text
                   style={{

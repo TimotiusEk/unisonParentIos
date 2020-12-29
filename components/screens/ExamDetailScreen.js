@@ -96,7 +96,7 @@ export default function ExamDetailScreen(props) {
 
             <Text style={{fontFamily: 'Avenir'}}>
               {!exam.file_path_student
-                ? 'No data'
+                ? '-'
                 : exam.file_path_student.split('/')[
                     exam.file_path_student.split('/').length - 1
                   ]}

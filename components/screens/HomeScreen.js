@@ -12,6 +12,7 @@ import HttpRequest from '../../util/HttpRequest';
 import AsyncStorage from '@react-native-community/async-storage';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Dialog from 'react-native-dialog';
+import {ImageBackground} from 'react-native';
 
 export default function HomeScreen(props) {
   const [ads, setAds] = useState([]);
@@ -66,7 +67,9 @@ export default function HomeScreen(props) {
 
   return (
     <AppContainer navigation={props.navigation}>
-      <ScrollView style={{paddingTop: 30}}>
+      <ScrollView
+        style={{paddingTop: 30}}
+        contentContainerStyle={{flexGrow: 1}}>
         <Dialog.Container visible={isComingSoonModalShown}>
           <Dialog.Description
             style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>
@@ -84,7 +87,11 @@ export default function HomeScreen(props) {
           data={ads}
           renderItem={(item) => {
             return (
-              <View style={{paddingHorizontal: 15}}>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  marginBottom: -120,
+                }}>
                 <TouchableWithoutFeedback
                   onPress={() => {
                     if (item.item.url) {
@@ -96,7 +103,12 @@ export default function HomeScreen(props) {
                   }}>
                   <Image
                     source={{uri: item.item.image_path}}
-                    style={{width: '100%', height: 200, resizeMode: 'contain'}}
+                    style={{
+                      width: '100%',
+                      height: 200,
+                      resizeMode: 'contain',
+                      borderRadius: 16,
+                    }}
                   />
                 </TouchableWithoutFeedback>
               </View>
@@ -112,17 +124,15 @@ export default function HomeScreen(props) {
           onSnapToItem={(idx) => setActiveSlide(idx)}
         />
 
-        <Pagination
+        {/* <Pagination
           dotsLength={ads.length}
           activeDotIndex={activeSlide}
-          containerStyle={{
-            marginTop: -45,
-          }}
+      
           dotStyle={{
             width: 13,
             height: 13,
             borderRadius: 7.5,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
+            backgroundColor: 'rgba(0, 0, 0, 1)',
             marginLeft: -3,
             marginRight: -3,
           }}
@@ -133,20 +143,21 @@ export default function HomeScreen(props) {
           }
           inactiveDotOpacity={0.4}
           inactiveDotScale={0.6}
-        />
+        /> */}
 
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{paddingHorizontal: 15, flex: 1}}>
           <Text
             style={{
-              fontFamily: 'Graphik-Regular',
-              fontSize: 16,
+              fontFamily: 'Avenir',
+              fontSize: 20,
               marginBottom: 20,
+              fontWeight: '600',
             }}>
-            School Activities
+            Aktivitas Sekolah
           </Text>
 
           <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1, alignItems: 'center'}}>
+            {/* <View style={{flex: 1, alignItems: 'center'}}>
               <TouchableWithoutFeedback
                 onPress={() => {
                   props.navigation.navigate('LearningActivitiesScreen');
@@ -170,18 +181,168 @@ export default function HomeScreen(props) {
 
                   <Text
                     style={{
-                      fontSize: 18,
-                      fontFamily: 'Graphik-Regular',
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
                       textAlign: 'center',
-                      marginTop: 5,
+                      marginTop: 10,
                     }}>
-                    Learning Activities
+                    Aktivitas{'\n'}Belajar
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View> */}
+
+            <View style={{flex: 1, alignItems: 'center'}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate('LearningActivitiesScreen');
+                }}>
+                <View style={{alignItems: 'center'}}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      height: 95,
+                      width: 95,
+                      borderRadius: 50,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      shadowColor: '#000',
+                      shadowOffset: {width: 0, height: 0},
+                      elevation: 3,
+                      shadowOpacity: 0.15,
+                      shadowRadius: 5,
+                    }}>
+                    <View
+                      style={{
+                        width: 85,
+                        height: 85,
+                        backgroundColor: '#E9E9E9',
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={require('../../assets/images/ic_activity_learning.png')}
+                        style={{width: 65, height: 65, resizeMode: 'contain'}}
+                      />
+                    </View>
+                  </View>
+
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
+                      textAlign: 'center',
+                      marginTop: 10,
+                    }}>
+                    Aktivitas{'\n'}Belajar
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
             </View>
 
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, alignItems: 'center'}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setComingSoonModalShown(true);
+                }}>
+                <View style={{alignItems: 'center'}}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      height: 95,
+                      width: 95,
+                      borderRadius: 50,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      shadowColor: '#000',
+                      shadowOffset: {width: 0, height: 0},
+                      elevation: 3,
+                      shadowOpacity: 0.15,
+                      shadowRadius: 5,
+                    }}>
+                    <View
+                      style={{
+                        width: 85,
+                        height: 85,
+                        backgroundColor: '#E9E9E9',
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={require('../../assets/images/ic_mitra.png')}
+                        style={{width: 65, height: 65, resizeMode: 'contain'}}
+                      />
+                    </View>
+                  </View>
+
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
+                      textAlign: 'center',
+                      marginTop: 10,
+                    }}>
+                    Mitra
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+
+            <View style={{flex: 1, alignItems: 'center'}}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate('LearningMaterialScreen');
+                }}>
+                <View style={{alignItems: 'center'}}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      height: 95,
+                      width: 95,
+                      borderRadius: 50,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      shadowColor: '#000',
+                      shadowOffset: {width: 0, height: 0},
+                      elevation: 3,
+                      shadowOpacity: 0.15,
+                      shadowRadius: 5,
+                    }}>
+                    <View
+                      style={{
+                        width: 85,
+                        height: 85,
+                        backgroundColor: '#E9E9E9',
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={require('../../assets/images/ic_materi.png')}
+                        style={{width: 65, height: 65, resizeMode: 'contain'}}
+                      />
+                    </View>
+                  </View>
+
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
+                      textAlign: 'center',
+                      marginTop: 10,
+                    }}>
+                    Materi{'\n'}Belajar
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+
+            {/* <View style={{flex: 1}}>
               <TouchableWithoutFeedback
                 onPress={() => props.navigation.navigate('AttendanceScreen')}>
                 <View style={{alignItems: 'center'}}>
@@ -212,9 +373,9 @@ export default function HomeScreen(props) {
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
-            </View>
+            </View> */}
 
-            <View style={{flex: 1}}>
+            {/* <View style={{flex: 1}}>
               <TouchableWithoutFeedback
                 onPress={() => {
                   props.navigation.navigate('ReportScreen');
@@ -247,82 +408,52 @@ export default function HomeScreen(props) {
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
-            </View>
+            </View> */}
           </View>
 
-          <View
+          <View style={{flex: 1}} />
+
+          <ImageBackground
+            source={require('../../assets/images/blue-rect-gradient.png')}
+            imageStyle={{borderRadius: 8}}
             style={{
-              backgroundColor: '#3e67d6',
               flexDirection: 'row',
-              height: 90,
+              height: 100,
               paddingStart: 16,
-              marginTop: 30,
+              marginBottom: 10,
+              alignItems: 'center',
             }}>
             <Image
-              source={require('../../assets/images/ic_quotes.png')}
+              source={require('../../assets/images/ic_quotes-2.png')}
               style={{
-                width: 95,
-                height: 101,
-                marginTop: -11,
+                width: 75,
+                height: 75,
               }}
             />
-            <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', marginLeft: 16}}>
               <Text
                 style={{
-                  marginBottom: 8,
-                  fontFamily: 'Poppins-Medium',
+                  marginBottom: 4,
+                  fontFamily: 'Avenir',
                   color: 'white',
+                  fontSize: 18,
+                  fontWeight: '700',
                 }}>
                 {quotes.title}
               </Text>
               <Text
                 style={{
                   color: 'white',
-                  fontFamily: 'Graphik',
-                  fontWeight: '300',
+                  fontFamily: 'Avenir',
+                  marginRight: 16,
                 }}>
                 {quotes.quote}
               </Text>
             </View>
-          </View>
+          </ImageBackground>
 
           <View style={{flexDirection: 'row', marginTop: 30}}>
-            <View style={{flex: 1, alignItems: 'center'}}>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  props.navigation.navigate('LearningMaterialScreen');
-                }}>
-                <View style={{alignItems: 'center'}}>
-                  <View
-                    style={{
-                      backgroundColor: '#E9E9E9',
-                      height: 95,
-                      width: 95,
-                      borderRadius: 50,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <Image
-                      source={require('../../assets/images/ic_materi.png')}
-                      style={{width: 75, height: 75, resizeMode: 'contain'}}
-                    />
-                  </View>
-
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontFamily: 'Graphik-Regular',
-                      textAlign: 'center',
-                      marginTop: 5,
-                    }}>
-                    Learning Materials
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-
-            <View style={{flex: 1}}>
+            {/* <View style={{flex: 1}}>
               <TouchableWithoutFeedback
                 onPress={() => {
                   props.navigation.navigate('MyOrderScreen');
@@ -355,42 +486,7 @@ export default function HomeScreen(props) {
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
-            </View>
-
-            <View style={{flex: 1}}>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  setComingSoonModalShown(true);
-                }}>
-                <View style={{alignItems: 'center'}}>
-                  <View
-                    style={{
-                      backgroundColor: '#E9E9E9',
-                      height: 95,
-                      width: 95,
-                      borderRadius: 50,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <Image
-                      source={require('../../assets/images/ic_mitra.png')}
-                      style={{width: 75, height: 75, resizeMode: 'contain'}}
-                    />
-                  </View>
-
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      fontFamily: 'Graphik-Regular',
-                      textAlign: 'center',
-                      marginTop: 5,
-                    }}>
-                    Partner
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
+            </View> */}
           </View>
         </View>
       </ScrollView>
