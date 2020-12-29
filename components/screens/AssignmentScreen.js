@@ -474,7 +474,7 @@ export default function AgendaScreen(props) {
               </View>
             </TouchableWithoutFeedback>
 
-            <Image source={require('../../assets/images/ic_assignment.png')} />
+            <Image source={require('../../assets/images/ic_assignment_2.png')} />
           </View>
         </View>
 
