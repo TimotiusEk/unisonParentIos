@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {View, ScrollView, Text, Image} from "react-native";
+import {View, ScrollView, Text, Image, Platform} from "react-native";
 import HttpRequest from "../../util/HttpRequest";
 import AsyncStorage from "@react-native-community/async-storage";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -29,7 +29,7 @@ export default function NotificationScreen(props) {
     }
 
     return (
-        <View style={{flex: 1, paddingTop: 60}}>
+        <View style={{flex: 1, paddingTop: Platform.OS === 'ios' ? 60 : 20}}>
             <View style={{flexDirection: 'row', marginHorizontal: 15, marginBottom: 15}}>
                 <MaterialCommunityIcons name={'arrow-left'} size={28} onPress={() => props.navigation.goBack(null)}/>
                 <Text style={{fontFamily: 'Poppins-Medium', flex: 1, fontSize: 20, textAlign: 'center'}}>

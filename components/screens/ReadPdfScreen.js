@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    Platform
 } from "react-native";
 import Pdf from "react-native-pdf";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -22,13 +23,13 @@ export default function ReadPdfScreen(props) {
             <View style={{
                 flexDirection: 'row',
                 backgroundColor: '#3D67D5',
-                height: 100,
+                height: Platform.OS === 'ios' ? 100 : 65,
                 alignItems: 'flex-end',
-                paddingBottom: 15,
+                paddingBottom: Platform.OS === 'ios' ? 15 : 12,
                 paddingLeft: 15,
             }}>
                 <TouchableWithoutFeedback onPress={() => props.navigation.goBack(null)}>
-                    <Ionicons name={'md-arrow-back'} size={23} color={'white'} style={{marginBottom: 2}}/>
+                    <Ionicons name={'md-arrow-back'} size={23} color={'white'} style={{marginBottom: Platform.OS === 'ios' ? 2 : 4}}/>
                 </TouchableWithoutFeedback>
 
                 <Text style={{fontFamily: 'Poppins-Regular', color: 'white', fontSize: 20, marginLeft: 25}}>
@@ -37,7 +38,7 @@ export default function ReadPdfScreen(props) {
             </View>
 
             <Pdf
-                style={{flex: 1, backgroundColor: 'white', marginBottom: 50}}
+                style={{flex: 1, backgroundColor: 'white', marginBottom: Platform.OS === 'ios' ? 50 : 0}}
                 source={{uri: material.file_path}}
                 horizontal={true}
                 enablePaging={true}

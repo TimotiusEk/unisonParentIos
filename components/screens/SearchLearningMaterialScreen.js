@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {View, Text, TextInput, ScrollView, ImageBackground, Image, TouchableWithoutFeedback} from "react-native"
+import {View, Text, TextInput, ScrollView, ImageBackground, Image, TouchableWithoutFeedback, Platform} from "react-native"
 import AppContainer from "../reusables/AppContainer";
 import {TextInputLayout} from "rn-textinputlayout";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -71,7 +71,7 @@ export default function SearchLearningMaterialScreen(props) {
                     alignItems: 'center',
                     marginHorizontal: 16,
                     paddingHorizontal: 10,
-                    paddingVertical: 7,
+                    paddingVertical: Platform.OS === 'ios' ? 7 : 0,
                     shadowColor: '#000',
                     shadowOffset: {width: 0, height: 2},
                     shadowOpacity: 0.2,
@@ -92,7 +92,8 @@ export default function SearchLearningMaterialScreen(props) {
                         value={keyword}
                         style={{
                             fontFamily: 'Montserrat-Regular',
-                            marginLeft: 20
+                            marginLeft: 20,
+                            flex: 1
                         }}
                         placeholder={'Search Material Learning'}
                     />

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, Platform} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {WebView} from 'react-native-webview';
 
@@ -11,7 +11,7 @@ export default function WebViewScreen(props) {
   return (
     <View style={{flex: 1}}>
       <View
-        style={{backgroundColor: '#3e67d6', paddingTop: 60, paddingBottom: 12}}>
+        style={{backgroundColor: '#3e67d6', paddingTop: Platform.OS === 'ios' ? 60 : 15, paddingBottom: 12}}>
         <Ionicons
           name={'md-arrow-back'}
           size={28}

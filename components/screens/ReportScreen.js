@@ -6,7 +6,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Modal,
+  Platform,
   Image,
   Dimensions,
 } from 'react-native';
@@ -17,7 +17,6 @@ import HttpRequest from '../../util/HttpRequest';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import moment from 'moment';
 import RNFetchBlob from 'rn-fetch-blob';
-import {Platform} from 'react-native';
 const {config, fs} = RNFetchBlob;
 
 export default function ReportScreen(props) {
@@ -247,7 +246,7 @@ export default function ReportScreen(props) {
       <View
         style={{
           backgroundColor: '#3e67d6',
-          paddingTop: 50,
+          paddingTop: Platform.OS === 'ios' ? 50 : 0,
           paddingBottom: 90,
           borderBottomLeftRadius: 24,
           marginBottom: -60,
@@ -440,7 +439,7 @@ export default function ReportScreen(props) {
 
                               RNFetchBlob.ios.openDocument(res.data);
                             }
-                          
+
                           })
                           .catch((err) => console.log('err', err));
 

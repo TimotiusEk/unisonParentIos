@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Image, Dimensions, View, Text} from 'react-native';
+import {Image, Dimensions, View, Text, Platform} from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function ImageViewerScreen(props) {
@@ -7,7 +7,7 @@ export default function ImageViewerScreen(props) {
   const url = props.navigation.getParam('url');
 
   return (
-    <View style={{flex: 1, backgroundColor: '#303030', paddingTop: 60}}>
+    <View style={{flex: 1, backgroundColor: '#303030', paddingTop: Platform.OS === 'ios' ? 60: 20}}>
       <View style={{flexDirection: 'row', paddingLeft: 15, paddingRight: 15, alignItems: 'center'}}>
         <MaterialCommunityIcons
           name={'arrow-left'}
