@@ -20,7 +20,7 @@ export default function AppContainer(props) {
 
   useEffect(() => {
     getUserData();
-  }, [props.error]);
+  }, [props.message]);
 
   const getUserData = async () => {
     let user = await AsyncStorage.getItem('user');
@@ -38,10 +38,10 @@ export default function AppContainer(props) {
           zIndex: 10000000,
           width: '100%'
       }}>
-        <Collapsible collapsed={!props.error}>
+        <Collapsible collapsed={!props.message}>
           <View
             style={{
-              backgroundColor: '#3b5999',
+              backgroundColor: props.messageColor ? props.messageColor : '#3b5999',
               width: '100%',
             }}>
             <Text
@@ -51,7 +51,7 @@ export default function AppContainer(props) {
                 paddingLeft: 10,
                 paddingVertical: 13,
               }}>
-              {props.error}
+              {props.message}
             </Text>
           </View>
         </Collapsible>

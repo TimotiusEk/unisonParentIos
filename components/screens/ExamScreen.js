@@ -21,6 +21,9 @@ import Dialog from 'react-native-dialog';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'react-native-image-picker/src';
 import DocumentPicker from 'react-native-document-picker';
+import RNFetchBlob from 'rn-fetch-blob';
+import {Platform} from 'react-native';
+const {config, fs} = RNFetchBlob;
 
 export default function ExamScreen(props) {
   const [myChildren, setMyChildren] = useState([]);
@@ -39,8 +42,10 @@ export default function ExamScreen(props) {
   const [exams, setExams] = useState([]);
   const [isExamErrorModalShown, setExamErrorModalShown] = useState(false);
   const [uploadFileIdx, setUploadFileIdx] = useState(null);
-  const [examId, setExamId] = useState(null);
+  const [selectedExam, setSelectedExam] = useState({});
   const [note, setNote] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [messageColor, setMessageColor] = useState(null);
 
   useEffect(() => {
     console.log('a');
@@ -160,7 +165,10 @@ export default function ExamScreen(props) {
   };
 
   return (
-    <AppContainer navigation={props.navigation}>
+    <AppContainer
+      navigation={props.navigation}
+      message={message}
+      messageColor={messageColor}>
       <Dialog.Container visible={isExamErrorModalShown}>
         <Dialog.Title style={{fontFamily: 'Poppins-Regular', fontSize: 17}}>
           Message
@@ -223,7 +231,11 @@ export default function ExamScreen(props) {
               </TouchableWithoutFeedback>
               <Text
                 style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
-                File 1 no data
+                {selectedExam.file_path_student
+                  ? selectedExam.file_path_student.split('/')[
+                      selectedExam.file_path_student.split('/').length - 1
+                    ]
+                  : 'File 1 no data'}
               </Text>
             </View>
           )}
@@ -249,7 +261,11 @@ export default function ExamScreen(props) {
               </TouchableWithoutFeedback>
               <Text
                 style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
-                File 2 no data
+                {selectedExam.file_path_student2
+                  ? selectedExam.file_path_student2.split('/')[
+                      selectedExam.file_path_student2.split('/').length - 1
+                    ]
+                  : 'File 2 no data'}
               </Text>
             </View>
           )}
@@ -275,14 +291,18 @@ export default function ExamScreen(props) {
               </TouchableWithoutFeedback>
               <Text
                 style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
-                File 3 no data
+                {selectedExam.file_path_student3
+                  ? selectedExam.file_path_student3.split('/')[
+                      selectedExam.file_path_student3.split('/').length - 1
+                    ]
+                  : 'File 3 no data'}
               </Text>
             </View>
           )}
 
           {uploadFileIdx ? (
             <TextInput
-              placeholder={'Assignment Note'}
+              placeholder={'Exam Note'}
               value={note}
               onChangeText={(note) => setNote(note)}
               style={{
@@ -327,7 +347,7 @@ export default function ExamScreen(props) {
 
                     const data = new FormData();
                     data.append('access_token', user.access_token);
-                    data.append('exam_id', examId);
+                    data.append('exam_id', selectedExam.exam_id);
                     data.append('student_id', selectedChild.student_id);
                     data.append('file', file);
                     data.append('file1', uploadFileIdx === 1);
@@ -343,8 +363,27 @@ export default function ExamScreen(props) {
                       body: data,
                     })
                       .then((response) => response.json())
-                      .then((res) => console.log('res', res))
-                      .catch((err) => console.log('err', err));
+                      .then((res) => {
+                        getExam();
+                        uploadRbSheetRef.current.close();
+                        setMessage(res.msg);
+
+                        setTimeout(() => {
+                          setMessage(null);
+                        }, 3000);
+                      })
+                      .catch((err) => {
+                        console.log('err', err);
+
+                        uploadRbSheetRef.current.close();
+                        setMessageColor('red');
+                        setMessage(res.msg);
+
+                        setTimeout(() => {
+                          setMessageColor(null);
+                          setMessage(null);
+                        }, 3000);
+                      });
                   },
                 );
               }}>
@@ -387,7 +426,7 @@ export default function ExamScreen(props) {
 
                   const data = new FormData();
                   data.append('access_token', user.access_token);
-                  data.append('exam_id', examId);
+                  data.append('exam_id', selectedExam.exam_id);
                   data.append('student_id', selectedChild.student_id);
                   data.append('file', file);
                   data.append('file1', uploadFileIdx === 1);
@@ -403,8 +442,28 @@ export default function ExamScreen(props) {
                     body: data,
                   })
                     .then((response) => response.json())
-                    .then((res) => console.log('res', res))
-                    .catch((err) => console.log('err', err));
+                    .then((res) => {
+                      getExam();
+                      uploadRbSheetRef.current.close();
+
+                      setMessage(res.msg);
+
+                      setTimeout(() => {
+                        setMessage(null);
+                      }, 3000);
+                    })
+                    .catch((err) => {
+                      console.log('err', err);
+
+                      uploadRbSheetRef.current.close();
+                      setMessageColor('red');
+                      setMessage(res.msg);
+
+                      setTimeout(() => {
+                        setMessageColor(null);
+                        setMessage(null);
+                      }, 3000);
+                    });
                 } catch (e) {
                   console.log('e', e);
                 }
@@ -860,26 +919,77 @@ export default function ExamScreen(props) {
                   </Text>
                 </View>
 
-                <View
-                  style={{
-                    backgroundColor: '#f2f2f2',
-                    width: 28,
-                    height: 28,
-                    borderRadius: 14,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    marginStart: 8,
-                    marginEnd: 8,
-                  }}>
-                  <AntDesign name={'download'} size={20} />
-                </View>
+                {exam.file_path && (
+                  <TouchableWithoutFeedback
+                    onPress={(e) => {
+                      if (moment().isBefore(moment.utc(exam.start_time))) {
+                        setExamErrorModalShown(true);
+                      } else {
+                        e.stopPropagation();
+
+                        let PictureDir =
+                          Platform.OS === 'ios'
+                            ? fs.dirs.DocumentDir
+                            : fs.dirs.PictureDir;
+                        let options = {
+                          fileCache: true,
+                          path:
+                            PictureDir +
+                            `/${
+                              exam.file_path.split('/')[
+                                exam.file_path.split('/').length - 1
+                              ]
+                            }`,
+                          addAndroidDownloads: {
+                            useDownloadManager: true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
+                            notification: true,
+                            path: `${
+                              exam.file_path.split('/')[
+                                exam.file_path.split('/').length - 1
+                              ]
+                            }`,
+                            description: 'Downloading exam file',
+                          },
+                        };
+
+                        config(options)
+                          .fetch('GET', exam.file_path)
+                          .then((res) => {
+                            if (Platform.OS === 'ios') {
+                              console.log(res.data);
+
+                              RNFetchBlob.ios.openDocument(res.data);
+                            }
+                          })
+                          .catch((err) => console.log('err', err));
+                      }
+                    }}>
+                    <View
+                      style={{
+                        backgroundColor: '#f2f2f2',
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        alignSelf: 'center',
+                        marginStart: 8,
+                        marginEnd: 8,
+                      }}>
+                      <AntDesign name={'download'} size={20} />
+                    </View>
+                  </TouchableWithoutFeedback>
+                )}
                 <TouchableWithoutFeedback
                   onPress={(e) => {
-                    e.stopPropagation();
-                    setNote(null);
-                    setExamId(exam.exam_id);
-                    uploadRbSheetRef.current.open();
+                    if (moment().isBefore(moment.utc(exam.start_time))) {
+                      setExamErrorModalShown(true);
+                    } else {
+                      e.stopPropagation();
+                      setNote(null);
+                      setSelectedExam(exam);
+                      uploadRbSheetRef.current.open();
+                    }
                   }}>
                   <Image
                     source={require('../../assets/images/ic_upload.png')}

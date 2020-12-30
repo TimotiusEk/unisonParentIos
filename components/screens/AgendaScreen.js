@@ -35,7 +35,9 @@ export default function AgendaScreen(props) {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
   const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
+  const [schedules, setSchedules] = useState([]);
   const [agendas, setAgendas] = useState([]);
+
   const colors = [
     '#B968C7',
     '#FFB64D',
@@ -59,7 +61,7 @@ export default function AgendaScreen(props) {
     getMyChildren();
   }, []);
 
-  const getAgenda = async (child) => {
+  const getSchedules = async (child) => {
     let user = await AsyncStorage.getItem('user');
     user = JSON.parse(user);
 
@@ -77,10 +79,38 @@ export default function AgendaScreen(props) {
     )
       .then((res) => {
         if (res.result) {
-          setAgendas(res.data);
+          setSchedules(res.data);
         }
       })
       .catch((err) => console.log(err));
+  };
+
+  const getAgendas = async (subject) => {
+    let user = await AsyncStorage.getItem('user');
+    user = JSON.parse(user);
+
+    new Promise(
+      await HttpRequest.set(
+        '/agendas/class/list',
+        'POST',
+        JSON.stringify({
+          access_token: user.access_token,
+          class_id: selectedChild.class_id,
+          student_id: selectedChild.student_id,
+          subject_id: subject.subject_id,
+          keyword: '',
+          pages: 1,
+        }),
+      ),
+    )
+      .then((res) => {
+        console.log('res agenda', res);
+
+        if (res.result) {
+          setAgendas(res.data);
+        }
+      })
+      .catch((err) => console.log('err agenda', err));
   };
 
   const getMyChildren = async () => {
@@ -103,7 +133,7 @@ export default function AgendaScreen(props) {
           if (res.data.length > 0) {
             setSelectedChild(res.data[0]);
 
-            getAgenda(res.data[0]);
+            getSchedules(res.data[0]);
           }
 
           setMyChildren(res.data);
@@ -116,7 +146,7 @@ export default function AgendaScreen(props) {
     } else {
       if (JSON.parse(myChildren).length > 0) {
         setSelectedChild(JSON.parse(myChildren)[0]);
-        getAgenda(JSON.parse(myChildren)[0]);
+        getSchedules(JSON.parse(myChildren)[0]);
       }
 
       setMyChildren(JSON.parse(myChildren));
@@ -244,6 +274,8 @@ export default function AgendaScreen(props) {
                         onPress={() => {
                           setSelectedSubject(subject);
 
+                          getAgendas(subject);
+
                           rbSheetRef.current.close();
                         }}>
                         <View style={{padding: 15}}>
@@ -275,7 +307,7 @@ export default function AgendaScreen(props) {
                       <TouchableWithoutFeedback
                         onPress={() => {
                           setSelectedChild(child);
-                          getAgenda(child);
+                          getSchedules(child);
                           setSelectedSubject({});
                           fetchAndOpenSheet();
                         }}>
@@ -552,7 +584,7 @@ export default function AgendaScreen(props) {
                 <ScrollView
                   contentContainerStyle={{marginHorizontal: 36, marginTop: 25}}>
                   <View>
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{flexDirection: 'row', marginBottom: 20}}>
                       <Text
                         style={{
                           width: 70,
@@ -570,14 +602,68 @@ export default function AgendaScreen(props) {
                         Agenda
                       </Text>
                     </View>
-                    <Text
-                      style={{
-                        fontFamily: 'Montserrat-Bold',
-                        textAlign: 'center',
-                        marginTop: 20,
-                      }}>
-                      None Of Your Data{'\n'}at this time
-                    </Text>
+                    {agendas.length === 0 ? (
+                      <Text
+                        style={{
+                          fontFamily: 'Montserrat-Bold',
+                          textAlign: 'center',
+                        }}>
+                        None Of Your Data{'\n'}at this time
+                      </Text>
+                    ) : (
+                      agendas.map((agenda) => {
+                        return (
+                          <TouchableWithoutFeedback onPress={() => {
+                            props.navigation.navigate('AgendaDetailScreen', {agenda})
+                          }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginBottom: 30,
+                                paddingLeft: 30,
+                              }}>
+                              <View
+                                style={{
+                                  flex: 1,
+                                  paddingHorizontal: 15,
+                                  paddingVertical: 10,
+                                  borderRadius: 8,
+                                  backgroundColor:
+                                    colors[
+                                      Math.floor(Math.random() * colors.length)
+                                    ],
+                                  elevation: 3,
+                                  shadowColor: '#000',
+                                  shadowOffset: {width: 0, height: 2},
+                                  shadowOpacity: 0.25,
+                                  shadowRadius: 2,
+                                }}>
+                                <Text style={{fontFamily: 'Avenir'}}>
+                                  {agenda.agenda}
+                                </Text>
+                                <View style={{marginTop: 6}}>
+                                  <Text
+                                    style={{
+                                      fontFamily: 'Avenir',
+                                      color: 'white',
+                                    }}>
+                                    {moment.utc(agenda.class_date).format('DD MMM YYYY, HH:mm')}  {agenda.end_date && '-' + moment.utc(agenda.end_date).format('HH:mm')}
+                                  </Text>
+
+                                  <Text
+                                    style={{
+                                      fontFamily: 'Avenir',
+                                      color: 'white',
+                                    }}>
+                                    {agenda.class_name} ({agenda.subject})
+                                  </Text>
+                                </View>
+                              </View>
+                            </View>
+                          </TouchableWithoutFeedback>
+                        );
+                      })
+                    )}
                   </View>
                 </ScrollView>
               );
@@ -595,7 +681,7 @@ export default function AgendaScreen(props) {
                         Day
                       </Text>
                     </View>
-                    {agendas.length === 0 ? (
+                    {schedules.length === 0 ? (
                       <Text
                         style={{
                           fontFamily: 'Montserrat-Bold',
@@ -606,7 +692,7 @@ export default function AgendaScreen(props) {
                       </Text>
                     ) : (
                       <ScrollView contentContainerStyle={{paddingTop: 20}}>
-                        {agendas.map((agenda) => {
+                        {schedules.map((schedule) => {
                           return (
                             <View
                               style={{flexDirection: 'row', marginBottom: 30}}>
@@ -617,7 +703,7 @@ export default function AgendaScreen(props) {
                                   fontSize: 12,
                                   marginTop: 10,
                                 }}>
-                                {dayOfWeek[agenda.day_of_week - 1]}
+                                {dayOfWeek[schedule.day_of_week - 1]}
                               </Text>
 
                               <View
@@ -637,15 +723,16 @@ export default function AgendaScreen(props) {
                                   shadowRadius: 2,
                                 }}>
                                 <Text style={{fontFamily: 'Avenir'}}>
-                                  {agenda.subject}
+                                  {schedule.subject}
                                 </Text>
-                                <View style={{flexDirection: 'row', marginTop: 6}}>
+                                <View
+                                  style={{flexDirection: 'row', marginTop: 6}}>
                                   <Text
                                     style={{
                                       fontFamily: 'Avenir',
-                                      color: 'white'
+                                      color: 'white',
                                     }}>
-                                    {agenda.start_time}
+                                    {schedule.start_time}
                                   </Text>
 
                                   <Text
@@ -654,7 +741,7 @@ export default function AgendaScreen(props) {
                                       color: 'white',
                                       marginLeft: 10,
                                     }}>
-                                    {agenda.teacher_name}
+                                    {schedule.teacher_name}
                                   </Text>
                                 </View>
                               </View>

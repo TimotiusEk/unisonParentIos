@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import AppContainer from '../reusables/AppContainer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -19,6 +20,12 @@ import DateRangePicker from 'react-native-daterange-picker';
 import CalendarPicker from 'react-native-calendar-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Carousel from 'react-native-snap-carousel';
+import RNFetchBlob from 'rn-fetch-blob';
+import {Platform} from 'react-native';
+const {config, fs} = RNFetchBlob;
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'react-native-image-picker/src';
+import DocumentPicker from 'react-native-document-picker';
 
 export default function AgendaScreen(props) {
   const carouselRef = useRef(null);
@@ -29,6 +36,7 @@ export default function AgendaScreen(props) {
   const [selectedSubject, setSelectedSubject] = useState({});
   const [isLoadingShown, setLoadingShown] = useState(false);
   const rbSheetRef = useRef(null);
+  const uploadRbSheetRef = useRef(null);
   const [select, setSelect] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [selectedStartDate, setSelectedStartDate] = useState(null);
@@ -37,7 +45,10 @@ export default function AgendaScreen(props) {
   const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
   const [assignments, setAssignments] = useState([]);
   const [assignmentScores, setAssignmentScores] = useState([]);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [uploadFileIdx, setUploadFileIdx] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] = useState({});
+  const [note, setNote] = useState(null);
 
   const colors = [
     '#B968C7',
@@ -80,10 +91,10 @@ export default function AgendaScreen(props) {
         setAssignmentScores(res.data);
       })
       .catch((err) => {
-        setError(err.msg)
+        setMessage(err.msg);
 
         setTimeout(() => {
-          setError(null)
+          setMessage(null);
         }, 3000);
       });
   };
@@ -183,8 +194,324 @@ export default function AgendaScreen(props) {
   };
 
   return (
-    <AppContainer navigation={props.navigation} error={error}>
+    <AppContainer navigation={props.navigation} message={message}>
       <ScrollView>
+        <RBSheet
+          ref={uploadRbSheetRef}
+          closeOnDragDown={true}
+          onClose={() => setUploadFileIdx(null)}
+          height={350}
+          openDuration={250}>
+          <View style={{margin: 8, padding: 8}}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontFamily: 'Montserrat-Bold',
+              }}>
+              Upload File
+            </Text>
+
+            {uploadFileIdx === null && (
+              <View style={{flexDirection: 'row', marginTop: 16}}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setUploadFileIdx(1);
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                    <Text
+                      style={{
+                        fontFamily: 'Avenir',
+                        fontSize: 18,
+                        marginLeft: 4,
+                      }}>
+                      Upload File
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <Text
+                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  {selectedAssignment.file_path_student
+                    ? selectedAssignment.file_path_student.split('/')[
+                        selectedAssignment.file_path_student.split('/').length -
+                          1
+                      ]
+                    : 'File 1 no data'}
+                </Text>
+              </View>
+            )}
+
+            {uploadFileIdx === null && (
+              <View style={{flexDirection: 'row', marginTop: 16}}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setUploadFileIdx(2);
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                    <Text
+                      style={{
+                        fontFamily: 'Avenir',
+                        fontSize: 18,
+                        marginLeft: 4,
+                      }}>
+                      Upload File
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <Text
+                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  {selectedAssignment.file_path_student2
+                    ? selectedAssignment.file_path_student2.split('/')[
+                        selectedAssignment.file_path_student2.split('/')
+                          .length - 1
+                      ]
+                    : 'File 2 no data'}
+                </Text>
+              </View>
+            )}
+
+            {uploadFileIdx === null && (
+              <View style={{flexDirection: 'row', marginTop: 16}}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setUploadFileIdx(3);
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Ionicons name="attach" size={24} color="#9EA3BA" />
+
+                    <Text
+                      style={{
+                        fontFamily: 'Avenir',
+                        fontSize: 18,
+                        marginLeft: 4,
+                      }}>
+                      Upload File
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <Text
+                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  {selectedAssignment.file_path_student3
+                    ? selectedAssignment.file_path_student3.split('/')[
+                        selectedAssignment.file_path_student3.split('/')
+                          .length - 1
+                      ]
+                    : 'File 3 no data'}
+                </Text>
+              </View>
+            )}
+
+            {uploadFileIdx ? (
+              <TextInput
+                placeholder={'Assignment Note'}
+                value={note}
+                onChangeText={(note) => setNote(note)}
+                style={{
+                  borderBottomWidth: 1,
+                  marginTop: 24,
+                  fontFamily: 'Avenir',
+                  fontWeight: '500',
+                }}
+              />
+            ) : null}
+
+            {uploadFileIdx ? (
+              <Text
+                style={{
+                  marginTop: 16,
+                  padding: 12,
+                  fontSize: 18,
+                  fontFamily: 'Avenir',
+                }}>
+                Choose your Photo or File
+              </Text>
+            ) : null}
+
+            {uploadFileIdx ? (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  ImagePicker.launchImageLibrary(
+                    {
+                      mediaType: 'photo',
+                    },
+                    async (response) => {
+                      const res = await fetch(response.uri);
+
+                      const blob = await res.blob();
+
+                      const file = new File([blob], response.fileName, {
+                        type: response.type,
+                      });
+
+                      let user = await AsyncStorage.getItem('user');
+                      user = JSON.parse(user);
+
+                      const data = new FormData();
+                      data.append('access_token', user.access_token);
+                      data.append(
+                        'assignment_id',
+                        selectedAssignment.assignment_id,
+                      );
+                      data.append('student_id', selectedChild.student_id);
+                      data.append('file', file);
+                      data.append('file1', uploadFileIdx === 1);
+                      data.append('file2', uploadFileIdx === 2);
+                      data.append('file3', uploadFileIdx === 3);
+                      data.append('note', note);
+
+                      fetch('https://api.unison.id/uploadResult/assignment', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                        body: data,
+                      })
+                        .then((response) => response.json())
+                        .then((res) => {
+                          getAssignment();
+                          uploadRbSheetRef.current.close();
+                          setMessage(res.msg);
+
+                          setTimeout(() => {
+                            setMessage(null);
+                          }, 3000);
+                        })
+                        .catch((err) => {
+                          console.log('err', err);
+
+                          uploadRbSheetRef.current.close();
+                          setMessageColor('red');
+                          setMessage(res.msg);
+
+                          setTimeout(() => {
+                            setMessageColor(null);
+                            setMessage(null);
+                          }, 3000);
+                        });
+                    },
+                  );
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 16,
+                    padding: 12,
+                    alignItems: 'center',
+                  }}>
+                  <MaterialCommunityIcons
+                    name="image"
+                    size={24}
+                    color={'#757575'}
+                    style={{marginRight: 16}}
+                  />
+                  <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                    Take from gallery
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            ) : null}
+
+            {uploadFileIdx ? (
+              <TouchableWithoutFeedback
+                onPress={async () => {
+                  let user = await AsyncStorage.getItem('user');
+                  user = JSON.parse(user);
+
+                  try {
+                    const response = await DocumentPicker.pick({});
+
+                    const res = await fetch(response.uri);
+
+                    const blob = await res.blob();
+
+                    const file = new File([blob], response.name, {
+                      type: response.type,
+                    });
+
+                    const data = new FormData();
+                    data.append('access_token', user.access_token);
+                    data.append(
+                      'assignment_id',
+                      selectedAssignment.assignment_id,
+                    );
+                    data.append('student_id', selectedChild.student_id);
+                    data.append('file', file);
+                    data.append('file1', uploadFileIdx === 1);
+                    data.append('file2', uploadFileIdx === 2);
+                    data.append('file3', uploadFileIdx === 3);
+                    data.append('note', note);
+
+                    fetch('https://api.unison.id/uploadResult/assignment', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'multipart/form-data',
+                      },
+                      body: data,
+                    })
+                      .then((response) => response.json())
+                      .then((res) => {
+                        getAssignment();
+                        uploadRbSheetRef.current.close();
+
+                        setMessage(res.msg);
+
+                        setTimeout(() => {
+                          setMessage(null);
+                        }, 3000);
+                      })
+                      .catch((err) => {
+                        console.log('err', err);
+
+                        uploadRbSheetRef.current.close();
+                        setMessageColor('red');
+                        setMessage(res.msg);
+
+                        setTimeout(() => {
+                          setMessageColor(null);
+                          setMessage(null);
+                        }, 3000);
+                      });
+                  } catch (e) {
+                    console.log('e', e);
+                  }
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 16,
+                    padding: 12,
+                    alignItems: 'center',
+                  }}>
+                  <Ionicons
+                    name="attach"
+                    size={24}
+                    color="#9EA3BA"
+                    style={{marginRight: 16}}
+                  />
+                  <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                    Upload File (apart from photos)
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            ) : null}
+          </View>
+        </RBSheet>
+
         <RBSheet
           ref={rbSheetRef}
           closeOnDragDown={true}
@@ -474,7 +801,9 @@ export default function AgendaScreen(props) {
               </View>
             </TouchableWithoutFeedback>
 
-            <Image source={require('../../assets/images/ic_assignment_2.png')} />
+            <Image
+              source={require('../../assets/images/ic_assignment_2.png')}
+            />
           </View>
         </View>
 
@@ -585,7 +914,13 @@ export default function AgendaScreen(props) {
                   ) : (
                     assignments.map((assignment) => {
                       return (
-                        <TouchableWithoutFeedback onPress={() => props.navigation.navigate('AssignmentDetailScreen', {assignment})}>
+                        <TouchableWithoutFeedback
+                          onPress={() =>
+                            props.navigation.navigate(
+                              'AssignmentDetailScreen',
+                              {assignment},
+                            )
+                          }>
                           <View
                             style={{
                               shadowOffset: {width: 0, height: 0},
@@ -679,32 +1014,90 @@ export default function AgendaScreen(props) {
                             </View>
 
                             {assignment.file_path && (
-                              <View
-                                style={{
-                                  backgroundColor: '#f2f2f2',
-                                  width: 28,
-                                  height: 28,
-                                  borderRadius: 14,
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  alignSelf: 'center',
-                                  marginStart: 8,
-                                  marginEnd: 8,
+                              <TouchableWithoutFeedback
+                                onPress={(e) => {
+                                  e.stopPropagation();
+
+                                  let PictureDir =
+                                    Platform.OS === 'ios'
+                                      ? fs.dirs.DocumentDir
+                                      : fs.dirs.PictureDir;
+                                  let options = {
+                                    fileCache: true,
+                                    path:
+                                      PictureDir +
+                                      `/${
+                                        assignment.file_path.split('/')[
+                                          assignment.file_path.split('/')
+                                            .length - 1
+                                        ]
+                                      }`,
+                                    addAndroidDownloads: {
+                                      useDownloadManager: true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
+                                      notification: true,
+                                      path: `${
+                                        assignment.file_path.split('/')[
+                                          assignment.file_path.split('/')
+                                            .length - 1
+                                        ]
+                                      }`,
+                                      description:
+                                        'Downloading assignment file',
+                                    },
+                                  };
+
+                                  console.log(assignment.file_path);
+
+                                  config(options)
+                                    .fetch(
+                                      'GET',
+                                      'https://api.unison.id/' +
+                                        assignment.file_path,
+                                    )
+                                    .then((res) => {
+                                      if (Platform.OS === 'ios') {
+                                        console.log(res.data);
+
+                                        RNFetchBlob.ios.openDocument(res.data);
+                                      }
+                                    })
+                                    .catch((err) => console.log('err', err));
                                 }}>
-                                <AntDesign name={'download'} size={20} />
-                              </View>
+                                <View
+                                  style={{
+                                    backgroundColor: '#f2f2f2',
+                                    width: 28,
+                                    height: 28,
+                                    borderRadius: 14,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    alignSelf: 'center',
+                                    marginStart: 8,
+                                    marginEnd: 8,
+                                  }}>
+                                  <AntDesign name={'download'} size={20} />
+                                </View>
+                              </TouchableWithoutFeedback>
                             )}
 
-                            <Image
-                              source={require('../../assets/images/ic_upload.png')}
-                              style={{
-                                width: 28,
-                                height: 28,
-                                marginTop: 16,
-                                marginEnd: 16,
-                                marginStart: 8,
-                              }}
-                            />
+                            <TouchableWithoutFeedback
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                setNote(null);
+                                setSelectedAssignment(assignment);
+                                uploadRbSheetRef.current.open();
+                              }}>
+                              <Image
+                                source={require('../../assets/images/ic_upload.png')}
+                                style={{
+                                  width: 28,
+                                  height: 28,
+                                  marginTop: 16,
+                                  marginEnd: 16,
+                                  marginStart: 8,
+                                }}
+                              />
+                            </TouchableWithoutFeedback>
                           </View>
                         </TouchableWithoutFeedback>
                       );
@@ -736,6 +1129,7 @@ export default function AgendaScreen(props) {
                             borderWidth: 1,
                             marginHorizontal: 15,
                             flexDirection: 'row',
+                            marginBottom: 10,
                           }}>
                           <View style={{flex: 1}}>
                             <Text
@@ -796,19 +1190,21 @@ export default function AgendaScreen(props) {
                             <Text style={{fontFamily: 'Montserrat-Bold'}}>
                               {score.score}
                             </Text>
-                            <Text
-                              style={{
-                                fontFamily: 'Avenir',
-                                fontSize: 10,
-                                color:
-                                  score.score >= score.min_score
-                                    ? '#1541BB'
-                                    : 'red',
-                              }}>
-                              {score.score >= score.min_score
-                                ? 'Passed'
-                                : 'Not Passed'}
-                            </Text>
+                            {score.score !== "0" && (
+                              <Text
+                                style={{
+                                  fontFamily: 'Avenir',
+                                  fontSize: 10,
+                                  color:
+                                    score.score >= score.min_score
+                                      ? '#1541BB'
+                                      : 'red',
+                                }}>
+                                {score.score >= score.min_score
+                                  ? 'Passed'
+                                  : 'Not Passed'}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       );

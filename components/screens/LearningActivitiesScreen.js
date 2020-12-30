@@ -61,7 +61,7 @@ export default function LearningActivitiesScreen(props) {
                 flex: 1,
                 color: 'white',
               }}>
-              Exam
+              Ujian
             </Text>
 
             <Image
