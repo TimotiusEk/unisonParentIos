@@ -1,7 +1,6 @@
 import GlobalData from './GlobalData';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
-import RNFetchBlob from 'react-native-fetch-blob';
 
 export default class HttpRequest {
   static set = async (endpoint, method, body) => {

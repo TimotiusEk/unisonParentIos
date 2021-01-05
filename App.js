@@ -45,6 +45,7 @@ import ExamDetailScreen from './components/screens/ExamDetailScreen';
 import AssignmentDetailScreen from './components/screens/AssignmentDetailScreen';
 import ImageViewerScreen from './components/screens/ImageViewerScreen';
 import AgendaDetailScreen from './components/screens/AgendaDetailScreen';
+import PartnerScreen from './components/screens/PartnerScreen';
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -97,7 +98,8 @@ export default function App() {
             ExamDetailScreen,
             AssignmentDetailScreen,
             ImageViewerScreen,
-            AgendaDetailScreen
+            AgendaDetailScreen,
+            PartnerScreen
         },
         {
             headerMode: "none",

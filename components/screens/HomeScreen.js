@@ -246,7 +246,7 @@ export default function HomeScreen(props) {
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback
                                 onPress={() => {
-                                    setComingSoonModalShown(true);
+                                   props.navigation.navigate('PartnerScreen')
                                 }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View
