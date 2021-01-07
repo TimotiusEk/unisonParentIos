@@ -46,6 +46,14 @@ import AssignmentDetailScreen from './components/screens/AssignmentDetailScreen'
 import ImageViewerScreen from './components/screens/ImageViewerScreen';
 import AgendaDetailScreen from './components/screens/AgendaDetailScreen';
 import PartnerScreen from './components/screens/PartnerScreen';
+import PartnerDetailScreen from './components/screens/PartnerDetailScreen';
+import ClassDetailScreen from './components/screens/ClassDetailScreen';
+import PaymentSummaryScreen from './components/screens/PaymentSummaryScreen';
+import PaymentScreen from './components/screens/PaymentScreen';
+import PaymentSuccessScreen from './components/screens/PaymentSuccessScreen';
+import BankTransferScreen from './components/screens/BankTransferScreen';
+import CompletePaymentScreen from './components/screens/CompletePaymentScreen';
+import CameraScreen from './components/screens/CameraScreen';
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -99,7 +107,15 @@ export default function App() {
             AssignmentDetailScreen,
             ImageViewerScreen,
             AgendaDetailScreen,
-            PartnerScreen
+            PartnerScreen,
+            PartnerDetailScreen,
+            ClassDetailScreen,
+            PaymentSummaryScreen,
+            PaymentScreen,
+            PaymentSuccessScreen,
+            BankTransferScreen,
+            CompletePaymentScreen,
+            CameraScreen
         },
         {
             headerMode: "none",

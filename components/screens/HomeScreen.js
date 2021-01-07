@@ -246,7 +246,7 @@ export default function HomeScreen(props) {
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback
                                 onPress={() => {
-                                   props.navigation.navigate('PartnerScreen')
+                                   props.navigation.navigate('CameraScreen')
                                 }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View
