@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     TouchableWithoutFeedback,
-    KeyboardAvoidingView
+    KeyboardAvoidingView, Platform
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -26,8 +26,8 @@ export default function LoginScreen(props) {
             fontSize: 16,
             height: 40,
             color: '#101010',
-            fontFamily: 'Avenir',
-            fontWeight: '400'
+            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
+
         },
         inputLayout: {
             marginTop: 16,
@@ -88,10 +88,11 @@ export default function LoginScreen(props) {
                 <View style={{flex: 1}}>
                     <View style={{paddingHorizontal: 36}}>
                         <Text style={{
-                            fontFamily: 'Avenir-Heavy',
                             fontSize: 24,
                             color: '#042C5C',
-                            marginTop: 8
+                            marginTop: 8,
+                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                            fontWeight: Platform.OS === 'android' ? undefined : '700'
                         }}>
                             Login into my account
                         </Text>
@@ -120,7 +121,7 @@ export default function LoginScreen(props) {
                                 placeholder={'Username'}
                             />
                         </TextInputLayout>
-                        <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                        <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                             {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
                         </Text>
 
@@ -147,13 +148,14 @@ export default function LoginScreen(props) {
                                 <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                             </TouchableOpacity>
 
-                            <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
+                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
                                 {isValidating && password.length === 0 ? 'Password is mandatory.' : null}
                             </Text>
 
                             <TouchableOpacity onPress={() => props.navigation.navigate('ForgotPasswordSwitch')}>
                                 <Text style={{
-                                    fontFamily: 'Avenir-Heavy',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
                                     color: '#0033A8',
                                     alignSelf: 'flex-end',
                                     marginTop: 15,
@@ -183,7 +185,8 @@ export default function LoginScreen(props) {
 
                             <TouchableWithoutFeedback onPress={() => props.navigation.navigate('RegisterScreen')}>
                                 <View style={{alignItems: 'center', marginTop: 30}}>
-                                    <Text style={{fontSize: 18, color: '#77869E', fontFamily: 'Avenir-Heavy'}}>
+                                    <Text style={{fontSize: 16, color: '#77869E',  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                        fontWeight:  Platform.OS === 'android' ? undefined: '700',}}>
                                         Don't Have Account? <Text style={{color: '#101010'}}>Register</Text>
                                     </Text>
                                 </View>

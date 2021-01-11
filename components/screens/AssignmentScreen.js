@@ -226,7 +226,7 @@ export default function AgendaScreen(props) {
 
                     <Text
                       style={{
-                        fontFamily: 'Avenir',
+                          fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                         fontSize: 18,
                         marginLeft: 4,
                       }}>
@@ -235,7 +235,7 @@ export default function AgendaScreen(props) {
                   </View>
                 </TouchableWithoutFeedback>
                 <Text
-                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                   {selectedAssignment.file_path_student
                     ? selectedAssignment.file_path_student.split('/')[
                         selectedAssignment.file_path_student.split('/').length -
@@ -261,7 +261,7 @@ export default function AgendaScreen(props) {
 
                     <Text
                       style={{
-                        fontFamily: 'Avenir',
+                          fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                         fontSize: 18,
                         marginLeft: 4,
                       }}>
@@ -270,7 +270,7 @@ export default function AgendaScreen(props) {
                   </View>
                 </TouchableWithoutFeedback>
                 <Text
-                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                   {selectedAssignment.file_path_student2
                     ? selectedAssignment.file_path_student2.split('/')[
                         selectedAssignment.file_path_student2.split('/')
@@ -296,7 +296,7 @@ export default function AgendaScreen(props) {
 
                     <Text
                       style={{
-                        fontFamily: 'Avenir',
+                          fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                         fontSize: 18,
                         marginLeft: 4,
                       }}>
@@ -305,7 +305,7 @@ export default function AgendaScreen(props) {
                   </View>
                 </TouchableWithoutFeedback>
                 <Text
-                  style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                  style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                   {selectedAssignment.file_path_student3
                     ? selectedAssignment.file_path_student3.split('/')[
                         selectedAssignment.file_path_student3.split('/')
@@ -324,7 +324,7 @@ export default function AgendaScreen(props) {
                 style={{
                   borderBottomWidth: 1,
                   marginTop: 24,
-                  fontFamily: 'Avenir',
+                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                   fontWeight: '500',
                 }}
               />
@@ -336,7 +336,7 @@ export default function AgendaScreen(props) {
                   marginTop: 16,
                   padding: 12,
                   fontSize: 18,
-                  fontFamily: 'Avenir',
+                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
                 }}>
                 Choose your Photo or File
               </Text>
@@ -419,7 +419,7 @@ export default function AgendaScreen(props) {
                     color={'#757575'}
                     style={{marginRight: 16}}
                   />
-                  <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                  <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18}}>
                     Take from gallery
                   </Text>
                 </View>
@@ -503,7 +503,7 @@ export default function AgendaScreen(props) {
                     color="#9EA3BA"
                     style={{marginRight: 16}}
                   />
-                  <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                  <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18}}>
                     Upload File (apart from photos)
                   </Text>
                 </View>

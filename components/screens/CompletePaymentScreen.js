@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-  TextInput,
+  Platform,
   Modal,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -57,7 +57,7 @@ export default function CompletePaymentScreen(props) {
                       mediaType: 'photo',
                     },
                     async (response) => {
-                        
+
                     })
               }}>
                 <View
@@ -117,7 +117,7 @@ export default function CompletePaymentScreen(props) {
       <View
         style={{
           backgroundColor: 'white',
-          paddingTop: 60,
+          paddingTop: Platform.OS === 'ios' ? 60 : 16,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 0},
           shadowOpacity: 0.15,

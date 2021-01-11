@@ -224,13 +224,15 @@ export default function ExamScreen(props) {
                   <Ionicons name="attach" size={24} color="#9EA3BA" />
 
                   <Text
-                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    style={{
+                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                        fontSize: 18, marginLeft: 4}}>
                     Upload File
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
               <Text
-                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                 {selectedExam.file_path_student
                   ? selectedExam.file_path_student.split('/')[
                       selectedExam.file_path_student.split('/').length - 1
@@ -254,13 +256,13 @@ export default function ExamScreen(props) {
                   <Ionicons name="attach" size={24} color="#9EA3BA" />
 
                   <Text
-                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 4}}>
                     Upload File
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
               <Text
-                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                 {selectedExam.file_path_student2
                   ? selectedExam.file_path_student2.split('/')[
                       selectedExam.file_path_student2.split('/').length - 1
@@ -284,13 +286,13 @@ export default function ExamScreen(props) {
                   <Ionicons name="attach" size={24} color="#9EA3BA" />
 
                   <Text
-                    style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 4}}>
+                    style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 4}}>
                     Upload File
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
               <Text
-                style={{fontFamily: 'Avenir', fontSize: 18, marginLeft: 12}}>
+                style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18, marginLeft: 12}}>
                 {selectedExam.file_path_student3
                   ? selectedExam.file_path_student3.split('/')[
                       selectedExam.file_path_student3.split('/').length - 1
@@ -308,8 +310,8 @@ export default function ExamScreen(props) {
               style={{
                 borderBottomWidth: 1,
                 marginTop: 24,
-                fontFamily: 'Avenir',
-                fontWeight: '500',
+                  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
+                  fontWeight: '500',
               }}
             />
           ) : null}
@@ -320,7 +322,7 @@ export default function ExamScreen(props) {
                 marginTop: 16,
                 padding: 12,
                 fontSize: 18,
-                fontFamily: 'Avenir',
+                  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
               }}>
               Choose your Photo or File
             </Text>
@@ -400,7 +402,7 @@ export default function ExamScreen(props) {
                   color={'#757575'}
                   style={{marginRight: 16}}
                 />
-                <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18}}>
                   Take from gallery
                 </Text>
               </View>
@@ -481,7 +483,7 @@ export default function ExamScreen(props) {
                   color="#9EA3BA"
                   style={{marginRight: 16}}
                 />
-                <Text style={{fontFamily: 'Avenir', fontSize: 18}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontSize: 18}}>
                   Upload File (apart from photos)
                 </Text>
               </View>
@@ -904,12 +906,15 @@ export default function ExamScreen(props) {
                   margin: 8,
                 }}>
                 <View style={{flex: 1, marginStart: 16, marginTop: 16}}>
-                  <Text style={{fontFamily: 'Avenir', fontWeight: '700'}}>
+                  <Text style={{
+                      fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                      fontWeight:  Platform.OS === 'android' ? undefined: '700'
+                  }}>
                     {exam.exam}
                   </Text>
                   <Text
                     style={{
-                      fontFamily: 'Avenir',
+                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                       marginTop: 8,
                       marginBottom: 8,
                       fontSize: 12,
@@ -1005,7 +1010,7 @@ export default function ExamScreen(props) {
 
                 <Text
                   style={{
-                    fontFamily: 'Avenir',
+                      fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                     color: '#878787',
                     fontSize: 12,
                     marginTop: 10,

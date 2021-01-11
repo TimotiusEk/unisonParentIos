@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {
-    ActivityIndicator,
+    ActivityIndicator, Platform,
     StyleSheet,
     Text, TextInput, TouchableOpacity, TouchableWithoutFeedback,
     View
@@ -31,8 +31,8 @@ export default function ResetPasswordScreen (props) {
             fontSize: 16,
             height: 40,
             color: '#101010',
-            fontFamily: 'Avenir',
-            fontWeight: '400'
+            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+
         },
         inputLayout: {
             marginTop: 16,
@@ -131,7 +131,7 @@ export default function ResetPasswordScreen (props) {
                     opacity: isValidating && !code ? 1 : 0
                 }}>
                     <MaterialIcons name={'error'} color={'red'} size={18}/>
-                    <Text style={{color: 'red', marginLeft: 10, fontFamily: 'Avenir', fontWeight: '400',}}>
+                    <Text style={{color: 'red', marginLeft: 10, fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', }}>
                         Reset code is mandatory.
                     </Text>
                 </View>
@@ -157,7 +157,7 @@ export default function ResetPasswordScreen (props) {
                     opacity: isValidating && !username ? 1 : 0
                 }}>
                     <MaterialIcons name={'error'} color={'red'} size={18}/>
-                    <Text style={{color: 'red', marginLeft: 10, fontFamily: 'Avenir', fontWeight: '400',}}>
+                    <Text style={{color: 'red', marginLeft: 10,  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', }}>
                         Username is mandatory.
                     </Text>
                 </View>
@@ -182,7 +182,7 @@ export default function ResetPasswordScreen (props) {
                     <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                 </TouchableOpacity>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
                     {isValidating && password.length === 0 ? 'New password is mandatory.' : isValidating && password.length < 6 ? 'Password a minimum of 6 characters' : null}
                 </Text>
 
@@ -206,7 +206,7 @@ export default function ResetPasswordScreen (props) {
                     <Ionicons name={isConfirmPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                 </TouchableOpacity>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
                     {isValidating && confirmPassword.length === 0 ? 'Confirm password is mandatory.' : isValidating && password !== confirmPassword ? 'The password confirmation does not match.' : null}
                 </Text>
 

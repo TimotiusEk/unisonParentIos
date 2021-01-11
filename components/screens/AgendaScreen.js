@@ -1,12 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {
-  ScrollView,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-  Image,
-  TouchableOpacity,
-  Dimensions,
+    ScrollView,
+    Text,
+    TouchableWithoutFeedback,
+    View,
+    Image,
+    TouchableOpacity,
+    Dimensions, Platform,
 } from 'react-native';
 import AppContainer from '../reusables/AppContainer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -638,13 +638,13 @@ export default function AgendaScreen(props) {
                                   shadowOpacity: 0.25,
                                   shadowRadius: 2,
                                 }}>
-                                <Text style={{fontFamily: 'Avenir'}}>
+                                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                                   {agenda.agenda}
                                 </Text>
                                 <View style={{marginTop: 6}}>
                                   <Text
                                     style={{
-                                      fontFamily: 'Avenir',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                       color: 'white',
                                     }}>
                                     {moment.utc(agenda.class_date).format('DD MMM YYYY, HH:mm')}  {agenda.end_date && '-' + moment.utc(agenda.end_date).format('HH:mm')}
@@ -652,7 +652,7 @@ export default function AgendaScreen(props) {
 
                                   <Text
                                     style={{
-                                      fontFamily: 'Avenir',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                       color: 'white',
                                     }}>
                                     {agenda.class_name} ({agenda.subject})
@@ -722,14 +722,14 @@ export default function AgendaScreen(props) {
                                   shadowOpacity: 0.25,
                                   shadowRadius: 2,
                                 }}>
-                                <Text style={{fontFamily: 'Avenir'}}>
+                                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                                   {schedule.subject}
                                 </Text>
                                 <View
                                   style={{flexDirection: 'row', marginTop: 6}}>
                                   <Text
                                     style={{
-                                      fontFamily: 'Avenir',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                       color: 'white',
                                     }}>
                                     {schedule.start_time}
@@ -737,7 +737,7 @@ export default function AgendaScreen(props) {
 
                                   <Text
                                     style={{
-                                      fontFamily: 'Avenir',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                       color: 'white',
                                       marginLeft: 10,
                                     }}>

@@ -6,6 +6,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Modal,
+    Platform
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -107,7 +108,7 @@ export default function PaymentScreen(props) {
       <View
         style={{
           backgroundColor: 'white',
-          paddingTop: 60,
+          paddingTop: Platform.OS === 'ios' ? 60 : 16,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 0},
           shadowOpacity: 0.15,
@@ -148,7 +149,7 @@ export default function PaymentScreen(props) {
         </View>
       </View>
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{paddingBottom: 20}}>
         <View
           style={{
             backgroundColor: 'white',

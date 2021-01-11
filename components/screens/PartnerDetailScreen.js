@@ -5,7 +5,7 @@ import {
   Text,
   Image,
   TouchableWithoutFeedback,
-  TextInput,
+  Platform,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -17,7 +17,7 @@ export default function PartnerDetailScreen(props) {
       <View
         style={{
           backgroundColor: 'white',
-          paddingTop: 60,
+          paddingTop: Platform.OS ? 16 : 60,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 0},
           shadowOpacity: 0.15,

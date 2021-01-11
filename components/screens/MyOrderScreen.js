@@ -1,6 +1,6 @@
 import React, {useState, useRef} from "react";
 import AppContainer from "../reusables/AppContainer";
-import {View, Text, ScrollView, Dimensions, TouchableWithoutFeedback, Image} from "react-native";
+import {View, Text, ScrollView, Dimensions, TouchableWithoutFeedback, Image, Platform} from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 
@@ -26,14 +26,14 @@ export default function MyOrderScreen(props) {
             <View style={{flexDirection: 'row', marginTop: 20, marginHorizontal: 20}}>
                 <TouchableWithoutFeedback onPress={() => carouselRef.current.snapToItem(0)}>
                     <View style={{flex: 1, borderBottomWidth: 1.5, borderColor: activeSlide === 0 ? '#3e67d6' : '#3e67d680', paddingBottom: 10}}>
-                        <Text style={{textAlign: 'center', fontFamily: 'Avenir', fontWeight: '500', color: activeSlide === 0 ? 'black' : 'grey'}}>
+                        <Text style={{textAlign: 'center', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontWeight: '500', color: activeSlide === 0 ? 'black' : 'grey'}}>
                             Upcoming
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={() => carouselRef.current.snapToItem(1)}>
                     <View style={{flex: 1, borderBottomWidth: 1.5, borderColor: activeSlide === 1 ? '#3e67d6' : '#3e67d680', paddingBottom: 10}}>
-                        <Text style={{textAlign: 'center', fontFamily: 'Avenir', fontWeight: '500', color: activeSlide === 1 ? 'black' : 'grey'}}>
+                        <Text style={{textAlign: 'center', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontWeight: '500', color: activeSlide === 1 ? 'black' : 'grey'}}>
                             Past Booking
                         </Text>
                     </View>

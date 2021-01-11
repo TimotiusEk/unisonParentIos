@@ -8,7 +8,7 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity, ActivityIndicator,
-    Modal
+    Modal, Platform
 } from "react-native";
 import AppContainer from "../reusables/AppContainer";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -32,8 +32,8 @@ export default function ProfileScreen(props) {
         textInput: {
             fontSize: 16,
             height: 40,
-            fontFamily: 'Avenir',
-            fontWeight: '400'
+            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+
         },
         inputLayout: {
             marginTop: 10,
@@ -245,7 +245,7 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
                                 {errorMsg ? errorMsg : isValidating && currentPassword.length === 0 ? 'Current password is mandatory.' : null}
                             </Text>
 
@@ -263,7 +263,7 @@ export default function ProfileScreen(props) {
                                     rbSheetRef.current.close();
                                     props.navigation.navigate('ForgotPasswordSwitch')
                                 }}>
-                                    <Text style={{color: 'grey', fontFamily: 'Avenir'}}>Forgot Password?</Text>
+                                    <Text style={{color: 'grey', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>Forgot Password?</Text>
                                 </TouchableWithoutFeedback>
                             </View>
                         }
@@ -292,7 +292,7 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
                                 {isValidating && newPassword.length === 0 ? 'New password is mandatory.' : isValidating && newPassword.length < 6 ? 'New password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
                             </Text>
 
@@ -329,7 +329,7 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: 'Avenir', fontWeight: '400', marginTop: 3, color: 'red'}}>
+                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
                                 {isValidating && confirmPassword.length === 0 ? 'Confirmation password is mandatory.' : isValidating && confirmPassword.length < 6 ? 'Confirmation password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
                             </Text>
 
@@ -362,7 +362,7 @@ export default function ProfileScreen(props) {
                                     value={username}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                                 {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
                             </Text>
                         </View>
@@ -392,7 +392,7 @@ export default function ProfileScreen(props) {
                                     value={email}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                                 {isValidating && email.length === 0 ? 'Email is mandatory.' : null}
                             </Text>
                         </View>
@@ -424,7 +424,7 @@ export default function ProfileScreen(props) {
                                     value={hp}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                                 {isValidating && hp.length === 0 ? 'Mobile Phone is mandatory.' : null}
                             </Text>
                         </View>
@@ -453,7 +453,7 @@ export default function ProfileScreen(props) {
                                     value={address}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                                 {isValidating && address.length === 0 ? 'Address is mandatory.' : null}
                             </Text>
                         </View>
@@ -592,7 +592,8 @@ export default function ProfileScreen(props) {
                                 return (
                                     <View>
                                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                            <Text style={{fontFamily: 'Avenir', fontWeight: '700', fontSize: 18}}>
+                                            <Text style={{  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                fontWeight:  Platform.OS === 'android' ? undefined: '700', fontSize: 18}}>
                                                 {child.student_name}
                                             </Text>
 

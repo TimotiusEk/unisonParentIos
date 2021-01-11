@@ -5,7 +5,7 @@ import {
   Text,
   Image,
   TouchableWithoutFeedback,
-  TextInput,
+  Platform,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -15,7 +15,7 @@ export default function PaymentSummaryScreen(props) {
       <View
         style={{
           backgroundColor: 'white',
-          paddingTop: 60,
+          paddingTop: Platform.OS === 'ios' ? 60 : 16,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 0},
           shadowOpacity: 0.15,

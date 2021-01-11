@@ -22,7 +22,7 @@ export default function RegisterScreen(props) {
             height: 40,
             color: '#101010',
             fontFamily: 'Avenir',
-            fontWeight: '400'
+
         },
         inputLayout: {
             marginTop: 16,
@@ -82,7 +82,7 @@ export default function RegisterScreen(props) {
                     />
                 </TextInputLayout>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: 'Avenir',  marginTop: 3}}>
                     {isValidating && errorMsg.length !== 0 ? errorMsg : null}
                 </Text>
 

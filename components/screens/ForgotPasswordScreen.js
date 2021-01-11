@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {
     View,
     Text,
-    TouchableWithoutFeedback, TextInput, ActivityIndicator
+    TouchableWithoutFeedback, TextInput, ActivityIndicator, Platform
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import HttpRequest from "../../util/HttpRequest";
@@ -94,7 +94,7 @@ export default function ForgotPasswordScreen(props) {
                     opacity: isValidating && !email ? 1 : 0
                 }}>
                     <MaterialIcons name={'error'} color={'red'} size={18}/>
-                    <Text style={{color: 'red', marginLeft: 10, fontFamily: 'Avenir', fontWeight: '400',}}>
+                    <Text style={{color: 'red', marginLeft: 10, fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', }}>
                         Email is mandatory.
                     </Text>
                 </View>

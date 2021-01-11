@@ -1,4 +1,4 @@
-import {Image, Text, View, TouchableWithoutFeedback, ActivityIndicator, TouchableOpacity} from "react-native";
+import {Image, Text, View, TouchableWithoutFeedback, StatusBar, TouchableOpacity} from "react-native";
 import React, {useState} from "react";
 import Collapsible from "react-native-collapsible";
 
@@ -20,6 +20,8 @@ export default function ChooseGenderScreen(props) {
 
     return (
         <View style={{flex: 1, backgroundColor: 'white'}}>
+            <StatusBar translucent={true} backgroundColor={'transparent'}/>
+
             <Image source={require('../../assets/images/ic_header_blue.png')}
                    style={{width: 309, height: 109, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
@@ -110,7 +112,7 @@ export default function ChooseGenderScreen(props) {
                     marginLeft: 36,
                     marginRight: 36,
                     borderRadius: 5,
-                    marginTop: 55
+                    marginTop: 20
                 }}>
                     <Text style={{fontFamily: 'Montserrat-Bold', color: 'white'}}>
                         Next
@@ -120,7 +122,7 @@ export default function ChooseGenderScreen(props) {
 
             <View style={{flex: 1, paddingLeft: 20, flexDirection: 'row', alignItems: 'flex-end'}}>
                 <Image source={require('../../assets/images/logo_one_line.png')}
-                       style={{height: 74 / 1.9, width: 239 / 1.9, resizeMode: 'contain', marginBottom: 40}}/>
+                       style={{height: 74 / 2.25, width: 239 / 2.25, resizeMode: 'contain', marginBottom: 20}}/>
             </View>
         </View>
     )

@@ -6,7 +6,7 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator, Platform
 } from "react-native";
 import React, {useState} from "react";
 import {TextInputLayout} from "rn-textinputlayout";
@@ -25,8 +25,8 @@ export default function ChildRegistrationScreen(props) {
             fontSize: 16,
             height: 40,
             color: '#101010',
-            fontFamily: 'Avenir',
-            fontWeight: '400'
+            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
+
         },
         inputLayout: {
             marginTop: 16,
@@ -174,12 +174,12 @@ export default function ChildRegistrationScreen(props) {
                         placeholder={'Name'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                     {isValidating && childName.length === 0 ? 'Name is mandatory.' : null}
                 </Text>
 
 
-                <Text style={{fontFamily: 'Avenir', marginTop: 10, marginBottom: 5}}>Tanggal Lahir</Text>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', marginTop: 10, marginBottom: 5}}>Tanggal Lahir</Text>
                 <DateTimePicker
                     testID="dateTimePicker"
                     value={childDob}

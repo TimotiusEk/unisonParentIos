@@ -60,15 +60,17 @@ export default function NotificationScreen(props) {
 
                                 <View style={{flex: 1, marginLeft: 30}}>
                                     <Text style={{
-                                        fontFamily: 'Avenir',
-                                        fontWeight: '700',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                        fontWeight:  Platform.OS === 'android' ? undefined: '700',
                                         flex: 1
                                     }}>{
                                         notification.title + ', '}
                                         <Text style={{color: 'grey'}}>{notification.description}</Text>
                                     </Text>
 
-                                    <Text style={{color: 'grey', fontFamily: 'Avenir'}}>
+                                    <Text style={{color: 'grey',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                       }}>
                                         {moment.utc(notification.created_at).format('HH:mm, DD MMMM YYYY')}
                                     </Text>
                                 </View>

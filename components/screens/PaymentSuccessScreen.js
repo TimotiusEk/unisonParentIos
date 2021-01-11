@@ -1,11 +1,11 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {
-  ScrollView,
-  View,
-  Text,
-  Image,
-  TouchableWithoutFeedback,
-  Modal,
+    ScrollView,
+    View,
+    Text,
+    Image,
+    TouchableWithoutFeedback,
+    Modal, Platform,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -20,11 +20,11 @@ export default function PaymentSuccessScreen() {
           style={{width: 110, height: 110, marginBottom: 24}}
         />
 
-        <Text style={{fontFamily: 'Avenir', fontWeight: '500', fontSize: 20}}>
+        <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', fontWeight: '500', fontSize: 20}}>
           Terima Kasih
         </Text>
 
-        <Text style={{fontFamily: 'Avenir', marginTop: 4}}>
+        <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', marginTop: 4}}>
           Booking Anda telah sukses terbayar
         </Text>
       </View>
@@ -56,7 +56,8 @@ export default function PaymentSuccessScreen() {
           }}
         />
         <Text
-          style={{fontFamily: 'Avenir', fontWeight: '600', color: '#373737'}}>
+          style={{fontFamily: 'Avenir', fontWeight: '600', color: '#373737'}}
+        >
           Kelas akan dilaksanakan pada
         </Text>
 

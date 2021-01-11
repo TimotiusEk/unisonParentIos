@@ -20,7 +20,7 @@ export default function ClassDetailScreen(props) {
       <View
         style={{
           backgroundColor: 'white',
-          paddingTop: 60,
+          paddingTop: Platform.OS === 'ios' ? 60 : 16,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 0},
           shadowOpacity: 0.15,

@@ -1,5 +1,15 @@
 import React, {useRef, useState, useEffect} from "react";
-import {View, Text, TouchableOpacity, Dimensions, ScrollView, Image} from "react-native"
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Dimensions,
+    ScrollView,
+    Image,
+    Platform,
+    TouchableWithoutFeedback,
+    PanResponder
+} from "react-native"
 import AppContainer from "../reusables/AppContainer";
 import Carousel, {Pagination} from "react-native-snap-carousel";
 import HttpRequest from "../../util/HttpRequest";
@@ -18,6 +28,22 @@ export default function LearningMaterialScreen(props) {
     const [mustHaveActiveSlide, setMustHaveActiveSlide] = useState(SLIDE.NEW);
     const [mustHaveBooks, setMustHaveBooks] = useState([]);
     const [audioNewRelease, setAudioNewRelease] = useState([]);
+    const [carouselScrollEnabled, setCarouselScrollEnabled] = useState(false);
+
+    const _panResponder = PanResponder.create({
+        onMoveShouldSetResponderCapture: () => true,
+        onMoveShouldSetPanResponderCapture: () => true,
+        onPanResponderGrant: (e, gestureState) => {
+            setCarouselScrollEnabled(false)
+        },
+        onPanResponderMove: () => {
+
+        },
+        onPanResponderTerminationRequest: () => true,
+        onPanResponderRelease: () => {
+            setCarouselScrollEnabled(true)
+        },
+    })
 
     const _renderItem = (item) => {
         item = item.item
@@ -31,7 +57,12 @@ export default function LearningMaterialScreen(props) {
                             height: 250,
                             marginBottom: -220
                         }}>
-                            <Text style={{fontFamily: 'Avenir', textAlign: 'center', fontSize: 16, marginTop: 16}}>
+                            <Text style={{
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                textAlign: 'center',
+                                fontSize: 16,
+                                marginTop: 16
+                            }}>
                                 Buku Wajib Yang Harus Kamu Punya
                             </Text>
                         </View>
@@ -42,20 +73,24 @@ export default function LearningMaterialScreen(props) {
                                 item = item.item;
 
                                 return (
-                                    <View style={{alignItems: 'center'}}>
-                                        <Image source={{uri: item.image_path}} style={{
-                                            width: '80%',
-                                            height: 250,
-                                            resizeMode: 'contain',
-                                            marginTop: 40
-                                        }}/>
-                                    </View>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => props.navigation.navigate('LearningMaterialDetailScreen', {material: item})}>
+                                        <View style={{alignItems: 'center'}}>
+                                            <Image source={{uri: item.image_path}} style={{
+                                                width: '80%',
+                                                height: 250,
+                                                resizeMode: 'contain',
+                                                marginTop: 40
+                                            }}/>
+                                        </View>
+                                    </TouchableWithoutFeedback>
                                 )
                             }}
                             sliderWidth={Dimensions.get('window').width}
                             itemWidth={Dimensions.get('window').width}
                             loop={true}
                             useNativeDriver
+                            useScrollView={true}
                             autoplay={true}
                             autoplayDelay={3000}
                             autoplayInterval={3000}
@@ -91,33 +126,36 @@ export default function LearningMaterialScreen(props) {
                             {
                                 audioNewRelease.map(audio => {
                                     return (
-                                        <View style={{flexDirection: 'column'}}>
-                                            <Image source={{uri: audio.image_path}}
-                                                   style={{width: 136, height: 168, borderRadius: 5}}/>
-                                            <Text style={{
-                                                fontFamily: 'Montserrat-Bold',
-                                                marginTop: 8,
-                                                marginEnd: 8
-                                            }}>
-                                                {audio.title}
-                                            </Text>
-                                            <Text style={{
-                                                fontFamily: 'Poppins-Medium',
-                                                marginTop: 8,
-                                                color: '#818181'
-                                            }}>
-                                                {audio.author}
-                                            </Text>
+                                        <TouchableWithoutFeedback
+                                            onPress={() => props.navigation.navigate('LearningMaterialDetailScreen', {material: audio})}>
+                                            <View style={{flexDirection: 'column'}}>
+                                                <Image source={{uri: audio.image_path}}
+                                                       style={{width: 136, height: 168, borderRadius: 5}}/>
+                                                <Text style={{
+                                                    fontFamily: 'Montserrat-Bold',
+                                                    marginTop: 8,
+                                                    marginEnd: 8
+                                                }}>
+                                                    {audio.title}
+                                                </Text>
+                                                <Text style={{
+                                                    fontFamily: 'Poppins-Medium',
+                                                    marginTop: 8,
+                                                    color: '#818181'
+                                                }}>
+                                                    {audio.author}
+                                                </Text>
 
-                                            <Rating defaultValue={parseFloat(audio.average)} readonly={true}
-                                                    imageSize={16} style={{marginLeft: -60, marginTop: 16}}/>
+                                                <Rating defaultValue={parseFloat(audio.average)} readonly={true}
+                                                        imageSize={16} style={{marginLeft: -60, marginTop: 16}}/>
 
-                                            <Text style={{
-                                                marginTop: 8,
-                                                fontFamily: 'Poppins-Medium',
-                                                color: '#818181'
-                                            }}>{audio.totalReview} Review{audio.totalReview > 1 && 's'}</Text>
-                                        </View>
+                                                <Text style={{
+                                                    marginTop: 8,
+                                                    fontFamily: 'Poppins-Medium',
+                                                    color: '#818181'
+                                                }}>{audio.totalReview} Review{audio.totalReview > 1 && 's'}</Text>
+                                            </View>
+                                        </TouchableWithoutFeedback>
                                     )
                                 })
                             }
@@ -134,34 +172,40 @@ export default function LearningMaterialScreen(props) {
                                     const rating = parseFloat(book.average)
 
                                     return (
-                                        <View style={{flexDirection: 'column', marginRight: 40}}>
-                                            <Image source={{uri: book.image_path}}
-                                                   style={{width: 136, height: 168, borderRadius: 5}}/>
-                                            <Text style={{
-                                                fontFamily: 'Montserrat-Bold',
-                                                marginTop: 8,
-                                                marginEnd: 8
-                                            }}>
-                                                {book.title}
-                                            </Text>
-                                            <Text style={{
-                                                fontFamily: 'Poppins-Medium',
-                                                marginTop: 8,
-                                                color: '#818181'
-                                            }}>
-                                                {book.author}
-                                            </Text>
+                                        <TouchableWithoutFeedback onPress={() => props.navigation.navigate('LearningMaterialDetailScreen', {material: book})}>
+                                            <View style={{flexDirection: 'column', marginRight: 40}}>
+                                                <Image source={{uri: book.image_path}}
+                                                       style={{width: 136, height: 168, borderRadius: 5}}/>
+                                                <Text style={{
+                                                    fontFamily: 'Montserrat-Bold',
+                                                    marginTop: 8,
+                                                    marginEnd: 8
+                                                }}>
+                                                    {book.title}
+                                                </Text>
+                                                <Text style={{
+                                                    fontFamily: 'Poppins-Medium',
+                                                    marginTop: 8,
+                                                    color: '#818181'
+                                                }}>
+                                                    {book.author}
+                                                </Text>
 
-                                            <Rating startingValue={isNaN(rating) ? 0 : rating} readonly={true}
-                                                    imageSize={16}
-                                                    style={{marginTop: 16, display: 'flex', alignItems: 'flex-start'}}/>
+                                                <Rating startingValue={isNaN(rating) ? 0 : rating} readonly={true}
+                                                        imageSize={16}
+                                                        style={{
+                                                            marginTop: 16,
+                                                            display: 'flex',
+                                                            alignItems: 'flex-start'
+                                                        }}/>
 
-                                            <Text style={{
-                                                marginTop: 8,
-                                                fontFamily: 'Poppins-Medium',
-                                                color: '#818181'
-                                            }}>{book.totalReview} Review{book.totalReview > 1 && 's'}</Text>
-                                        </View>
+                                                <Text style={{
+                                                    marginTop: 8,
+                                                    fontFamily: 'Poppins-Medium',
+                                                    color: '#818181'
+                                                }}>{book.totalReview} Review{book.totalReview > 1 && 's'}</Text>
+                                            </View>
+                                        </TouchableWithoutFeedback>
                                     )
                                 })
                             }
@@ -209,7 +253,7 @@ export default function LearningMaterialScreen(props) {
                                                 marginTop: 6
                                             }}>
                                                 <Text style={{
-                                                    fontFamily: 'Avenir',
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                                     color: '#f99500',
                                                     paddingHorizontal: 8
                                                 }}>
@@ -224,7 +268,13 @@ export default function LearningMaterialScreen(props) {
                             }
                         </ScrollView>
 
-                        <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 16, marginTop: 32, marginStart: 12, marginBottom: 30}}>Audio
+                        <Text style={{
+                            fontFamily: 'Montserrat-Bold',
+                            fontSize: 16,
+                            marginTop: 32,
+                            marginStart: 12,
+                            marginBottom: 30
+                        }}>Audio
                             New Release</Text>
 
                         {
@@ -239,9 +289,16 @@ export default function LearningMaterialScreen(props) {
                                         <Image source={require('../../assets/images/ic_default_pict.png')}/>
                                     </View>
                                     <View style={{flex: 1}}>
-                                        <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 16}}>{audioNewRelease[0].title}</Text>
+                                        <Text style={{
+                                            fontFamily: 'Montserrat-Bold',
+                                            fontSize: 16
+                                        }}>{audioNewRelease[0].title}</Text>
                                         <Text
-                                            style={{fontFamily: 'Avenir', marginTop: 6, marginEnd: 8}}>{audioNewRelease[0].description.split('\n')[0]}</Text>
+                                            style={{
+                                                fontFamily: 'Avenir',
+                                                marginTop: 6,
+                                                marginEnd: 8
+                                            }}>{audioNewRelease[0].description.split('\n')[0]}</Text>
                                     </View>
                                 </View>
 
@@ -338,7 +395,7 @@ export default function LearningMaterialScreen(props) {
                     </Text>
 
                     <View
-                        style={{marginTop: 20, marginBottom: 15, marginLeft: 5, flexDirection: 'row', marginStart: 24}}>
+                        style={{marginTop: 20, marginBottom: 15, marginLeft: 5, flexDirection: 'row', paddingLeft: 24}}>
                         <TouchableOpacity onPress={() => mainCarouselRef.current.snapToItem(SLIDE.NEW)}>
                             <Text style={{
                                 fontFamily: 'Avenir',
@@ -377,6 +434,7 @@ export default function LearningMaterialScreen(props) {
                         itemWidth={Dimensions.get('window').width}
                         onSnapToItem={(index) => setActiveSlide(index)}
                         useScrollView={true}
+                        scrollEnabled={carouselScrollEnabled}
                     />
 
                 </View>

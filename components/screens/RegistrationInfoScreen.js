@@ -1,4 +1,4 @@
-import {Image, Text, TouchableOpacity, ScrollView, View, TextInput, StyleSheet} from "react-native";
+import {Image, Text, TouchableOpacity, ScrollView, View, TextInput, StyleSheet, Platform} from "react-native";
 import Collapsible from "react-native-collapsible";
 import React, {useState} from "react";
 import {TextInputLayout} from "rn-textinputlayout";
@@ -26,8 +26,8 @@ export default function RegistrationInfoScreen (props) {
             fontSize: 16,
             height: 40,
             color: '#101010',
-            fontFamily: 'Avenir',
-            fontWeight: '400'
+            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
+
         },
         inputLayout: {
             marginTop: 16,
@@ -109,7 +109,7 @@ export default function RegistrationInfoScreen (props) {
                         placeholder={'Name'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                     {isValidating && name.length === 0 ? 'Name is mandatory.' : null}
                 </Text>
 
@@ -127,7 +127,7 @@ export default function RegistrationInfoScreen (props) {
                         placeholder={'Email'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                     {isValidating && email.length === 0 ? 'Email is mandatory.' : isValidating && !validateEmail(email)  ? 'Form email is not an email address.' : null}
                 </Text>
 
@@ -148,7 +148,7 @@ export default function RegistrationInfoScreen (props) {
                         placeholder={'No. KTP'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
 
                 </Text>
 
@@ -165,7 +165,7 @@ export default function RegistrationInfoScreen (props) {
                         placeholder={'Address'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
                     {isValidating && address.length === 0 ? 'Address is mandatory.' : null}
                 </Text>
 
@@ -189,7 +189,7 @@ export default function RegistrationInfoScreen (props) {
                     <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                 </TouchableOpacity>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
                     {isValidating && password.length === 0 ? 'Password is mandatory.' : isValidating && password.length < 6 ? 'Password a minimum of 6 characters' : null}
                 </Text>
 
@@ -213,7 +213,7 @@ export default function RegistrationInfoScreen (props) {
                     <Ionicons name={isConfirmPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                 </TouchableOpacity>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir', fontWeight: '400', marginTop: 13}}>
+                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
                     {isValidating && confirmPassword.length === 0 ? 'Confirm password is mandatory.' : isValidating && password !== confirmPassword ? 'The password confirmation does not match.' : null}
                 </Text>
             </KeyboardAwareScrollView>

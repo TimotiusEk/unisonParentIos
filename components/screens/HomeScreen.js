@@ -149,7 +149,7 @@ export default function HomeScreen(props) {
                 <View style={{paddingHorizontal: 15, flex: 1}}>
                     <Text
                         style={{
-                            fontFamily: 'Avenir',
+                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
                             fontSize: 20,
                             marginBottom: 20,
                             fontWeight: '600',
@@ -233,7 +233,7 @@ export default function HomeScreen(props) {
                                     <Text
                                         style={{
                                             fontSize: 16,
-                                            fontFamily: 'Avenir',
+                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                             textAlign: 'center',
                                             marginTop: 10,
                                         }}>
@@ -246,7 +246,7 @@ export default function HomeScreen(props) {
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback
                                 onPress={() => {
-                                   props.navigation.navigate('CameraScreen')
+                                   props.navigation.navigate('PartnerScreen')
                                 }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View
@@ -283,7 +283,7 @@ export default function HomeScreen(props) {
                                     <Text
                                         style={{
                                             fontSize: 16,
-                                            fontFamily: 'Avenir',
+                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                             textAlign: 'center',
                                             marginTop: 10,
                                         }}>
@@ -333,7 +333,7 @@ export default function HomeScreen(props) {
                                     <Text
                                         style={{
                                             fontSize: 16,
-                                            fontFamily: 'Avenir',
+                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                             textAlign: 'center',
                                             marginTop: 10,
                                         }}>
@@ -419,10 +419,11 @@ export default function HomeScreen(props) {
                         imageStyle={{borderRadius: 8}}
                         style={{
                             flexDirection: 'row',
-                            height: 100,
+                            paddingVertical: 10,
                             paddingStart: 16,
                             marginBottom: Platform.OS === 'ios' ? 10 : 0,
                             alignItems: 'center',
+                            marginTop: 10
                         }}>
                         <Image
                             source={require('../../assets/images/ic_quotes-2.png')}
@@ -435,18 +436,19 @@ export default function HomeScreen(props) {
                             <Text
                                 style={{
                                     marginBottom: 4,
-                                    fontFamily: 'Avenir',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
                                     color: 'white',
                                     fontSize: 18,
-                                    fontWeight: '700',
+                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
                                 }}>
                                 {quotes.title}
                             </Text>
                             <Text
                                 style={{
                                     color: 'white',
-                                    fontFamily: 'Avenir',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                                     marginRight: 16,
+                                    lineHeight: 18
                                 }}>
                                 {quotes.quote}
                             </Text>

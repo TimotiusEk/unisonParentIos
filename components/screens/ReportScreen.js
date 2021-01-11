@@ -458,8 +458,7 @@ export default function ReportScreen(props) {
                         <Text
                           style={{
                             color: '#3e67d6',
-                            fontFamily: 'Avenir',
-                            fontWeight: '500',
+                              fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
                           }}>
                           Download Report
                         </Text>
