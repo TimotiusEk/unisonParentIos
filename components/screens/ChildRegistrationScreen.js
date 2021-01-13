@@ -14,6 +14,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Collapsible from "react-native-collapsible";
 import HttpRequest from "../../util/HttpRequest";
 import moment from "moment";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export default function ChildRegistrationScreen(props) {
     const styles = StyleSheet.create({
@@ -23,27 +24,26 @@ export default function ChildRegistrationScreen(props) {
         },
         textInput: {
             fontSize: 16,
-            height: 40,
+            height: 35,
             color: '#101010',
             fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
 
         },
-        inputLayout: {
-            marginTop: 16,
-        }
     });
 
 
     const [childGender, setChildGender] = useState(null);
     const [childName, setChildName] = useState('');
-    const [childDob, setChildDob] = useState(new Date());
+    const [childDob, setChildDob] = useState('');
     const [isValidating, setValidating] = useState(false);
 
     const [isLoading, setLoading] = useState(false);
+    const [showDatePicker, setDatePickerShown] = useState(false)
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || childDob;
         setChildDob(currentDate);
+       setDatePickerShown(false)
     };
 
     const attemptRegister = async () => {
@@ -73,7 +73,7 @@ export default function ChildRegistrationScreen(props) {
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: 'white'}}>
+        <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1, backgroundColor: 'white'}}>
 
 
             <Image source={require('../../assets/images/ic_header_blue.png')}
@@ -174,25 +174,63 @@ export default function ChildRegistrationScreen(props) {
                         placeholder={'Name'}
                     />
                 </TextInputLayout>
-                <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
+                <Text style={{
+                    color: 'red',
+                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                    marginTop: 3
+                }}>
                     {isValidating && childName.length === 0 ? 'Name is mandatory.' : null}
                 </Text>
 
 
-                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', marginTop: 10, marginBottom: 5}}>Tanggal Lahir</Text>
-                <DateTimePicker
-                    testID="dateTimePicker"
-                    value={childDob}
-                    mode={'date'}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                    maximumDate={new Date()}
-                />
+                {Platform.OS === 'ios' &&
+                <Text
+                    style={{
+                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                        marginTop: 10,
+                        marginBottom: 5
+                    }}>Tanggal Lahir</Text>
+                }
+
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        console.log('asd');
+                        setDatePickerShown(true)
+                    }}>
+                    <View>
+                        <TextInputLayout
+
+                            style={[styles.inputLayout, {marginBottom: 30}]}
+                            hintColor={isValidating && childName.length === 0 ? 'red' : 'grey'}
+                            focusColor={isValidating && childName.length === 0 ? 'red' : 'blue'}
+                        >
+                            <TextInput
+                                value={childDob ? moment(childDob).format('DD MMM YYYY') : childDob}
+                                editable={false}
+                                style={[styles.textInput]}
+                                placeholder={'Tanggal Lahir'}
+                            />
+                        </TextInputLayout>
+                    </View>
+                </TouchableWithoutFeedback>
+
+                {(Platform.OS === 'ios' || showDatePicker) && (
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={childDob ? childDob : new Date()}
+                        mode={'date'}
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChange}
+                        maximumDate={new Date()}
+                    />
+                )}
             </View>
 
             <View style={{flex: 1, paddingLeft: 20, justifyContent: 'flex-end'}}>
-                <TouchableOpacity onPress={attemptRegister}>
+                <TouchableOpacity
+                    onPress={attemptRegister}
+                >
                     <View style={{
                         backgroundColor: '#0033A8',
                         alignItems: 'center',
@@ -213,13 +251,12 @@ export default function ChildRegistrationScreen(props) {
                 </TouchableOpacity>
 
                 <Image source={require('../../assets/images/logo_one_line.png')} style={{
-                    height: 74 / 1.9,
-                    width: 239 / 1.9,
+                    height: 74 / 2.3, width: 239 / 2.3,
                     resizeMode: 'contain',
                     marginBottom: 40,
                     marginTop: 50
                 }}/>
             </View>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }

@@ -2,13 +2,15 @@ import React from "react";
 import {
     View,
     Text,
-    TouchableWithoutFeedback, Platform
+    TouchableWithoutFeedback, Platform,
+    StatusBar
 } from "react-native";
 import Pdf from "react-native-pdf";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function ReadTermAndConditionScreen(props) {
     const source = require('../../assets/pdf/termsandcondition.pdf');
+
 
     return (
         <View style={{
@@ -18,7 +20,7 @@ export default function ReadTermAndConditionScreen(props) {
             <View style={{
                 flexDirection: 'row',
                 backgroundColor: '#3D67D5',
-                height: Platform.OS === 'ios' ? 100 : 65,
+                height: Platform.OS === 'ios' ? 100 : 90,
                 alignItems: 'flex-end',
                 paddingBottom: Platform.OS === 'ios' ? 15 : 12,
                 paddingLeft: 15,

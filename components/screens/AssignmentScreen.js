@@ -1036,7 +1036,7 @@ export default function AgendaScreen(props) {
                                       useDownloadManager: true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
                                       notification: true,
                                       path: `${
-                                        assignment.file_path.split('/')[
+                                        PictureDir + assignment.file_path.split('/')[
                                           assignment.file_path.split('/')
                                             .length - 1
                                         ]
@@ -1051,10 +1051,11 @@ export default function AgendaScreen(props) {
                                   config(options)
                                     .fetch(
                                       'GET',
-                                      'https://api.unison.id/' +
-                                        assignment.file_path,
+                                        assignment.file_path
                                     )
                                     .then((res) => {
+                                        console.log('res', res)
+
                                       if (Platform.OS === 'ios') {
                                         console.log(res.data);
 

@@ -17,6 +17,10 @@ export default function ExamDetailScreen(props) {
     return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
   };
 
+    const checkUrlIsVideo = (url) => {
+        return url.match(/\.(mp4)$/) != null;
+    };
+
   return (
     <AppContainer navigation={props.navigation}>
       <ScrollView>
@@ -100,6 +104,11 @@ export default function ExamDetailScreen(props) {
                 props.navigation.navigate('ImageViewerScreen', {
                   url: exam.file_path_student,
                 });
+              } else if( exam.file_path_student &&
+                  checkUrlIsVideo(exam.file_path_student)) {
+                  props.navigation.navigate('VideoPlayerScreen', {
+                      url: exam.file_path_student,
+                  });
               }
             }}>
             <View
@@ -115,7 +124,7 @@ export default function ExamDetailScreen(props) {
                 color="#9EA3BA"
               />
 
-              <Text style={{fontFamily: 'Avenir'}}>
+              <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
                 {!exam.file_path_student
                   ? '-'
                   : exam.file_path_student.split('/')[
@@ -135,6 +144,11 @@ export default function ExamDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: exam.file_path_student2,
                   });
+                } else if( exam.file_path_student2 &&
+                    checkUrlIsVideo(exam.file_path_student2)) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: exam.file_path_student2,
+                    });
                 }
               }}>
               <View
@@ -150,7 +164,7 @@ export default function ExamDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
                   {!exam.file_path_student2
                     ? '-'
                     : exam.file_path_student2.split('/')[
@@ -171,6 +185,11 @@ export default function ExamDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: exam.file_path_student3,
                   });
+                } else if( exam.file_path_student3 &&
+                    checkUrlIsVideo(exam.file_path_student3)) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: exam.file_path_student3,
+                    });
                 }
               }}>
               <View
@@ -186,7 +205,7 @@ export default function ExamDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
                   {!exam.file_path_student3
                     ? '-'
                     : exam.file_path_student3.split('/')[
@@ -220,7 +239,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{exam.exam_date}</Text>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>{exam.exam_date}</Text>
           </View>
 
           <View
@@ -236,7 +255,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
               {exam.start_time} - {exam.end_time}
             </Text>
           </View>
@@ -247,6 +266,11 @@ export default function ExamDetailScreen(props) {
                 props.navigation.navigate('ImageViewerScreen', {
                   url: exam.file_path,
                 });
+              } else if( exam.file_path &&
+                  checkUrlIsVideo(exam.file_path)) {
+                  props.navigation.navigate('VideoPlayerScreen', {
+                      url: exam.file_path,
+                  });
               }
             }}>
             <View
@@ -262,7 +286,7 @@ export default function ExamDetailScreen(props) {
                 color="#9EA3BA"
               />
 
-              <Text style={{fontFamily: 'Avenir'}}>
+              <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
                 {!exam.file_path
                   ? '-'
                   : exam.file_path.split('/')[
@@ -285,7 +309,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
               Min Score : {exam.min_score}
             </Text>
           </View>
@@ -303,7 +327,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>
               Score : {exam.score ? exam.score : 'No data'}
             </Text>
           </View>
@@ -331,7 +355,7 @@ export default function ExamDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{exam.subject}</Text>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',}}>{exam.subject}</Text>
           </View>
         </View>
       </ScrollView>

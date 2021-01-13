@@ -4,16 +4,6 @@ import AppIntroSlider from "react-native-app-intro-slider";
 import AsyncStorage from "@react-native-community/async-storage";
 
 export default function AppIntroScreen (props)  {
-    useEffect(() => {
-        redirectIfUserFinishedIntro();
-    }, [])
-
-    const redirectIfUserFinishedIntro = async () => {
-        const isUserFinishedIntro = await AsyncStorage.getItem('isUserFinishedIntro');
-
-        if(isUserFinishedIntro === 'true') props.navigation.navigate('LoginScreen')
-    }
-
     const _renderItem = ({item, index}) => {
         if (index === 0) {
             return (

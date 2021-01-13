@@ -54,6 +54,8 @@ import PaymentSuccessScreen from './components/screens/PaymentSuccessScreen';
 import BankTransferScreen from './components/screens/BankTransferScreen';
 import CompletePaymentScreen from './components/screens/CompletePaymentScreen';
 import CameraScreen from './components/screens/CameraScreen';
+import SplashScreen from "./components/screens/SplashScreen";
+import VideoPlayerScreen from "./components/screens/VideoPlayerScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -115,7 +117,8 @@ export default function App() {
             PaymentSuccessScreen,
             BankTransferScreen,
             CompletePaymentScreen,
-            CameraScreen
+            CameraScreen,
+            VideoPlayerScreen
         },
         {
             headerMode: "none",
@@ -127,11 +130,12 @@ export default function App() {
     );
 
     const MainSwitch = createSwitchNavigator({
+        SplashScreen,
         AppIntroScreen,
         LoginStack,
         HomeStack
     }, {
-        initialRouteName: "AppIntroScreen",
+        initialRouteName: "SplashScreen",
         backBehavior: 'none'
     });
 

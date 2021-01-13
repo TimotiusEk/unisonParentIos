@@ -20,6 +20,10 @@ export default function AssignmentDetailScreen(props) {
     return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
   };
 
+    const checkUrlIsVideo = (url) => {
+        return url.match(/\.(mp4)$/) != null;
+    };
+
   useEffect(() => {
     console.log(assignment);
   }, []);
@@ -107,6 +111,11 @@ export default function AssignmentDetailScreen(props) {
                 props.navigation.navigate('ImageViewerScreen', {
                   url: assignment.file_path_student,
                 });
+              } else if( assignment.file_path_student &&
+                  checkUrlIsVideo(assignment.file_path_student)) {
+                  props.navigation.navigate('VideoPlayerScreen', {
+                      url: assignment.file_path_student,
+                  });
               }
             }}>
             <View
@@ -122,7 +131,7 @@ export default function AssignmentDetailScreen(props) {
                 color="#9EA3BA"
               />
 
-              <Text style={{fontFamily: 'Avenir'}}>
+              <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                 {!assignment.file_path_student
                   ? '-'
                   : assignment.file_path_student.split('/')[
@@ -142,6 +151,11 @@ export default function AssignmentDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: assignment.file_path_student2,
                   });
+                } else if( assignment.file_path_student2 &&
+                    checkUrlIsVideo(assignment.file_path_student2)) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: assignment.file_path_student2,
+                    });
                 }
               }}>
               <View
@@ -157,7 +171,7 @@ export default function AssignmentDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                   {!assignment.file_path_student2
                     ? '-'
                     : assignment.file_path_student2.split('/')[
@@ -178,6 +192,11 @@ export default function AssignmentDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: assignment.file_path_student3,
                   });
+                } else if( assignment.file_path_student3 &&
+                    checkUrlIsVideo(assignment.file_path_student3)) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: assignment.file_path_student3,
+                    });
                 }
               }}>
               <View
@@ -193,7 +212,7 @@ export default function AssignmentDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                   {!assignment.file_path_student3
                     ? '-'
                     : assignment.file_path_student3.split('/')[
@@ -227,7 +246,7 @@ export default function AssignmentDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
               {moment.utc(assignment.assignment_date).format('DD MMM')}
             </Text>
           </View>
@@ -250,7 +269,7 @@ export default function AssignmentDetailScreen(props) {
                 color="#9EA3BA"
               />
 
-              <Text style={{fontFamily: 'Avenir'}}>
+              <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                 {!assignment.link ? 'No data' : 'https://' + assignment.link}
               </Text>
             </View>
@@ -272,7 +291,7 @@ export default function AssignmentDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                   {!assignment.link2
                     ? 'No data'
                     : 'https://' + assignment.link2}
@@ -294,7 +313,7 @@ export default function AssignmentDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{assignment.end_date}</Text>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>{assignment.end_date}</Text>
           </View>
 
           <TouchableWithoutFeedback
@@ -306,6 +325,13 @@ export default function AssignmentDetailScreen(props) {
                 props.navigation.navigate('ImageViewerScreen', {
                   url: assignment.file_path,
                 });
+              } else if (
+                  assignment.file_path &&
+                  checkUrlIsVideo(assignment.file_path)
+              ) {
+                  props.navigation.navigate('VideoPlayerScreen', {
+                      url: assignment.file_path,
+                  });
               }
             }}>
             <View
@@ -321,7 +347,7 @@ export default function AssignmentDetailScreen(props) {
                 color="#9EA3BA"
               />
 
-              <Text style={{fontFamily: 'Avenir'}}>
+              <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                 {!assignment.file_path
                   ? 'No data'
                   : assignment.file_path.split('/')[
@@ -338,6 +364,13 @@ export default function AssignmentDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: assignment.file_path2,
                   });
+                } else if (
+                    assignment.file_path2 &&
+                    checkUrlIsVideo(assignment.file_path2)
+                ) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: assignment.file_path2,
+                    });
                 }
               }}>
               <View
@@ -353,7 +386,7 @@ export default function AssignmentDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                   {!assignment.file_path2
                     ? 'No data'
                     : assignment.file_path2.split('/')[
@@ -371,6 +404,13 @@ export default function AssignmentDetailScreen(props) {
                   props.navigation.navigate('ImageViewerScreen', {
                     url: assignment.file_path3,
                   });
+                }  else if (
+                    assignment.file_path3 &&
+                    checkUrlIsVideo(assignment.file_path3)
+                ) {
+                    props.navigation.navigate('VideoPlayerScreen', {
+                        url: assignment.file_path3,
+                    });
                 }
               }}>
               <View
@@ -386,7 +426,7 @@ export default function AssignmentDetailScreen(props) {
                   color="#9EA3BA"
                 />
 
-                <Text style={{fontFamily: 'Avenir'}}>
+                <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>
                   {!assignment.file_path3
                     ? 'No data'
                     : assignment.file_path3.split('/')[
@@ -410,7 +450,7 @@ export default function AssignmentDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{assignment.class_name}</Text>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>{assignment.class_name}</Text>
           </View>
 
           <View
@@ -426,7 +466,7 @@ export default function AssignmentDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir'}}>{assignment.type}</Text>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>{assignment.type}</Text>
           </View>
 
           <Text
@@ -452,7 +492,7 @@ export default function AssignmentDetailScreen(props) {
               color="#9EA3BA"
             />
 
-            <Text style={{fontFamily: 'Avenir', flex: 1, paddingEnd: 16}}>
+            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', flex: 1, paddingEnd: 16}}>
               {assignment.description}
             </Text>
           </View>

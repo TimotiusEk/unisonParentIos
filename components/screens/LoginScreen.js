@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     TouchableWithoutFeedback,
-    KeyboardAvoidingView, Platform
+    StatusBar, Platform
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -15,6 +15,7 @@ import {TextInputLayout} from 'rn-textinputlayout';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Collapsible from "react-native-collapsible";
 import HttpRequest from "../../util/HttpRequest";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export default function LoginScreen(props) {
     const styles = StyleSheet.create({
@@ -40,16 +41,6 @@ export default function LoginScreen(props) {
     const [isValidating, setValidating] = useState(false);
     const [errorMsg, setErrorMsg] = useState('')
     const [isLoading, setLoading] = useState(false);
-
-    useEffect(() => {
-        redirectIfLoggedIn()
-    }, [])
-
-    const redirectIfLoggedIn = async () => {
-        const user = await AsyncStorage.getItem('user');
-
-        if (user) props.navigation.navigate('HomeStack')
-    }
 
     const attemptLogin = async () => {
         if (!username || !password) setValidating(true)
@@ -80,52 +71,61 @@ export default function LoginScreen(props) {
     }
 
     return (
-        <KeyboardAvoidingView style={{flex: 1}}>
-            <View style={{flex: 1, backgroundColor: 'white'}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
+            <StatusBar translucent={true} backgroundColor={'transparent'} barStyle={'dark-content'}/>
+
+            <View style={{flex: 1}}>
                 <Image source={require('../../assets/images/ic_login_header.png')}
-                       style={{width: 308, height: 99, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
+                       style={{width: 308 / 1.25, height: 99 / 1.25, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
                 <View style={{flex: 1}}>
-                    <View style={{paddingHorizontal: 36}}>
-                        <Text style={{
-                            fontSize: 24,
-                            color: '#042C5C',
-                            marginTop: 8,
-                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                            fontWeight: Platform.OS === 'android' ? undefined : '700'
+                    <View style={{flex: 1}}>
+                        <View style={{
+                            paddingHorizontal: 36
                         }}>
-                            Login into my account
-                        </Text>
-
-                        <Collapsible collapsed={errorMsg.length === 0}>
-                            <View style={{
-                                backgroundColor: 'red', marginTop: 5, paddingLeft: 15, paddingRight: 15, height: 55,
-                                justifyContent: 'center'
+                            <Text style={{
+                                fontSize: 24,
+                                color: '#042C5C',
+                                marginTop: 8,
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                fontWeight: Platform.OS === 'android' ? undefined : '700'
                             }}>
-                                <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
-                                    {errorMsg}
-                                </Text>
-                            </View>
-                        </Collapsible>
+                                Login into my account
+                            </Text>
 
-                        <TextInputLayout
-                            style={styles.inputLayout}
-                            hintColor={isValidating && username.length === 0 ? 'red' : 'grey'}
-                            focusColor={isValidating && username.length === 0 ? 'red' : 'blue'}
-                        >
-                            <TextInput
-                                onChangeText={(username) => {
-                                    setUsername(username)
-                                }}
-                                style={styles.textInput}
-                                placeholder={'Username'}
-                            />
-                        </TextInputLayout>
-                        <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
-                            {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
-                        </Text>
+                            <Collapsible collapsed={errorMsg.length === 0}>
+                                <View style={{
+                                    backgroundColor: 'red', marginTop: 5, paddingLeft: 15, paddingRight: 15, height: 55,
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text style={{color: 'white', fontFamily: 'Poppins-Regular'}}>
+                                        {errorMsg}
+                                    </Text>
+                                </View>
+                            </Collapsible>
 
-                        <View>
+                            <TextInputLayout
+                                style={styles.inputLayout}
+                                hintColor={isValidating && username.length === 0 ? 'red' : 'grey'}
+                                focusColor={isValidating && username.length === 0 ? 'red' : 'blue'}
+                            >
+                                <TextInput
+                                    onChangeText={(username) => {
+                                        setUsername(username)
+                                    }}
+                                    style={styles.textInput}
+                                    placeholder={'Username'}
+                                />
+                            </TextInputLayout>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3
+                            }}>
+                                {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
+                            </Text>
+
+
                             <TextInputLayout
                                 style={styles.inputLayout}
                                 hintColor={isValidating && password.length === 0 ? 'red' : 'grey'}
@@ -148,7 +148,11 @@ export default function LoginScreen(props) {
                                 <Ionicons name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color={'grey'}/>
                             </TouchableOpacity>
 
-                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 13}}>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 13
+                            }}>
                                 {isValidating && password.length === 0 ? 'Password is mandatory.' : null}
                             </Text>
 
@@ -185,36 +189,48 @@ export default function LoginScreen(props) {
 
                             <TouchableWithoutFeedback onPress={() => props.navigation.navigate('RegisterScreen')}>
                                 <View style={{alignItems: 'center', marginTop: 30}}>
-                                    <Text style={{fontSize: 16, color: '#77869E',  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                        fontWeight:  Platform.OS === 'android' ? undefined: '700',}}>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        color: '#77869E',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                        fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                    }}>
                                         Don't Have Account? <Text style={{color: '#101010'}}>Register</Text>
                                     </Text>
                                 </View>
                             </TouchableWithoutFeedback>
-                        </View>
-                    </View>
 
-                    <View style={{flex: 1}}/>
-                    <View style={{paddingLeft: 20, flexDirection: 'row', alignItems: 'flex-end', zIndex: -1}}>
-                        <Image source={require('../../assets/images/logo_one_line.png')}
-                               style={{
-                                   height: 74 / 1.9,
-                                   width: 239 / 1.9,
-                                   resizeMode: 'contain',
-                                   marginBottom: 40
-                               }}/>
-                        <View style={{flex: 1, alignItems: 'flex-end'}}>
-                            <Image source={require('../../assets/images/ic_login_blue.png')}
-                                   style={{width: 260 / 1.1, height: 95 / 1.1, marginBottom: -213}}/>
-                            <Image source={require('../../assets/images/ic_login.png')}
-                                   style={{width: 200, height: 193, marginBottom: 20}}/>
+
+
+
+                        </View>
+
+                        <View style={{flex: 1}}/>
+
+                        <View>
+                            <View style={{flexDirection: 'row', alignItems: 'flex-end', zIndex: -1, paddingLeft: 18}}>
+                                <Image source={require('../../assets/images/logo_one_line.png')}
+                                       style={{
+                                           height: 74 / 2.3,
+                                           width: 239 / 2.3,
+                                           resizeMode: 'contain',
+                                           marginBottom: 15,
+                                       }}/>
+                                <View style={{flex: 1, alignItems: 'flex-end'}}>
+
+                                    <Image source={require('../../assets/images/ic_login.png')}
+                                           style={{width: 200 / 1.1, height: 193 / 1.1, marginBottom: 17}}/>
+
+                                    <Image source={require('../../assets/images/ic_login_blue.png')}
+                                           style={{width: 260 / 1.25, height: 95 / 1.25, position: 'absolute', right: 0, bottom : -10, zIndex: -1}}/>
+                                </View>
+                            </View>
                         </View>
                     </View>
                 </View>
 
 
-
             </View>
-        </KeyboardAvoidingView>
+        </View>
     )
 }

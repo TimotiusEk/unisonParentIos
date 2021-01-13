@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import React, {useState} from "react";
 import {TextInputLayout} from "rn-textinputlayout";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 export default function RegisterScreen(props) {
     const styles = StyleSheet.create({
@@ -47,7 +48,7 @@ export default function RegisterScreen(props) {
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: 'white'}}>
+        <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1, backgroundColor: 'white'}}>
             <Image source={require('../../assets/images/ic_header_blue.png')}
                    style={{width: 309, height: 109, resizeMode: 'contain', alignSelf: 'flex-end'}}/>
 
@@ -63,7 +64,7 @@ export default function RegisterScreen(props) {
             <Text style={{color: '#818181', fontFamily: 'Poppins-Regular', textAlign: 'center', marginTop: 8}}>Enter
                 your mobile number</Text>
 
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: 36, paddingRight: 36}}>
+            <View style={{justifyContent: 'center', paddingLeft: 36, paddingRight: 36, marginTop: 36}}>
                 <TextInputLayout
                     style={styles.inputLayout}
                     hintColor={isValidating && errorMsg.length !== 0 ? 'red' : 'grey'}
@@ -82,7 +83,7 @@ export default function RegisterScreen(props) {
                     />
                 </TextInputLayout>
 
-                <Text style={{color: 'red', fontFamily: 'Avenir',  marginTop: 3}}>
+                <Text style={{color: 'red', fontFamily: 'Avenir', marginTop: 3}}>
                     {isValidating && errorMsg.length !== 0 ? errorMsg : null}
                 </Text>
 
@@ -93,7 +94,7 @@ export default function RegisterScreen(props) {
                 </TouchableWithoutFeedback>
             </View>
 
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: 36, paddingRight: 36}}>
+            <View style={{justifyContent: 'center', paddingLeft: 36, paddingRight: 36, paddingVertical: 50}}>
                 <TouchableOpacity onPress={attemptRegister}>
                     <View style={{
                         backgroundColor: '#0033A8',
@@ -110,14 +111,16 @@ export default function RegisterScreen(props) {
 
             </View>
 
-            <Image source={require('../../assets/images/logo_one_line.png')}
-                   style={{
-                       height: 74 / 1.9,
-                       width: 239 / 1.9,
-                       resizeMode: 'contain',
-                       marginBottom: 40,
-                       marginLeft: 20
-                   }}/>
-        </View>
+            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                <Image source={require('../../assets/images/logo_one_line.png')}
+                       style={{
+                           height: 74 / 2.3,
+                           width: 239 / 2.3,
+                           resizeMode: 'contain',
+                           marginBottom: 15,
+                           marginLeft: 20,
+                       }}/>
+            </View>
+        </KeyboardAwareScrollView>
     )
 }

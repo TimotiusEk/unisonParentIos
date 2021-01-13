@@ -40,11 +40,18 @@ export default function PartnerScreen(props) {
                             message: 'This App needs to Access your location',
                         },
                     );
+
+                    console.log(granted)
+
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        console.log('granted')
+
                         //To Check, If Permission is granted
                         getOneTimeLocation();
                         subscribeLocationLocation();
                     } else {
+                        console.log('not granted')
+
                         setLocationStatus('Permission Denied');
                     }
                 } catch (err) {
@@ -489,7 +496,6 @@ export default function PartnerScreen(props) {
 
                     <View
                         style={{
-                            marginleft: 15,
                             backgroundColor: 'white',
                             borderRadius: 10,
                             shadowColor: '#000',
