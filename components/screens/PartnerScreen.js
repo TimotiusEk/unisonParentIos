@@ -12,11 +12,11 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MapView, {Marker} from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
+import {request, PERMISSIONS} from 'react-native-permissions';
+import Permissions from 'react-native-permissions';
+import Geolocation from 'react-native-geolocation-service';
 
 export default function PartnerScreen(props) {
-    const [currentLongitude, setCurrentLongitude] = useState(0);
-    const [currentLatitude, setCurrentLatitude] = useState(0);
     const [locationStatus, setLocationStatus] = useState('');
     const [locationName, setLocationName] = useState('');
     const [centerPosition, setCenterPosition] = useState({
@@ -26,44 +26,70 @@ export default function PartnerScreen(props) {
         longitudeDelta: 0.008,
     });
 
+    const [userPosition, setUserPosition] = useState({
+        latitude: -6.2269,
+        longitude: 106.7979
+    })
+
     useEffect(() => {
-        const requestLocationPermission = async () => {
-            if (Platform.OS === 'ios') {
-                getOneTimeLocation();
-                subscribeLocationLocation();
-            } else {
-                try {
-                    const granted = await PermissionsAndroid.request(
-                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                        {
-                            title: 'Location Access Required',
-                            message: 'This App needs to Access your location',
-                        },
-                    );
+        checkAndRequestLocationPermission()
 
-                    console.log(granted)
-
-                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                        console.log('granted')
-
-                        //To Check, If Permission is granted
-                        getOneTimeLocation();
-                        subscribeLocationLocation();
-                    } else {
-                        console.log('not granted')
-
-                        setLocationStatus('Permission Denied');
-                    }
-                } catch (err) {
-                    console.warn(err);
-                }
-            }
-        };
-        requestLocationPermission();
+        // const requestLocationPermission = async () => {
+        //     if (Platform.OS === 'ios') {
+        //         getOneTimeLocation();
+        //         subscribeLocationLocation();
+        //     } else {
+        //         try {
+        //             request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION).then(result => {
+        //                 console.log('ACCESS_COARSE_LOCATION', result);
+        //                 if(result === PermissionsAndroid.RESULTS.GRANTED) {
+        //                     getOneTimeLocation();
+        //                     subscribeLocationLocation();
+        //                 }
+        //             });
+        //
+        //             request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(result => {
+        //                 console.log('ACCESS_FINE_LOCATION', result);
+        //             });
+        //
+        //             // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        //             //     console.log('granted')
+        //             //
+        //             //     //To Check, If Permission is granted
+        //             //     getOneTimeLocation();
+        //             //     subscribeLocationLocation();
+        //             // } else {
+        //             //     console.log('not granted')
+        //             //
+        //             //     setLocationStatus('Permission Denied');
+        //             // }
+        //         } catch (err) {
+        //             console.warn(err);
+        //         }
+        //     }
+        // };
+        // requestLocationPermission();
         // return () => {
         //   Geolocation.clearWatch(watchID);
         // };
     }, []);
+
+    const checkAndRequestLocationPermission = () => {
+        if (Platform.OS === 'ios') {
+            // Geolocation.requestAuthorization((location)=>{
+            //     console.log("succ", location)
+            // }, (error)=>{
+            //     console.log("loc_error", error)
+            // })
+            Geolocation.requestAuthorization()
+
+            return;
+        }
+
+        request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(result => {
+            if(result === 'granted') goToMyLocation();
+        });
+    }
 
     const getLocationFromLatLng = (lat, lng) => {
         fetch(
@@ -89,15 +115,100 @@ export default function PartnerScreen(props) {
             });
     };
 
-    const getOneTimeLocation = () => {
-        setLocationStatus('Getting Location ...');
+    // const getOneTimeLocation = () => {
+    //     setLocationStatus('Getting Location ...');
+    //     Geolocation.getCurrentPosition(
+    //         //Will give you the current location
+    //         (position) => {
+    //             setLocationStatus('You are Here');
+    //
+    //             console.log('xaxa');
+    //
+    //             //getting the Longitude from the location json
+    //             const currentLongitude = JSON.stringify(position.coords.longitude);
+    //
+    //             //getting the Latitude from the location json
+    //             const currentLatitude = JSON.stringify(position.coords.latitude);
+    //
+    //             getLocationFromLatLng(
+    //                 parseFloat(position.coords.latitude),
+    //                 parseFloat(position.coords.longitude),
+    //             );
+    //
+    //             setCenterPosition({
+    //                 latitude: parseFloat(position.coords.latitude),
+    //                 longitude: parseFloat(position.coords.longitude),
+    //                 latitudeDelta: 0.008,
+    //                 longitudeDelta: 0.008,
+    //             });
+    //
+    //             //Setting Longitude state
+    //             setCurrentLongitude(currentLongitude);
+    //
+    //             //Setting Longitude state
+    //             setCurrentLatitude(currentLatitude);
+    //         },
+    //         (error) => {
+    //             setLocationStatus(error.message);
+    //         },
+    //         {
+    //             enableHighAccuracy: false,
+    //             timeout: 30000,
+    //             maximumAge: 1000,
+    //         },
+    //     );
+    // };
+
+    // const subscribeLocationLocation = () => {
+    //     watchID = Geolocation.watchPosition(
+    //         (position) => {
+    //             //Will give you the location on location change
+    //
+    //             setLocationStatus('You are Here');
+    //
+    //             //getting the Longitude from the location json
+    //             const currentLongitude = JSON.stringify(position.coords.longitude);
+    //
+    //             //getting the Latitude from the location json
+    //             const currentLatitude = JSON.stringify(position.coords.latitude);
+    //
+    //             getLocationFromLatLng(
+    //                 parseFloat(position.coords.latitude),
+    //                 parseFloat(position.coords.longitude),
+    //             );
+    //
+    //             setCenterPosition({
+    //                 latitude: parseFloat(position.coords.latitude),
+    //                 longitude: parseFloat(position.coords.longitude),
+    //                 latitudeDelta: 0.008,
+    //                 longitudeDelta: 0.008,
+    //             });
+    //
+    //             //Setting Longitude state
+    //             setCurrentLongitude(currentLongitude);
+    //
+    //             //Setting Latitude state
+    //             setCurrentLatitude(currentLatitude);
+    //         },
+    //         (error) => {
+    //             console.log(error);
+    //             setLocationStatus(error.message);
+    //         },
+    //         {
+    //             enableHighAccuracy: false,
+    //             maximumAge: 1000,
+    //         },
+    //     );
+    // };
+
+    const goToMyLocation = () => {
+
+        if (Platform.OS === "ios") {
+            console.log("requersting")
+        }
+
         Geolocation.getCurrentPosition(
-            //Will give you the current location
             (position) => {
-                setLocationStatus('You are Here');
-
-                console.log('xaxa');
-
                 //getting the Longitude from the location json
                 const currentLongitude = JSON.stringify(position.coords.longitude);
 
@@ -105,75 +216,30 @@ export default function PartnerScreen(props) {
                 const currentLatitude = JSON.stringify(position.coords.latitude);
 
                 getLocationFromLatLng(
-                    parseFloat(position.coords.latitude),
-                    parseFloat(position.coords.longitude),
+                    position.coords.latitude,
+                    position.coords.longitude,
                 );
 
                 setCenterPosition({
-                    latitude: parseFloat(position.coords.latitude),
-                    longitude: parseFloat(position.coords.longitude),
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
                     latitudeDelta: 0.008,
                     longitudeDelta: 0.008,
                 });
 
-                //Setting Longitude state
-                setCurrentLongitude(currentLongitude);
-
-                //Setting Longitude state
-                setCurrentLatitude(currentLatitude);
+                setUserPosition({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                })
             },
             (error) => {
-                setLocationStatus(error.message);
+                // See error code charts below.
+                console.log('error bro');
+                console.log(error.code, error.message);
             },
-            {
-                enableHighAccuracy: false,
-                timeout: 30000,
-                maximumAge: 1000,
-            },
+            {enableHighAccuracy: false, timeout: 15000, maximumAge: 10000},
         );
-    };
-
-    const subscribeLocationLocation = () => {
-        watchID = Geolocation.watchPosition(
-            (position) => {
-                //Will give you the location on location change
-
-                setLocationStatus('You are Here');
-
-                //getting the Longitude from the location json
-                const currentLongitude = JSON.stringify(position.coords.longitude);
-
-                //getting the Latitude from the location json
-                const currentLatitude = JSON.stringify(position.coords.latitude);
-
-                getLocationFromLatLng(
-                    parseFloat(position.coords.latitude),
-                    parseFloat(position.coords.longitude),
-                );
-
-                setCenterPosition({
-                    latitude: parseFloat(position.coords.latitude),
-                    longitude: parseFloat(position.coords.longitude),
-                    latitudeDelta: 0.008,
-                    longitudeDelta: 0.008,
-                });
-
-                //Setting Longitude state
-                setCurrentLongitude(currentLongitude);
-
-                //Setting Latitude state
-                setCurrentLatitude(currentLatitude);
-            },
-            (error) => {
-                console.log(error);
-                setLocationStatus(error.message);
-            },
-            {
-                enableHighAccuracy: false,
-                maximumAge: 1000,
-            },
-        );
-    };
+    }
 
     return (
         <View style={{flex: 1}}>
@@ -225,7 +291,6 @@ export default function PartnerScreen(props) {
                         borderRadius: 4,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        paddingVertical: 5,
                         paddingHorizontal: 10,
                         marginTop: 15,
                         marginHorizontal: 16,
@@ -599,10 +664,7 @@ export default function PartnerScreen(props) {
                             borderRadius: 8,
                         }}>
                         <Marker
-                            coordinate={{
-                                latitude: currentLatitude,
-                                longitude: currentLongitude,
-                            }}
+                            coordinate={userPosition}
                         />
                     </MapView>
 

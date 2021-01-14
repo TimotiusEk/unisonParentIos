@@ -57,7 +57,9 @@
     "react-navigation-tabs": "^2.8.11",
     "rn-fetch-blob": "^0.12.0",
     "rn-textinputlayout": "^1.0.5",
-    "toast-message": "0.0.2"
+    "toast-message": "0.0.2",
+    "react-native-permissions": "^2.0.9",
+    "react-native-geolocation-service": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.7",
