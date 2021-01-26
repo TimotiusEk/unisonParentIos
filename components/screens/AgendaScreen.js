@@ -37,6 +37,7 @@ export default function AgendaScreen(props) {
     const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
     const [schedules, setSchedules] = useState([]);
     const [agendas, setAgendas] = useState([]);
+    const [isParent, setParent] = useState(false);
 
     const colors = [
         '#B968C7',
@@ -119,7 +120,21 @@ export default function AgendaScreen(props) {
 
         let myChildren = await AsyncStorage.getItem('myChildren');
 
-        if (!myChildren) {
+        if (!user.parent_id) {
+            setParent(false)
+
+            new Promise(
+                await HttpRequest.set(
+                    '/users/student',
+                    'POST',
+                    JSON.stringify({
+                        access_token: user.access_token,
+                    }),
+                ),
+            ).then(res => {
+                setSelectedChild(res.data[0]);
+            }).catch(err => console.log(err))
+        } else if (!myChildren) {
             new Promise(
                 await HttpRequest.set(
                     '/students/mychildren',
@@ -391,8 +406,10 @@ export default function AgendaScreen(props) {
                         }}>
                         <TouchableWithoutFeedback
                             onPress={() => {
-                                setSelect('class');
-                                rbSheetRef.current.open();
+                                if (isParent) {
+                                    setSelect('class');
+                                    rbSheetRef.current.open();
+                                }
                             }}>
                             <View style={{flex: 1, marginTop: 20}}>
                                 <View
@@ -412,11 +429,13 @@ export default function AgendaScreen(props) {
                                             marginStart: 16,
                                             marginTop: 8,
                                             marginBottom: 8,
+                                            marginEnd: isParent ? 0 : 16,
                                             flex: 1,
                                         }}>
                                         {selectedChild.student_name} - {selectedChild.class_name}
                                     </Text>
 
+                                    {isParent &&
                                     <Fontisto
                                         name={'angle-down'}
                                         style={{
@@ -427,6 +446,7 @@ export default function AgendaScreen(props) {
                                         }}
                                         size={16}
                                     />
+                                    }
                                 </View>
                             </View>
                         </TouchableWithoutFeedback>
@@ -640,7 +660,10 @@ export default function AgendaScreen(props) {
                                                                 }}>
                                                                 <View style={{flexDirection: 'row'}}>
                                                                     <Text
-                                                                        style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir', flex: 1}}>
+                                                                        style={{
+                                                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                                            flex: 1
+                                                                        }}>
                                                                         {agenda.SUBJECT}
                                                                     </Text>
 

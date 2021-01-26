@@ -68,6 +68,7 @@ export default function ProfileScreen(props) {
     const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [isLoadingShown, setLoadingShown] = useState(false);
+    const [isParent, setParent] = useState(false);
 
     useEffect(() => {
         getUserData()
@@ -84,12 +85,16 @@ export default function ProfileScreen(props) {
         setHp(user.hp)
         setAddress(user.address)
 
-        let myChildren = await AsyncStorage.getItem('myChildren');
+        if (user.parent_id) {
+            setParent(true)
 
-        if (!myChildren) {
-            getMyChildren()
-        } else {
-            setMyChildren(JSON.parse(myChildren))
+            let myChildren = await AsyncStorage.getItem('myChildren');
+
+            if (!myChildren) {
+                getMyChildren()
+            } else {
+                setMyChildren(JSON.parse(myChildren))
+            }
         }
 
         setUser(user);
@@ -245,7 +250,11 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
+                            <Text style={{
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3,
+                                color: 'red'
+                            }}>
                                 {errorMsg ? errorMsg : isValidating && currentPassword.length === 0 ? 'Current password is mandatory.' : null}
                             </Text>
 
@@ -263,7 +272,10 @@ export default function ProfileScreen(props) {
                                     rbSheetRef.current.close();
                                     props.navigation.navigate('ForgotPasswordSwitch')
                                 }}>
-                                    <Text style={{color: 'grey', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'}}>Forgot Password?</Text>
+                                    <Text style={{
+                                        color: 'grey',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
+                                    }}>Forgot Password?</Text>
                                 </TouchableWithoutFeedback>
                             </View>
                         }
@@ -292,7 +304,11 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
+                            <Text style={{
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3,
+                                color: 'red'
+                            }}>
                                 {isValidating && newPassword.length === 0 ? 'New password is mandatory.' : isValidating && newPassword.length < 6 ? 'New password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
                             </Text>
 
@@ -329,7 +345,11 @@ export default function ProfileScreen(props) {
 
                                 />
                             </TextInputLayout>
-                            <Text style={{fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3, color: 'red'}}>
+                            <Text style={{
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3,
+                                color: 'red'
+                            }}>
                                 {isValidating && confirmPassword.length === 0 ? 'Confirmation password is mandatory.' : isValidating && confirmPassword.length < 6 ? 'Confirmation password must be at least 6 characters.' : isValidating && newPassword !== confirmPassword ? 'Password and confirm password does not match.' : null}
                             </Text>
 
@@ -362,7 +382,11 @@ export default function ProfileScreen(props) {
                                     value={username}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3
+                            }}>
                                 {isValidating && username.length === 0 ? 'Username is mandatory.' : null}
                             </Text>
                         </View>
@@ -392,7 +416,11 @@ export default function ProfileScreen(props) {
                                     value={email}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3
+                            }}>
                                 {isValidating && email.length === 0 ? 'Email is mandatory.' : null}
                             </Text>
                         </View>
@@ -424,7 +452,11 @@ export default function ProfileScreen(props) {
                                     value={hp}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3
+                            }}>
                                 {isValidating && hp.length === 0 ? 'Mobile Phone is mandatory.' : null}
                             </Text>
                         </View>
@@ -453,7 +485,11 @@ export default function ProfileScreen(props) {
                                     value={address}
                                 />
                             </TextInputLayout>
-                            <Text style={{color: 'red', fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',  marginTop: 3}}>
+                            <Text style={{
+                                color: 'red',
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                marginTop: 3
+                            }}>
                                 {isValidating && address.length === 0 ? 'Address is mandatory.' : null}
                             </Text>
                         </View>
@@ -564,112 +600,119 @@ export default function ProfileScreen(props) {
                     </View>
                 </Collapsible>
 
-                <TouchableWithoutFeedback onPress={() => setMyChildrenCollapsed(!isMyChildrenCollapsed)}>
-                    <View style={{
-                        backgroundColor: '#f5f5f5',
-                        paddingHorizontal: 18,
-                        paddingTop: 16,
-                        paddingBottom: 20,
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                    }}>
-                        <Text style={{
-                            fontFamily: 'Montserrat-Bold',
-                            flex: 1
+                {isParent &&
+                <>
+                    <TouchableWithoutFeedback onPress={() => setMyChildrenCollapsed(!isMyChildrenCollapsed)}>
+                        <View style={{
+                            backgroundColor: '#f5f5f5',
+                            paddingHorizontal: 18,
+                            paddingTop: 16,
+                            paddingBottom: 20,
+                            flexDirection: 'row',
+                            alignItems: 'center'
                         }}>
-                            My Children
-                        </Text>
+                            <Text style={{
+                                fontFamily: 'Montserrat-Bold',
+                                flex: 1
+                            }}>
+                                My Children
+                            </Text>
 
-                        <Ionicons name={isMyChildrenCollapsed ? 'chevron-down-outline' : 'chevron-up-outline'}
-                                  color={'#9D9D9D'} size={20}/>
-                    </View>
-                </TouchableWithoutFeedback>
+                            <Ionicons name={isMyChildrenCollapsed ? 'chevron-down-outline' : 'chevron-up-outline'}
+                                      color={'#9D9D9D'} size={20}/>
+                        </View>
+                    </TouchableWithoutFeedback>
 
-                <Collapsible collapsed={isMyChildrenCollapsed}>
-                    <View style={{marginTop: 20, paddingHorizontal: 20}}>
-                        {
-                            myChildren.map(child => {
-                                return (
-                                    <View>
-                                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                            <Text style={{  fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                                fontWeight:  Platform.OS === 'android' ? undefined: '700', fontSize: 18}}>
+                    <Collapsible collapsed={isMyChildrenCollapsed}>
+                        <View style={{marginTop: 20, paddingHorizontal: 20}}>
+                            {
+                                myChildren.map(child => {
+                                    return (
+                                        <View>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    fontSize: 18
+                                                }}>
+                                                    {child.student_name}
+                                                </Text>
+
+                                                <View style={{
+                                                    flex: 1,
+                                                    height: 1,
+                                                    backgroundColor: '#e6e6e6',
+                                                    marginLeft: 30
+                                                }}/>
+                                            </View>
+
+                                            <Text style={{color: '#787878', fontWeight: '300', marginTop: 20}}>
+                                                Name
+                                            </Text>
+                                            <Text style={{marginTop: 9}}>
                                                 {child.student_name}
                                             </Text>
 
                                             <View style={{
-                                                flex: 1,
+                                                width: '100%',
                                                 height: 1,
                                                 backgroundColor: '#e6e6e6',
-                                                marginLeft: 30
+                                                marginTop: 10,
+                                                marginBottom: 10
+                                            }}/>
+
+                                            <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
+                                                Mobile Phone
+                                            </Text>
+                                            <Text style={{marginTop: 9}}>
+                                                {child.student_hp}
+                                            </Text>
+
+                                            <View style={{
+                                                width: '100%',
+                                                height: 1,
+                                                backgroundColor: '#e6e6e6',
+                                                marginTop: 10,
+                                                marginBottom: 10
+                                            }}/>
+
+                                            <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
+                                                Class
+                                            </Text>
+                                            <Text style={{marginTop: 9}}>
+                                                {child.class_name}
+                                            </Text>
+
+                                            <View style={{
+                                                width: '100%',
+                                                height: 1,
+                                                backgroundColor: '#e6e6e6',
+                                                marginTop: 10,
+                                                marginBottom: 10
+                                            }}/>
+
+                                            <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
+                                                School Name
+                                            </Text>
+                                            <Text style={{marginTop: 9}}>
+                                                {child.school_name}
+                                            </Text>
+
+                                            <View style={{
+                                                width: '100%',
+                                                height: 1,
+                                                backgroundColor: '#e6e6e6',
+                                                marginTop: 10,
+                                                marginBottom: 30
                                             }}/>
                                         </View>
-
-                                        <Text style={{color: '#787878', fontWeight: '300', marginTop: 20}}>
-                                            Name
-                                        </Text>
-                                        <Text style={{marginTop: 9}}>
-                                            {child.student_name}
-                                        </Text>
-
-                                        <View style={{
-                                            width: '100%',
-                                            height: 1,
-                                            backgroundColor: '#e6e6e6',
-                                            marginTop: 10,
-                                            marginBottom: 10
-                                        }}/>
-
-                                        <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
-                                            Mobile Phone
-                                        </Text>
-                                        <Text style={{marginTop: 9}}>
-                                            {child.student_hp}
-                                        </Text>
-
-                                        <View style={{
-                                            width: '100%',
-                                            height: 1,
-                                            backgroundColor: '#e6e6e6',
-                                            marginTop: 10,
-                                            marginBottom: 10
-                                        }}/>
-
-                                        <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
-                                            Class
-                                        </Text>
-                                        <Text style={{marginTop: 9}}>
-                                            {child.class_name}
-                                        </Text>
-
-                                        <View style={{
-                                            width: '100%',
-                                            height: 1,
-                                            backgroundColor: '#e6e6e6',
-                                            marginTop: 10,
-                                            marginBottom: 10
-                                        }}/>
-
-                                        <Text style={{color: '#787878', fontWeight: '300', marginTop: 15}}>
-                                            School Name
-                                        </Text>
-                                        <Text style={{marginTop: 9}}>
-                                            {child.school_name}
-                                        </Text>
-
-                                        <View style={{
-                                            width: '100%',
-                                            height: 1,
-                                            backgroundColor: '#e6e6e6',
-                                            marginTop: 10,
-                                            marginBottom: 30
-                                        }}/>
-                                    </View>
-                                )
-                            })
-                        }
-                    </View>
-                </Collapsible>
+                                    )
+                                })
+                            }
+                        </View>
+                    </Collapsible>
+                </>
+                }
 
                 <View style={{
                     backgroundColor: '#f5f5f5',
@@ -747,36 +790,39 @@ export default function ProfileScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => {
-                    setLoadingShown(true)
+                {
+                    isParent &&
+                    <TouchableWithoutFeedback onPress={() => {
+                        setLoadingShown(true)
 
-                    getMyChildren()
-                }}>
-                    <View>
-                        <View style={{
-                            paddingHorizontal: 18,
-                            paddingTop: 16,
-                            paddingBottom: 17,
-                            flexDirection: 'row',
-                            alignItems: 'center'
-                        }}>
-                            <Text style={{
-                                fontFamily: 'Montserrat-Bold',
-                                flex: 1
+                        getMyChildren()
+                    }}>
+                        <View>
+                            <View style={{
+                                paddingHorizontal: 18,
+                                paddingTop: 16,
+                                paddingBottom: 17,
+                                flexDirection: 'row',
+                                alignItems: 'center'
                             }}>
-                                Sync child data
-                            </Text>
+                                <Text style={{
+                                    fontFamily: 'Montserrat-Bold',
+                                    flex: 1
+                                }}>
+                                    Sync child data
+                                </Text>
 
-                            <MaterialCommunityIcons name={'chevron-right'} color={'#9D9D9D'} size={25}/>
+                                <MaterialCommunityIcons name={'chevron-right'} color={'#9D9D9D'} size={25}/>
+                            </View>
+
+                            <View style={{
+                                width: '100%',
+                                height: 1,
+                                backgroundColor: '#e6e6e6',
+                            }}/>
                         </View>
-
-                        <View style={{
-                            width: '100%',
-                            height: 1,
-                            backgroundColor: '#e6e6e6',
-                        }}/>
-                    </View>
-                </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback>
+                }
 
                 <TouchableWithoutFeedback onPress={logout}>
                     <View>

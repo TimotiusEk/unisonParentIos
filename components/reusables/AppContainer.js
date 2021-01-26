@@ -34,7 +34,7 @@ export default function AppContainer(props) {
     <View style={{backgroundColor: 'white', flex: 1}}>
       <View style={{
           position: 'absolute',
-          top: 50,
+          top: Platform.OS === 'ios' ? 50: 134,
           zIndex: 10000000,
           width: '100%'
       }}>
