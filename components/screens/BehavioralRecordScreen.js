@@ -36,7 +36,7 @@ export default function AgendaScreen(props) {
     const [selectedEndDate, setSelectedEndDate] = useState(null);
     const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
     const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     useEffect(() => {
         if (selectedChild.student_id) {

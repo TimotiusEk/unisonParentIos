@@ -657,6 +657,7 @@ export default function PartnerScreen(props) {
                         paddingHorizontal: 15,
                     }}>
                     <MapView
+                        pitchEnabled={false} rotateEnabled={false} zoomEnabled={false} scrollEnabled={false}
                         initialRegion={centerPosition}
                         region={centerPosition}
                         style={{

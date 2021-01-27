@@ -25,7 +25,7 @@ export default function AttendanceScreen(props) {
     const [select, setSelect] = useState(null);
     const [subjects, setSubjects] = useState([]);
     const [attendance, setAttendance] = useState([]);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     useEffect(() => {
         if (selectedChild.student_id) {

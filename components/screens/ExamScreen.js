@@ -47,7 +47,7 @@ export default function ExamScreen(props) {
     const [note, setNote] = useState(null);
     const [message, setMessage] = useState(null);
     const [messageColor, setMessageColor] = useState(null);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     useEffect(() => {
         console.log('a');
@@ -109,7 +109,6 @@ export default function ExamScreen(props) {
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
 
-        console.log('user', user)
         if (!user.parent_id) {
             setParent(false)
 
@@ -487,7 +486,7 @@ export default function ExamScreen(props) {
                                     data.append('student_id', selectedChild.student_id);
                                     data.append('file', Platform.OS === 'ios' ? file : {
                                         uri: response.uri,
-                                        name: response.file,
+                                        name: response.name,
                                         type: response.type
                                     });
                                     data.append('file1', uploadFileIdx === 1);
@@ -1016,7 +1015,7 @@ export default function ExamScreen(props) {
                                                     addAndroidDownloads: {
                                                         useDownloadManager: true, // setting it to true will use the device's native download manager and will be shown in the notification bar.
                                                         notification: true,
-                                                        path: `${
+                                                        path:  PictureDir + `${
                                                             exam.file_path.split('/')[
                                                             exam.file_path.split('/').length - 1
                                                                 ]

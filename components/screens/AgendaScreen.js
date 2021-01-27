@@ -37,7 +37,7 @@ export default function AgendaScreen(props) {
     const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
     const [schedules, setSchedules] = useState([]);
     const [agendas, setAgendas] = useState([]);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     const colors = [
         '#B968C7',

@@ -51,7 +51,7 @@ export default function AgendaScreen(props) {
     const [selectedAssignment, setSelectedAssignment] = useState({});
     const [note, setNote] = useState(null);
     const [messageColor, setMessageColor] = useState(null);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     const colors = [
         '#B968C7',
@@ -499,7 +499,7 @@ export default function AgendaScreen(props) {
                                         data.append('student_id', selectedChild.student_id);
                                         data.append('file', Platform.OS === 'ios' ? file : {
                                             uri: response.uri,
-                                            name: response.file,
+                                            name: response.name,
                                             type: response.type
                                         });
                                         // data.append('file', file);
@@ -517,6 +517,8 @@ export default function AgendaScreen(props) {
                                         })
                                             .then((response) => response.json())
                                             .then((res) => {
+                                                console.log('res', res)
+
                                                 getAssignment();
                                                 uploadRbSheetRef.current.close();
 

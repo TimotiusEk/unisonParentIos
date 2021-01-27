@@ -46,7 +46,7 @@ export default function ReportScreen(props) {
     const carouselRef = useRef(null);
     const [reportData, setReportData] = useState([]);
     const [reportHistory, setReportHistory] = useState([]);
-    const [isParent, setParent] = useState(false);
+    const [isParent, setParent] = useState(true);
 
     const getReport = async () => {
         let user = await AsyncStorage.getItem('user');
