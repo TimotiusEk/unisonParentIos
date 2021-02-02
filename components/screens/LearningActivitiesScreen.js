@@ -269,6 +269,10 @@ export default function LearningActivitiesScreen(props) {
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
+
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('OnlineTestIntroScreen')}>
+                    <Text>Go To Online Test ></Text>
+                </TouchableWithoutFeedback>
             </ScrollView>
         </AppContainer>
     );
