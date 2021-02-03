@@ -5,17 +5,113 @@ import {
     View,
     Image,
     TouchableWithoutFeedback,
-    ScrollView
+    ScrollView,
+    TextInput, Modal, TouchableOpacity,
+    FlatList
 } from 'react-native';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Collapsible from "react-native-collapsible";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AppContainer from "../reusables/AppContainer";
 
 export default function OnlineTestScreen(props) {
+    const [multipleChoices, setMultipleChoices] = useState([
+        {
+            question: 'Dimanakah Ibukota Jawa Tengah saat ini ?',
+            choices: ['Banjarnegara', 'Karanganyar', 'Semarang', 'Salatiga', 'Banjar']
+        },
+        {
+            question: 'Planet luar adalah planet yang jarak rata-rata ke Matahari-nya lebih panjang dibandingkan jarak rata-rata Bumi-Matahari. Nah, planet inilah yang disebut planet luar. Mars, Jupiter, Saturnus, Uranus, dan Neptunus termasuk planet luar.\n' +
+                '\n' +
+                'Sedangkan, planet dalam adalah planet yang jarak rata-rata ke Matahari-nya lebih pendek dibandingkan jarak rata-rata Bumi-Matahari. Planet yang termasuk planet dalam adalah Merkurius dan Venus.\n' +
+                '\n' +
+                'Planet yang dengan satelit terbanyak adalah:',
+            choices: ['Jupiter', 'Bumi', 'Venus', 'Saturnus', 'Merkurius']
+        }
+    ]);
+
+    const [essays, setEssays] = useState([
+        {question: 'Jelaskan tentang objek material geografi beserta fenomena di tiap lapisannya!'},
+        {question: 'Jelaskan tentang 4 prinsip geografi!'},
+    ]);
+
     const [isQuestionCollapsed, setQuestionCollapsed] = useState(false);
+    const [showFinishModal, setFinishModalVisible] = useState(false)
+
+    const [selectedQuestion, setSelectedQuestion] = useState({idx: 0, type: 'ESSAY'});
+
+    const calculateAnsweredQuestions = () => {
+        let answered = 0;
+
+        multipleChoices.forEach(multipleChoice => {
+            if (multipleChoice.answer) answered++;
+        })
+
+        essays.forEach(essay => {
+            if (essay.answer) answered++;
+        })
+
+        return answered;
+    }
 
     return (
         <View style={{flex: 1}}>
+            <Modal visible={showFinishModal} transparent={true}>
+                <View
+                    style={{
+                        flex: 1,
+                        backgroundColor: '#00000040',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 24
+                    }}>
+                    <View style={{
+                        backgroundColor: 'white',
+                        width: '100%',
+                        borderRadius: 20,
+                        alignItems: 'center',
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        paddingBottom: 16
+                    }}>
+                        <Image source={require('../../assets/images/ic-okay.png')}
+                               style={{width: 140, resizeMode: 'contain'}}/>
+
+                        <Text style={{
+                            textAlign: 'center',
+                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                            fontWeight: Platform.OS === 'android' ? undefined : '700',
+                            color: '#333333',
+                            fontSize: 20,
+                            marginTop: -20
+                        }}>Terimakasih</Text>
+                        <Text style={{
+                            textAlign: 'center',
+                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                            marginTop: 4,
+                            color: '#666666'
+                        }}>Kamu telah menyelesaikan Ujian Online</Text>
+
+                        <TouchableOpacity style={{width: '100%'}}>
+                            <View style={{
+                                backgroundColor: '#3066D2',
+                                width: '100%',
+                                marginTop: 24,
+                                borderRadius: 8,
+                                paddingTop: 14,
+                                paddingBottom: 14
+                            }}>
+                                <Text style={{
+                                    textAlign: 'center',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                    fontWeight: Platform.OS === 'android' ? undefined : '700', color: 'white',
+                                }}>Oke</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
             <View
                 style={{
                     backgroundColor: 'white',
@@ -96,6 +192,7 @@ export default function OnlineTestScreen(props) {
                     </Text>
                 </View>
 
+                {(selectedQuestion.type === 'MULTIPLE_CHOICES' || selectedQuestion.type === 'ESSAY') &&
                 <View style={{
                     backgroundColor: '#e3e3e380',
                     marginTop: 2,
@@ -113,7 +210,7 @@ export default function OnlineTestScreen(props) {
                                 fontWeight: '700',
                                 flex: 1,
                             }}>
-                                Indikator Pengerjaan Soal (1/45)
+                                Indikator Pengerjaan Soal ({calculateAnsweredQuestions()}/{multipleChoices.length + essays.length})
                             </Text>
 
                             <Ionicons name={isQuestionCollapsed ? 'chevron-down-outline' : 'chevron-up-outline'}
@@ -130,285 +227,556 @@ export default function OnlineTestScreen(props) {
                             justifyContent: 'center',
                             flex: .3,
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            paddingBottom: 16
                         }}>
                             <Image source={require('../../assets/images/wave.png')}
-                                   style={{position: 'absolute', bottom: 0, right: 0, zIndex: -1, height: '100%', resizeMode: 'stretch'}}/>
+                                   style={{
+                                       position: 'absolute',
+                                       bottom: 0,
+                                       right: 0,
+                                       zIndex: -1,
+                                       height: '100%',
+                                       resizeMode: 'stretch'
+                                   }}/>
 
                             <ScrollView>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    color: 'black',
-                                    marginTop: 16,
-                                    marginBottom: 8
-                                }}>
-                                    Pilihan Ganda
-                                </Text>
+                                {multipleChoices.length > 0 &&
+                                <>
+                                    <Text style={{
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                        color: 'black',
+                                        marginTop: 16,
+                                        marginBottom: 8
+                                    }}>
+                                        Pilihan Ganda
+                                    </Text>
 
-                                <View style={{flexDirection: 'row'}}>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
+                                    <FlatList
+                                        data={multipleChoices}
+                                        numColumns={8}
+                                        renderItem={(item) => {
+                                            return (
+                                                <TouchableWithoutFeedback
+                                                    onPress={() => {
+                                                        setSelectedQuestion({
+                                                            type: 'MULTIPLE_CHOICES',
+                                                            idx: item.index
+                                                        })
+                                                    }}>
+                                                    <View style={{
+                                                        flex: .125,
+                                                        aspectRatio: 1,
+                                                        padding: 4,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        <View style={{
+                                                            backgroundColor: item.item.answer ? '#3066D2' : '#C4C4C4',
+                                                            height: '100%',
+                                                            width: '100%',
+                                                            borderRadius: 1000,
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'
+                                                        }}>
+                                                            <Text style={{
+                                                                color: item.item.answer ? 'white' : 'black',
+                                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                                fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                            }}>{item.index + 1}</Text>
+                                                        </View>
+                                                    </View>
+                                                </TouchableWithoutFeedback>
+                                            )
+                                        }}
+                                    />
+
+                                </>
+                                }
+
+                                {essays.length > 0 &&
+                                <>
+                                    <Text style={{
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                        color: 'black',
+                                        marginTop: 16,
+                                        marginBottom: 8
                                     }}>
-                                        <View style={{
-                                            backgroundColor: '#3066D2',
-                                            height: '100%',
-                                            width: '100%',
-                                            borderRadius: 1000,
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Text style={{
-                                                color: 'white',
-                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                                fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                            }}>1</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        <View style={{
-                                            backgroundColor: '#C4C4C4',
-                                            height: '100%',
-                                            width: '100%',
-                                            borderRadius: 1000,
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                            <Text style={{
-                                                color: 'black',
-                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                                fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                            }}>2</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                    <View style={{
-                                        flex: 1,
-                                        aspectRatio: 1,
-                                        padding: 4,
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                    </View>
-                                </View>
+                                        Essay
+                                    </Text>
+
+                                    <FlatList
+                                        data={essays}
+                                        numColumns={8}
+                                        renderItem={(item) => {
+                                            console.log(item)
+
+                                            return (
+                                                <TouchableWithoutFeedback onPress={() => {
+                                                    setSelectedQuestion({
+                                                        type: 'ESSAY',
+                                                        idx: item.index
+                                                    })
+                                                }}
+                                                >
+                                                    <View style={{
+                                                        flex: .125,
+                                                        aspectRatio: 1,
+                                                        padding: 4,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        <View style={{
+                                                            backgroundColor: item.item.answer ? '#3066D2' : '#C4C4C4',
+                                                            height: '100%',
+                                                            width: '100%',
+                                                            borderRadius: 1000,
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'
+                                                        }}>
+                                                            <Text style={{
+                                                                color: item.item.answer ? 'white' : 'black',
+                                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                                fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                            }}>{item.index + 1}</Text>
+                                                        </View>
+                                                    </View>
+                                                </TouchableWithoutFeedback>
+                                            )
+                                        }}
+                                    />
+
+                                </>
+                                }
                             </ScrollView>
                         </View>
                     </>
                     }
 
                     <View style={{flex: 1, backgroundColor: 'white', paddingTop: 24, paddingHorizontal: 16}}>
+                        <ScrollView contentContainerStyle={{padding: 1}}>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text style={{
+                                    width: 30,
+                                    color: '#333333',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
+                                    fontWeight: '500',
+                                }}>{selectedQuestion.idx + 1}. </Text>
+                                <Text style={{
+                                    color: '#333333',
+                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
+                                    fontWeight: '500',
+                                    flex: 1
+                                }}>{selectedQuestion.type === 'MULTIPLE_CHOICES' ? multipleChoices[selectedQuestion.idx].question : essays[selectedQuestion.idx].question}</Text>
+                            </View>
+
+                            {selectedQuestion.type === 'MULTIPLE_CHOICES' ?
+                                <>
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        const multipleChoicesTemp = [...multipleChoices];
+
+                                        multipleChoicesTemp[selectedQuestion.idx].answer = 'A'
+
+                                        setMultipleChoices(multipleChoicesTemp)
+                                    }}>
+                                        <View style={{
+                                            shadowOffset: {width: 0, height: 0},
+                                            elevation: 2,
+                                            shadowOpacity: 0.15,
+                                            shadowRadius: 5,
+                                            marginLeft: 30,
+                                            marginTop: 16,
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 12,
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            backgroundColor: multipleChoices[selectedQuestion.idx].answer === 'A' ? '#f6f7fc' : 'white',
+                                            borderColor: multipleChoices[selectedQuestion.idx].answer === 'A' ? '#3E6EDE' : 'white',
+                                        }}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    color: '#646464'
+                                                }}>
+                                                    A.
+                                                </Text>
+
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                    marginLeft: 8,
+                                                    flex: 1
+                                                }}>
+                                                    {multipleChoices[selectedQuestion.idx].choices[0]}
+                                                </Text>
+
+                                                <View style={{
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: 30,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#3066D2',
+                                                    opacity: multipleChoices[selectedQuestion.idx].answer === 'A' ? 1 : 0
+                                                }}>
+                                                    <MaterialCommunityIcons name={'check'} color={'white'} size={13}/>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        const multipleChoicesTemp = [...multipleChoices];
+
+                                        multipleChoicesTemp[selectedQuestion.idx].answer = 'B'
+
+                                        setMultipleChoices(multipleChoicesTemp)
+                                    }}>
+                                        <View style={{
+                                            shadowOffset: {width: 0, height: 0},
+                                            elevation: 2,
+                                            shadowOpacity: 0.15,
+                                            shadowRadius: 5,
+                                            marginLeft: 30,
+                                            marginTop: 16,
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 12,
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            backgroundColor: multipleChoices[selectedQuestion.idx].answer === 'B' ? '#f6f7fc' : 'white',
+                                            borderColor: multipleChoices[selectedQuestion.idx].answer === 'B' ? '#3E6EDE' : 'white',
+                                        }}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    color: '#646464'
+                                                }}>
+                                                    B.
+                                                </Text>
+
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                    marginLeft: 8,
+                                                    flex: 1
+                                                }}>
+                                                    {multipleChoices[selectedQuestion.idx].choices[1]}
+                                                </Text>
+
+                                                <View style={{
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: 30,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#3066D2',
+                                                    opacity: multipleChoices[selectedQuestion.idx].answer === 'B' ? 1 : 0
+                                                }}>
+                                                    <MaterialCommunityIcons name={'check'} color={'white'} size={13}/>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        const multipleChoicesTemp = [...multipleChoices];
+
+                                        multipleChoicesTemp[selectedQuestion.idx].answer = 'C'
+
+                                        setMultipleChoices(multipleChoicesTemp)
+                                    }}>
+                                        <View style={{
+                                            shadowOffset: {width: 0, height: 0},
+                                            elevation: 2,
+                                            shadowOpacity: 0.15,
+                                            shadowRadius: 5,
+                                            marginLeft: 30,
+                                            marginTop: 16,
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 12,
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            backgroundColor: multipleChoices[selectedQuestion.idx].answer === 'C' ? '#f6f7fc' : 'white',
+                                            borderColor: multipleChoices[selectedQuestion.idx].answer === 'C' ? '#3E6EDE' : 'white',
+                                        }}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    color: '#646464'
+                                                }}>
+                                                    C.
+                                                </Text>
+
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                    marginLeft: 8,
+                                                    flex: 1
+                                                }}>
+                                                    {multipleChoices[selectedQuestion.idx].choices[2]}
+                                                </Text>
+
+                                                <View style={{
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: 30,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#3066D2',
+                                                    opacity: multipleChoices[selectedQuestion.idx].answer === 'C' ? 1 : 0
+                                                }}>
+                                                    <MaterialCommunityIcons name={'check'} color={'white'} size={13}/>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        const multipleChoicesTemp = [...multipleChoices];
+
+                                        multipleChoicesTemp[selectedQuestion.idx].answer = 'D'
+
+                                        setMultipleChoices(multipleChoicesTemp)
+                                    }}>
+                                        <View style={{
+                                            shadowOffset: {width: 0, height: 0},
+                                            elevation: 2,
+                                            shadowOpacity: 0.15,
+                                            shadowRadius: 5,
+                                            marginLeft: 30,
+                                            marginTop: 16,
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 12,
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            backgroundColor: multipleChoices[selectedQuestion.idx].answer === 'D' ? '#f6f7fc' : 'white',
+                                            borderColor: multipleChoices[selectedQuestion.idx].answer === 'D' ? '#3E6EDE' : 'white',
+                                        }}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    color: '#646464'
+                                                }}>
+                                                    D.
+                                                </Text>
+
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                    marginLeft: 8,
+                                                    flex: 1
+                                                }}>
+                                                    {multipleChoices[selectedQuestion.idx].choices[3]}
+                                                </Text>
+
+                                                <View style={{
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: 30,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#3066D2',
+                                                    opacity: multipleChoices[selectedQuestion.idx].answer === 'D' ? 1 : 0
+                                                }}>
+                                                    <MaterialCommunityIcons name={'check'} color={'white'} size={13}/>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        const multipleChoicesTemp = [...multipleChoices];
+
+                                        multipleChoicesTemp[selectedQuestion.idx].answer = 'E'
+
+                                        setMultipleChoices(multipleChoicesTemp)
+                                    }}>
+                                        <View style={{
+                                            shadowOffset: {width: 0, height: 0},
+                                            elevation: 2,
+                                            shadowOpacity: 0.15,
+                                            shadowRadius: 5,
+                                            marginLeft: 30,
+                                            marginTop: 16,
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 12,
+                                            borderRadius: 8,
+                                            marginBottom: 24,
+                                            borderWidth: 1,
+                                            backgroundColor: multipleChoices[selectedQuestion.idx].answer === 'E' ? '#f6f7fc' : 'white',
+                                            borderColor: multipleChoices[selectedQuestion.idx].answer === 'E' ? '#3E6EDE' : 'white',
+                                        }}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                                    color: '#646464'
+                                                }}>
+                                                    E.
+                                                </Text>
+
+                                                <Text style={{
+                                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                    marginLeft: 8,
+                                                    flex: 1
+                                                }}>
+                                                    {multipleChoices[selectedQuestion.idx].choices[4]}
+                                                </Text>
+
+                                                <View style={{
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: 30,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: '#3066D2',
+                                                    opacity: multipleChoices[selectedQuestion.idx].answer === 'E' ? 1 : 0
+                                                }}>
+                                                    <MaterialCommunityIcons name={'check'} color={'white'} size={13}/>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                </> :
+                                <TextInput
+                                    value={essays[selectedQuestion.idx].answer ? essays[selectedQuestion.idx].answer : ""}
+                                    onChangeText={(text) => {
+                                        const essaysTemp = [...essays];
+
+                                        essaysTemp[selectedQuestion.idx].answer = text
+
+                                        setEssays(essaysTemp)
+                                    }
+                                    }
+                                    multiline={true}
+                                    maxLines={10}
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: '#BCBCBC',
+                                        borderRadius: 4,
+                                        height: 150,
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
+                                        fontWeight: '500',
+                                        color: '#646464',
+                                        textAlignVertical: 'top',
+                                        padding: 15,
+                                        marginBottom: 40,
+                                        marginTop: 16
+                                    }}/>
+                            }
+                        </ScrollView>
+
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={{
-                                width: 30,
-                                color: '#333333',
-                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir'
-                            }}>1. </Text>
-                            <Text style={{
-                                color: '#333333',
-                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                            }}>Dimanakah Ibukota Jawa Tengah</Text>
-                        </View>
+                            <TouchableOpacity
+                                disabled={(multipleChoices.length !== 0 && selectedQuestion.type === 'MULTIPLE_CHOICES' && selectedQuestion.idx === 0) || (multipleChoices.length === 0 && essays.length !== 0 && selectedQuestion.type === 'ESSAY' && selectedQuestion.idx === 0)}
+                                onPress={() => {
+                                if (selectedQuestion.type === 'MULTIPLE_CHOICES' || selectedQuestion.type === 'ESSAY') {
+                                    const selectedQuestionTemp = {...selectedQuestion};
 
-                        <View style={{
-                            shadowOffset: {width: 0, height: 0},
-                            elevation: 2,
-                            shadowOpacity: 0.15,
-                            shadowRadius: 5,
-                            backgroundColor: 'white',
-                            marginLeft: 30,
-                            marginTop: 16,
-                            paddingHorizontal: 16,
-                            paddingVertical: 12,
-                            borderRadius: 8
-                        }}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                    color: '#646464'
-                                }}>
-                                    A.
-                                </Text>
+                                    if (selectedQuestion.type === 'ESSAY') {
+                                        if (selectedQuestionTemp.idx === 0) {
+                                            if (multipleChoices.length !== 0) {
+                                                selectedQuestionTemp.type = 'MULTIPLE_CHOICES';
+                                                selectedQuestionTemp.idx = multipleChoices.length - 1;
+                                            }
+                                        } else {
+                                            selectedQuestionTemp.idx--;
+                                        }
+                                    } else {
+                                        selectedQuestionTemp.idx--;
+                                    }
 
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginLeft: 8,
+                                    setSelectedQuestion(selectedQuestionTemp);
+                                }
+                            }}>
+                                <View style={{
+                                    opacity: (multipleChoices.length !== 0 && selectedQuestion.type === 'MULTIPLE_CHOICES' && selectedQuestion.idx === 0) || (multipleChoices.length === 0 && essays.length !== 0 && selectedQuestion.type === 'ESSAY' && selectedQuestion.idx === 0) ? .35 : 1,
+                                    borderWidth: 1,
+                                    borderColor: '#3066D2',
+                                    width: 120,
+                                    height: 45,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: 8
                                 }}>
-                                    Banjarnegara
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={{
-                            shadowOffset: {width: 0, height: 0},
-                            elevation: 2,
-                            shadowOpacity: 0.15,
-                            shadowRadius: 5,
-                            backgroundColor: 'white',
-                            marginLeft: 30,
-                            marginTop: 16,
-                            paddingHorizontal: 16,
-                            paddingVertical: 12,
-                            borderRadius: 8
-                        }}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                    color: '#646464'
-                                }}>
-                                    B.
-                                </Text>
+                                    <Text style={{
+                                        color: '#3066D2',
+                                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                        fontWeight: Platform.OS === 'android' ? undefined : '700'
+                                    }}>Kembali</Text>
+                                </View>
+                            </TouchableOpacity>
 
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginLeft: 8,
-                                }}>
-                                    Salatiga
-                                </Text>
-                            </View>
-                        </View>
+                            <View style={{flex: 1}}/>
 
-                        <View style={{
-                            shadowOffset: {width: 0, height: 0},
-                            elevation: 2,
-                            shadowOpacity: 0.15,
-                            shadowRadius: 5,
-                            backgroundColor: 'white',
-                            marginLeft: 30,
-                            marginTop: 16,
-                            paddingHorizontal: 16,
-                            paddingVertical: 12,
-                            borderRadius: 8
-                        }}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                    color: '#646464'
-                                }}>
-                                    C.
-                                </Text>
+                            {
+                                calculateAnsweredQuestions() === multipleChoices.length + essays.length || (essays.length === 0 && selectedQuestion.type === 'MULTIPLE_CHOICES' && selectedQuestion.idx === multipleChoices.length - 1) || (essays.length !== 0 && selectedQuestion.type === 'ESSAY' && selectedQuestion.idx === essays.length - 1) ?
+                                    <TouchableOpacity disabled={calculateAnsweredQuestions() !== multipleChoices.length + essays.length}>
+                                        <View style={{
+                                            backgroundColor: '#3066D2',
+                                            width: 120,
+                                            height: 45,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: 8,
+                                            opacity: calculateAnsweredQuestions() === multipleChoices.length + essays.length ? 1 : 0.35
+                                        }}>
+                                            <Text style={{
+                                                color: 'white',
+                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                fontWeight: Platform.OS === 'android' ? undefined : '700'
+                                            }}>Submit Test</Text>
+                                        </View>
+                                    </TouchableOpacity> :
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            if (selectedQuestion.type === 'MULTIPLE_CHOICES' || selectedQuestion.type === 'ESSAY') {
+                                                const selectedQuestionTemp = {...selectedQuestion};
 
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginLeft: 8,
-                                }}>
-                                    Karanganyar
-                                </Text>
-                            </View>
-                        </View>
+                                                if (selectedQuestion.type === 'MULTIPLE_CHOICES') {
+                                                    if (selectedQuestionTemp.idx === multipleChoices.length - 1) {
+                                                        if (essays.length !== 0) {
+                                                            selectedQuestionTemp.type = 'ESSAY';
+                                                            selectedQuestionTemp.idx = 0;
+                                                        }
+                                                    } else {
+                                                        selectedQuestionTemp.idx++;
+                                                    }
+                                                } else {
+                                                    selectedQuestionTemp.idx++;
+                                                }
 
-                        <View style={{
-                            shadowOffset: {width: 0, height: 0},
-                            elevation: 2,
-                            shadowOpacity: 0.15,
-                            shadowRadius: 5,
-                            backgroundColor: '#f6f7fc',
-                            marginLeft: 30,
-                            marginTop: 16,
-                            paddingHorizontal: 16,
-                            paddingVertical: 12,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor: '#3E6EDE'
-                        }}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                    color: '#646464'
-                                }}>
-                                    D.
-                                </Text>
-
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginLeft: 8,
-                                }}>
-                                    Semarang
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={{
-                            shadowOffset: {width: 0, height: 0},
-                            elevation: 2,
-                            shadowOpacity: 0.15,
-                            shadowRadius: 5,
-                            backgroundColor: 'white',
-                            marginLeft: 30,
-                            marginTop: 16,
-                            paddingHorizontal: 16,
-                            paddingVertical: 12,
-                            borderRadius: 8
-                        }}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                    fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                    color: '#646464'
-                                }}>
-                                    E.
-                                </Text>
-
-                                <Text style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginLeft: 8,
-                                }}>
-                                    Surakarta
-                                </Text>
-                            </View>
+                                                setSelectedQuestion(selectedQuestionTemp);
+                                            }
+                                        }}>
+                                        <View style={{
+                                            backgroundColor: '#3066D2',
+                                            width: 120,
+                                            height: 45,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: 8
+                                        }}>
+                                            <Text style={{
+                                                color: 'white',
+                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                                fontWeight: Platform.OS === 'android' ? undefined : '700'
+                                            }}>Selanjutnya</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                            }
                         </View>
                     </View>
                 </View>
+                }
             </View>
         </View>
     )

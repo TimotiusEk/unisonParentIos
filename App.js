@@ -87,6 +87,15 @@ export default function App() {
         }
     );
 
+    const OnlineExamSwitch = createSwitchNavigator({
+        OnlineTestIntroScreen,
+        OnlineTestScreen
+    }, {
+        initialRouteName: "OnlineTestIntroScreen",
+        backBehavior: 'none'
+    });
+
+
     const HomeStack = createStackNavigator({
             HomeScreen,
             ProfileScreen,
@@ -121,8 +130,7 @@ export default function App() {
             CompletePaymentScreen,
             CameraScreen,
             VideoPlayerScreen,
-            OnlineTestIntroScreen,
-            OnlineTestScreen
+            OnlineExamSwitch
         },
         {
             headerMode: "none",
