@@ -15,8 +15,34 @@ import MapView, {Marker} from 'react-native-maps';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import Permissions from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
+import AsyncStorage from "@react-native-community/async-storage";
+import HttpRequest from "../../util/HttpRequest";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function PartnerScreen(props) {
+    const SD = [
+        "Kelas 1",
+        "Kelas 2",
+        "Kelas 3",
+        "Kelas 4",
+        "Kelas 5",
+        "Kelas 6"
+    ];
+
+    const SMP = [
+        "Kelas 7",
+        "Kelas 8",
+        "Kelas 9",
+    ]
+
+    const SMA = [
+        "Kelas 10",
+        "Kelas 11",
+        "Kelas 12",
+    ]
+
+
+    const [partners, setPartners] = useState([]);
     const [locationStatus, setLocationStatus] = useState('');
     const [locationName, setLocationName] = useState('');
     const [centerPosition, setCenterPosition] = useState({
@@ -31,8 +57,31 @@ export default function PartnerScreen(props) {
         longitude: 106.7979
     })
 
+    const getPartner = async () => {
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
+
+        new Promise(
+            await HttpRequest.set(
+                '/users/listmitra',
+                'POST',
+                JSON.stringify({
+                    access_token: user.access_token,
+                }),
+            ),
+        ).then(res => {
+            console.log(res)
+        }).catch(err => {
+            if (Array.isArray(err)) {
+                setPartners(err);
+            }
+        })
+    }
+
     useEffect(() => {
         checkAndRequestLocationPermission()
+
+        getPartner()
 
         // const requestLocationPermission = async () => {
         //     if (Platform.OS === 'ios') {
@@ -87,7 +136,7 @@ export default function PartnerScreen(props) {
         }
 
         request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(result => {
-            if(result === 'granted') goToMyLocation();
+            if (result === 'granted') goToMyLocation();
         });
     }
 
@@ -463,189 +512,184 @@ export default function PartnerScreen(props) {
                         flexDirection: 'row',
                         paddingBottom: 3,
                     }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => props.navigation.navigate('PartnerDetailScreen')}>
-                        <View
-                            style={{
-                                marginRight: 15,
-                                backgroundColor: 'white',
-                                borderRadius: 10,
-                                shadowColor: '#000',
-                                shadowOffset: {width: 0, height: 0},
-                                shadowOpacity: 0.05,
-                                elevation: 2,
-                                shadowRadius: 3,
-                            }}>
-                            <Image
-                                source={require('../../assets/images/example-tutor.jpeg')}
-                                style={{
-                                    width: 200,
-                                    height: 120,
-                                    borderTopLeftRadius: 10,
-                                    borderTopRightRadius: 10,
-                                }}
-                            />
+                    {
+                        partners.map(partner => {
+                            const subjects = [];
+                            const districts = [];
 
-                            <Text
-                                style={{
-                                    marginTop: 6,
-                                    fontFamily: 'Avenir',
-                                    fontWeight: '600',
-                                    paddingHorizontal: 10,
-                                }}>
-                                Cellyne Lakeysha Gomez
-                            </Text>
+                            partner.subject.map(subject => {
+                                if(!subjects.includes(subject.subject)) subjects.push(subject.subject)
+                            })
 
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    marginHorizontal: 10,
-                                    marginTop: 5,
-                                }}>
-                                <Image
-                                    source={require('../../assets/images/badge_sd.png')}
-                                    style={{width: 50, resizeMode: 'contain', marginRight: 10}}
-                                />
-                                <Image
-                                    source={require('../../assets/images/badge_smp.png')}
-                                    style={{width: 50, resizeMode: 'contain'}}
-                                />
-                            </View>
+                            partner.location.map(location => {
+                                if(!districts.includes(location.district)) districts.push(location.district)
+                            })
 
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    marginHorizontal: 10,
-                                    alignItems: 'center',
-                                }}>
-                                <Image
-                                    source={require('../../assets/images/ic_open_book.png')}
-                                    style={{width: 17, resizeMode: 'contain'}}
-                                />
+                            let isSD = false;
+                            let isSMP = false;
+                            let isSMA = false;
 
-                                <Text
-                                    style={{
-                                        fontFamily: 'Avenir',
-                                        fontSize: 13,
-                                        color: '#909090',
-                                        marginLeft: 10,
-                                    }}>
-                                    Matematika
-                                </Text>
-                            </View>
+                            return (
+                                <TouchableWithoutFeedback
+                                    onPress={() => props.navigation.navigate('PartnerDetailScreen', {id: partner.id})}>
+                                    <View
+                                        style={{
+                                            marginRight: 15,
+                                            borderRadius: 10,
+                                            shadowColor: '#000',
+                                            shadowOffset: {width: 0, height: 0},
+                                            shadowOpacity: 0.05,
+                                            elevation: 2,
+                                            shadowRadius: 3,
+                                            backgroundColor: 'white'
+                                        }}>
 
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    marginHorizontal: 10,
-                                    alignItems: 'center',
-                                    marginBottom: 15,
-                                }}>
-                                <Image
-                                    source={require('../../assets/images/ic_location.png')}
-                                    style={{width: 17, resizeMode: 'contain'}}
-                                />
+                                        <View style={{
+                                            width: 200,
+                                            height: 120,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            backgroundColor: '#b9cde5',
+                                            borderTopLeftRadius: 10,
+                                            borderTopRightRadius: 10
+                                        }}>
+                                            {
+                                                partner.image_path ?
+                                                    <Image source={{uri: partner.image_path}} style={{
+                                                        resizeMode: 'cover',
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        borderTopLeftRadius: 10,
+                                                        borderTopRightRadius: 10
+                                                    }}/> :
+                                                    <FontAwesome5 name={'user-alt'} color={'#d4dff7'} size={55}/>
+                                            }
+                                        </View>
+                                        {/*<Image*/}
+                                        {/*    source={require('../../assets/images/ic_user.png')}*/}
+                                        {/*    style={{*/}
+                                        {/*        resizeMode: 'contain',*/}
+                                        {/*        width: 200,*/}
+                                        {/*        height: 120,*/}
+                                        {/*        borderTopLeftRadius: 10,*/}
+                                        {/*        borderTopRightRadius: 10,*/}
+                                        {/*    }}*/}
+                                        {/*/>*/}
 
-                                <Text
-                                    style={{
-                                        fontFamily: 'Avenir',
-                                        fontSize: 13,
-                                        color: '#909090',
-                                        marginLeft: 10,
-                                    }}>
-                                    Pancoran
-                                </Text>
-                            </View>
-                        </View>
-                    </TouchableWithoutFeedback>
+                                        <Text
+                                            style={{
+                                                marginTop: 6,
+                                                fontFamily: 'Avenir',
+                                                fontWeight: '600',
+                                                paddingHorizontal: 10,
+                                            }}>
+                                            {partner.name}
+                                        </Text>
 
-                    <View
-                        style={{
-                            backgroundColor: 'white',
-                            borderRadius: 10,
-                            shadowColor: '#000',
-                            shadowOffset: {width: 0, height: 0},
-                            shadowOpacity: 0.05,
-                            elevation: 2,
-                            shadowRadius: 3,
-                        }}>
-                        <Image
-                            source={require('../../assets/images/example-tutor.jpeg')}
-                            style={{
-                                width: 200,
-                                height: 120,
-                                borderTopLeftRadius: 10,
-                                borderTopRightRadius: 10,
-                            }}
-                        />
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                marginHorizontal: 10,
+                                                marginTop: 5,
+                                            }}>
 
-                        <Text
-                            style={{
-                                marginTop: 6,
-                                fontFamily: 'Avenir',
-                                fontWeight: '600',
-                                paddingHorizontal: 10,
-                            }}>
-                            Andrew Sevchenko
-                        </Text>
+                                            {
+                                                partner.subject.forEach(subject => {
+                                                    isSD = SD.includes(subject.jenjang);
+                                                    isSMP = SMP.includes(subject.jenjang);
+                                                    isSMA = SMA.includes(subject.jenjang);
+                                                })
+                                            }
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginHorizontal: 10,
-                                marginTop: 5,
-                            }}>
-                            <Image
-                                source={require('../../assets/images/badge_smp.png')}
-                                style={{width: 50, resizeMode: 'contain'}}
-                            />
-                        </View>
+                                            {isSD &&
+                                            <Image
+                                                source={require('../../assets/images/badge_sd.png')}
+                                                style={{width: 50, resizeMode: 'contain', marginRight: 10}}
+                                            />
+                                            }
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginHorizontal: 10,
-                                alignItems: 'center',
-                            }}>
-                            <Image
-                                source={require('../../assets/images/ic_open_book.png')}
-                                style={{width: 17, resizeMode: 'contain'}}
-                            />
+                                            {isSMP &&
+                                            <Image
+                                                source={require('../../assets/images/badge_smp.png')}
+                                                style={{width: 50, resizeMode: 'contain', marginRight: 10}}
+                                            />
+                                            }
 
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    fontSize: 13,
-                                    color: '#909090',
-                                    marginLeft: 10,
-                                }}>
-                                IPS
-                            </Text>
-                        </View>
+                                            {isSMA &&
+                                            <Image
+                                                source={require('../../assets/images/badge_sma.png')}
+                                                style={{width: 50, resizeMode: 'contain'}}
+                                            />
+                                            }
+                                        </View>
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginHorizontal: 10,
-                                alignItems: 'center',
-                                marginBottom: 15,
-                            }}>
-                            <Image
-                                source={require('../../assets/images/ic_location.png')}
-                                style={{width: 17, resizeMode: 'contain'}}
-                            />
+                                        <View style={{flex: 1}}/>
 
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    fontSize: 13,
-                                    color: '#909090',
-                                    marginLeft: 10,
-                                }}>
-                                Mampang
-                            </Text>
-                        </View>
-                    </View>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                marginHorizontal: 10,
+                                                alignItems: 'center',
+                                                opacity: subjects.length > 0 ? 1 : 0
+                                            }}>
+                                            <Image
+                                                source={require('../../assets/images/ic_open_book.png')}
+                                                style={{width: 17, resizeMode: 'contain'}}
+                                            />
+
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Avenir',
+                                                    fontSize: 13,
+                                                    color: '#909090',
+                                                    marginLeft: 10,
+                                                }}>
+                                                {
+                                                    subjects.map((subject, idx) => {
+                                                        const comma = idx === subjects.length -1 ? '' : ', ';
+
+                                                        return subject + comma;
+                                                    })
+                                                }
+                                            </Text>
+                                        </View>
+
+
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                marginHorizontal: 10,
+                                                alignItems: 'center',
+                                                marginBottom: 15,
+                                                opacity: partner.location.length > 0 ? 1 : 0
+                                            }}>
+                                            <Image
+                                                source={require('../../assets/images/ic_location.png')}
+                                                style={{width: 17, resizeMode: 'contain'}}
+                                            />
+
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Avenir',
+                                                    fontSize: 13,
+                                                    color: '#909090',
+                                                    marginLeft: 10,
+                                                    maxWidth: 153
+                                                }}>
+                                                {
+                                                    districts.map((district, idx) => {
+                                                        const comma = idx === districts.length -1 ? '' : ', ';
+
+                                                        return district + comma;
+                                                    })
+                                                }
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            )
+                        })
+                    }
                 </ScrollView>
 
                 <View

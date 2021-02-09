@@ -296,7 +296,7 @@ export default function HomeScreen(props) {
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <TouchableWithoutFeedback
                                 onPress={() => {
-                                    props.navigation.navigate('LearningMaterialScreen');
+                                    props.navigation.navigate('LearningMaterialMenuScreen');
                                 }}>
                                 <View style={{alignItems: 'center'}}>
                                     <View

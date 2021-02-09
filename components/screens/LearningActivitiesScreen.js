@@ -270,8 +270,40 @@ export default function LearningActivitiesScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('OnlineExamSwitch')}>
-                    <Text>Go To Online Test ></Text>
+                <TouchableWithoutFeedback
+                    onPress={() => props.navigation.navigate('OnlineTestListScreen')}>
+                    <View
+                        style={{
+                            backgroundColor: '#1B53BE',
+                            borderRadius: 8,
+                            height: 112,
+                            marginHorizontal: 8,
+                            marginVertical: 16,
+                            flexDirection: 'row',
+                            marginBottom: 15,
+                            alignItems: 'center'
+                        }}>
+                        <Text
+                            style={{
+                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                fontWeight:  Platform.OS === 'android' ? undefined: '700',
+                                fontSize: 22,
+                                marginStart: 30,
+                                flex: 1,
+                                color: 'white',
+                            }}>
+                            Ujian Online
+                        </Text>
+
+                        <Image
+                            source={require('../../assets/images/ic-online-test.png')}
+                            style={{
+                                width: 140,
+                                height: 140,
+                                resizeMode: 'contain',
+                            }}
+                        />
+                    </View>
                 </TouchableWithoutFeedback>
             </ScrollView>
         </AppContainer>
