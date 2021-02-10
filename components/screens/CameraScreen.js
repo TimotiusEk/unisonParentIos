@@ -35,7 +35,7 @@ export default function CameraScreen(props) {
 
   takePicture = async () => {
     if (cameraRef) {
-      const options = { quality: 0.5, base64: true };
+      const options = {quality: 0.5, base64: true};
       const data = await cameraRef.current.takePictureAsync(options);
       console.log(data.uri);
     }
@@ -44,6 +44,7 @@ export default function CameraScreen(props) {
   return (
     <View style={styles.container}>
       <RNCamera
+        captureAudio={false}
         ref={cameraRef}
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
@@ -51,12 +52,6 @@ export default function CameraScreen(props) {
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        androidRecordAudioPermissionOptions={{
-          title: 'Permission to use audio recording',
-          message: 'We need your permission to use your audio',
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}

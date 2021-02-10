@@ -17,7 +17,7 @@ import Permissions from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from "@react-native-community/async-storage";
 import HttpRequest from "../../util/HttpRequest";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function PartnerScreen(props) {
     const SD = [
@@ -343,6 +343,7 @@ export default function PartnerScreen(props) {
                         paddingHorizontal: 10,
                         marginTop: 15,
                         marginHorizontal: 16,
+                        paddingVertical: Platform.OS === 'ios' ? 8 : 0
                     }}>
                     <Ionicons name={'search-outline'} color={'#909090'} size={17}/>
                     <TextInput
@@ -562,7 +563,7 @@ export default function PartnerScreen(props) {
                                                         borderTopLeftRadius: 10,
                                                         borderTopRightRadius: 10
                                                     }}/> :
-                                                    <FontAwesome5 name={'user-alt'} color={'#d4dff7'} size={55}/>
+                                                    <FontAwesome name={'user'} color={'#d4dff7'} size={55}/>
                                             }
                                         </View>
                                         {/*<Image*/}

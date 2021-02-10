@@ -85,7 +85,7 @@ export default function CompletePaymentScreen(props) {
                 onPress={() => {
                   setModalVisible(false);
 
-                  props.navigation.navigate('PaymentSuccessScreen');
+                  props.navigation.navigate('CameraScreen');
                 }}>
                 <View
                   style={{

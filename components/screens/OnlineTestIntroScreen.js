@@ -147,6 +147,7 @@ export default function OnlineTestIntroScreen(props) {
                 onPress={() => props.navigation.navigate('OnlineTestScreen')}
                 disabled={false}>
                 <View style={{backgroundColor: '#3066D2', margin: 16, padding: 13, borderRadius: 8,
+                    marginBottom: Platform.OS === 'ios' ? 40 : 16
                     // opacity: .3
                 }}>
                     <Text style={{
