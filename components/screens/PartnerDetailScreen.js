@@ -16,6 +16,7 @@ import HttpRequest from "../../util/HttpRequest";
 export default function PartnerDetailScreen(props) {
     const [detail, setDetail] = useState({});
     const [districts, setDistricts] = useState([]);
+    const [user, setUser] = useState({});
 
     const SD = [
         "Kelas 1",
@@ -40,7 +41,15 @@ export default function PartnerDetailScreen(props) {
 
     useEffect(() => {
         getDetail();
-    }, [])
+        getUser();
+    }, []);
+
+    const getUser = async () => {
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
+
+        setUser(user)
+    }
 
     const getDetail = async () => {
         let user = await AsyncStorage.getItem('user');
@@ -61,7 +70,7 @@ export default function PartnerDetailScreen(props) {
             const districtsTemp = [];
 
             err.location.map(location => {
-                if(!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
+                if (!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
             })
 
             setDistricts(districtsTemp);
@@ -187,7 +196,7 @@ export default function PartnerDetailScreen(props) {
                             }}>
                             {
                                 districts.map((district, idx) => {
-                                    const comma = idx === districts.length -1 ? '' : ', ';
+                                    const comma = idx === districts.length - 1 ? '' : ', ';
 
                                     return district + comma;
                                 })
@@ -375,7 +384,10 @@ export default function PartnerDetailScreen(props) {
                         console.log(subject)
 
                         return (
-                            <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ClassDetailScreen', {class: detail, subject})}>
+                            <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ClassDetailScreen', {
+                                class: detail,
+                                subject
+                            })}>
                                 <View
                                     style={{
                                         backgroundColor: 'white',
@@ -417,7 +429,11 @@ export default function PartnerDetailScreen(props) {
 
                                             <Image
                                                 source={SD.includes(subject.jenjang) ? require('../../assets/images/badge_sd.png') : SMP.includes(subject.jenjang) ? require('../../assets/images/badge_smp.png') : SMA.includes(subject.jenjang) ? require('../../assets/images/badge_sma.png') : null}
-                                                style={{width: SD.includes(subject.jenjang) ? 42 : 50, resizeMode: 'contain', marginRight: SD.includes(subject.jenjang) ? 6 : 0}}
+                                                style={{
+                                                    width: SD.includes(subject.jenjang) ? 42 : 50,
+                                                    resizeMode: 'contain',
+                                                    marginRight: SD.includes(subject.jenjang) ? 6 : 0
+                                                }}
                                             />
                                         </View>
 
@@ -446,12 +462,12 @@ export default function PartnerDetailScreen(props) {
                                             <MaterialIcons name={'people'} size={16} color={'#66666680'}/>
 
                                             <Text
-                             t                   style={{
-                                                    fontFamily: 'Avenir',
-                                                    color: '#909090',
-                                                    fontSize: 13,
-                                                    marginLeft: 5,
-                                                }}>
+                                                t style={{
+                                                fontFamily: 'Avenir',
+                                                color: '#909090',
+                                                fontSize: 13,
+                                                marginLeft: 5,
+                                            }}>
                                                 {subject.jumlah_murid ? subject.jumlah_murid : '0'} Murid
                                             </Text>
                                         </View>
@@ -472,7 +488,6 @@ export default function PartnerDetailScreen(props) {
                         )
                     })
                 }
-
 
 
                 <View style={{flexDirection: 'row'}}>
@@ -537,34 +552,35 @@ export default function PartnerDetailScreen(props) {
                         </Text>
                     </View>
 
-                    <View
-                        style={{
-                            backgroundColor: 'white',
-                            shadowColor: '#000',
-                            shadowOffset: {width: 0, height: 0},
-                            shadowOpacity: 0.1,
-                            elevation: 3,
-                            shadowRadius: 3,
-                            borderRadius: 10,
-                            paddingHorizontal: 10,
-                            marginTop: 25,
-                            flex: 2,
-                            marginRight: 16,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#3066D2',
-                            marginLeft: 16,
-                        }}>
-                        <Text
+                    <TouchableWithoutFeedback onPress={() => props.navigation.navigate('WebViewScreen', {url: `http://mitra.unison.id/messages/${user.parent_id}/${user.access_token}/${detail.user?.id}`, hideHeader: true})}>
+                        <View
                             style={{
-                                fontFamily: 'Avenir',
-                                fontWeight: '700',
-                                fontSize: 13,
-                                color: 'white',
+                                shadowColor: '#000',
+                                shadowOffset: {width: 0, height: 0},
+                                shadowOpacity: 0.1,
+                                elevation: 3,
+                                shadowRadius: 3,
+                                borderRadius: 10,
+                                paddingHorizontal: 10,
+                                marginTop: 25,
+                                flex: 2,
+                                marginRight: 16,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#3066D2',
+                                marginLeft: 16,
                             }}>
-                            Kirim Pesan
-                        </Text>
-                    </View>
+                            <Text
+                                style={{
+                                    fontFamily: 'Avenir',
+                                    fontWeight: '700',
+                                    fontSize: 13,
+                                    color: 'white',
+                                }}>
+                                Kirim Pesan
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </View>
             </ScrollView>
         </View>
