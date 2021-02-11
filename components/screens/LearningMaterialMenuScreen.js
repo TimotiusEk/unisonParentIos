@@ -76,6 +76,25 @@ export default function LearningMaterialMenuScreen(props) {
                         </Text>
                     </View>
                 </TouchableWithoutFeedback>
+
+                <TouchableWithoutFeedback>
+                    <View style={{
+                        backgroundColor: '#1B53BE',
+                        margin: 16,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        borderRadius: 5,
+                        paddingLeft: 30,
+                        paddingRight: 15,
+                        paddingVertical: 20
+                    }}>
+                        <Text style={{fontFamily: 'Montserrat-Regular', color: 'white', flex: 1}}>
+                            Interactive Math
+                        </Text>
+
+                        <Image source={require('../../assets/images/ic_interactive_math.png')} style={{width: 60, height: 60}}/>
+                    </View>
+                </TouchableWithoutFeedback>
             </ScrollView>
         </AppContainer>
     )

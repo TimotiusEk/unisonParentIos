@@ -57,6 +57,8 @@ export default function PartnerScreen(props) {
         longitude: 106.7979
     })
 
+    const [keyword, setKeyword] = useState('');
+
     const getPartner = async () => {
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
@@ -348,11 +350,16 @@ export default function PartnerScreen(props) {
                     <Ionicons name={'search-outline'} color={'#909090'} size={17}/>
                     <TextInput
                         placeholder={'Cari Mitra'}
+                        onChangeText={(text) => {
+                            setKeyword(text)
+                        }}
                         style={{
                             fontFamily: 'Avenir',
                             fontSize: 17,
                             color: '#909090',
                             marginLeft: 10,
+                            width: '100%'
+
                         }}
                     />
                 </View>
@@ -515,15 +522,17 @@ export default function PartnerScreen(props) {
                     }}>
                     {
                         partners.map(partner => {
+                            if(!partner.name.toLowerCase().includes(keyword.toLowerCase())) return null;
+
                             const subjects = [];
                             const districts = [];
 
                             partner.subject.map(subject => {
-                                if(!subjects.includes(subject.subject)) subjects.push(subject.subject)
+                                if (!subjects.includes(subject.subject)) subjects.push(subject.subject)
                             })
 
                             partner.location.map(location => {
-                                if(!districts.includes(location.district)) districts.push(location.district)
+                                if (!districts.includes(location.district)) districts.push(location.district)
                             })
 
                             let isSD = false;
@@ -647,7 +656,7 @@ export default function PartnerScreen(props) {
                                                 }}>
                                                 {
                                                     subjects.map((subject, idx) => {
-                                                        const comma = idx === subjects.length -1 ? '' : ', ';
+                                                        const comma = idx === subjects.length - 1 ? '' : ', ';
 
                                                         return subject + comma;
                                                     })
@@ -679,7 +688,7 @@ export default function PartnerScreen(props) {
                                                 }}>
                                                 {
                                                     districts.map((district, idx) => {
-                                                        const comma = idx === districts.length -1 ? '' : ', ';
+                                                        const comma = idx === districts.length - 1 ? '' : ', ';
 
                                                         return district + comma;
                                                     })

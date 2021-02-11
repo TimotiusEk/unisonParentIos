@@ -17,6 +17,27 @@ export default function PartnerDetailScreen(props) {
     const [detail, setDetail] = useState({});
     const [districts, setDistricts] = useState([]);
 
+    const SD = [
+        "Kelas 1",
+        "Kelas 2",
+        "Kelas 3",
+        "Kelas 4",
+        "Kelas 5",
+        "Kelas 6"
+    ];
+
+    const SMP = [
+        "Kelas 7",
+        "Kelas 8",
+        "Kelas 9",
+    ]
+
+    const SMA = [
+        "Kelas 10",
+        "Kelas 11",
+        "Kelas 12",
+    ]
+
     useEffect(() => {
         getDetail();
     }, [])
@@ -45,7 +66,6 @@ export default function PartnerDetailScreen(props) {
 
             setDistricts(districtsTemp);
             setDetail(err);
-            console.log('err', err)
         })
     }
 
@@ -112,7 +132,7 @@ export default function PartnerDetailScreen(props) {
                     <View style={{flexDirection: 'row'}}>
                         <View style={{flex: 1}}/>
                         <Image
-                            source={require('../../assets/images/example-tutor.jpeg')}
+                            source={detail.user?.image_path ? {uri: detail.user?.image_path} : require('../../assets/images/ic_user.png')}
                             style={{
                                 width: 80,
                                 height: 80,
@@ -185,7 +205,7 @@ export default function PartnerDetailScreen(props) {
                                     color: '#333333',
                                     textAlign: 'center',
                                 }}>
-                                {detail.rating ? detail.rating : '-'}
+                                {detail.rating?.rating ? detail.rating?.rating : '-'}
                             </Text>
                             <Text
                                 style={{
@@ -208,7 +228,7 @@ export default function PartnerDetailScreen(props) {
                                     color: '#333333',
                                     textAlign: 'center',
                                 }}>
-                                20
+                                {detail.rating?.favorite ? detail.rating?.favorite : '-'}
                             </Text>
                             <Text
                                 style={{
@@ -231,7 +251,7 @@ export default function PartnerDetailScreen(props) {
                                     color: '#333333',
                                     textAlign: 'center',
                                 }}>
-                                10
+                                {detail.rating?.question ? detail.rating?.question : '-'}
                             </Text>
                             <Text
                                 style={{
@@ -272,19 +292,19 @@ export default function PartnerDetailScreen(props) {
                         </Text>
                         }
 
-                        <TouchableWithoutFeedback onPress={() => {
-                        }}>
-                            <Text
-                                style={{
-                                    textDecorationLine: 'underline',
-                                    marginTop: 20,
-                                    fontSize: 13,
-                                    color: '#3066D2',
-                                    marginBottom: 30,
-                                }}>
-                                Lihat Pengalaman
-                            </Text>
-                        </TouchableWithoutFeedback>
+                        {/*<TouchableWithoutFeedback onPress={() => {*/}
+                        {/*}}>*/}
+                        {/*    <Text*/}
+                        {/*        style={{*/}
+                        {/*            textDecorationLine: 'underline',*/}
+                        {/*            marginTop: 20,*/}
+                        {/*            fontSize: 13,*/}
+                        {/*            color: '#3066D2',*/}
+                        {/*            marginBottom: 30,*/}
+                        {/*        }}>*/}
+                        {/*        Lihat Pengalaman*/}
+                        {/*    </Text>*/}
+                        {/*</TouchableWithoutFeedback>*/}
                     </View>
                 </View>
 
@@ -350,285 +370,110 @@ export default function PartnerDetailScreen(props) {
                     </View>
                 </ScrollView>
 
-                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ClassDetailScreen')}>
-                    <View
-                        style={{
-                            backgroundColor: 'white',
-                            shadowColor: '#000',
-                            shadowOffset: {width: 0, height: 0},
-                            shadowOpacity: 0.1,
-                            elevation: 3,
-                            shadowRadius: 3,
-                            borderRadius: 10,
-                            paddingLeft: 20,
-                            paddingRight: 10,
-                            paddingVertical: 15,
-                            marginTop: 15,
-                            flexDirection: 'row',
-                            marginHorizontal: 16,
-                        }}>
-                        <Image
-                            source={require('../../assets/images/example_class_cover_photo.jpg')}
-                            style={{
-                                width: 50,
-                                height: 50,
-                                borderRadius: 4,
-                                marginRight: 20,
-                            }}
-                        />
+                {
+                    detail.subject?.map(subject => {
+                        console.log(subject)
 
-                        <View style={{flex: 1}}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text
+                        return (
+                            <TouchableWithoutFeedback onPress={() => props.navigation.navigate('ClassDetailScreen', {class: detail, subject})}>
+                                <View
                                     style={{
-                                        fontFamily: 'Avenir',
-                                        color: '#373737',
-                                        fontWeight: '700',
-                                        flex: 1,
-                                        marginTop: 2,
+                                        backgroundColor: 'white',
+                                        shadowColor: '#000',
+                                        shadowOffset: {width: 0, height: 0},
+                                        shadowOpacity: 0.1,
+                                        elevation: 3,
+                                        shadowRadius: 3,
+                                        borderRadius: 10,
+                                        paddingLeft: 20,
+                                        paddingRight: 10,
+                                        paddingVertical: 15,
+                                        marginTop: 15,
+                                        flexDirection: 'row',
+                                        marginHorizontal: 16,
                                     }}>
-                                    Matematika kelas 5
-                                </Text>
-
-                                <Image
-                                    source={require('../../assets/images/badge_sd.png')}
-                                    style={{width: 50, resizeMode: 'contain', marginRight: 10}}
-                                />
-                            </View>
-
-                            <View style={{flexDirection: 'row'}}>
-                                <MaterialIcons name={'date-range'} size={16} color={'#66666680'}/>
-
-                                <View style={{marginLeft: 5}}>
-                                    <Text
-                                        style={{fontFamily: 'Avenir', color: '#909090', fontSize: 13}}>
-                                        31 Dec 2020 - 30 Jan 2021
-                                    </Text>
-
-                                    <Text
+                                    <Image
+                                        source={detail?.subject?.image_path ? {uri: detail?.subject?.image_path} : require('../../assets/images/default-class-img.jpg')}
                                         style={{
-                                            fontFamily: 'Avenir',
-                                            fontWeight: '600',
-                                            color: '#666666',
-                                            fontSize: 13,
-                                        }}>
-                                        16:00 - 17:30 WIB
-                                    </Text>
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: 4,
+                                            marginRight: 20,
+                                        }}
+                                    />
+
+                                    <View style={{flex: 1}}>
+                                        <View style={{flexDirection: 'row'}}>
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Avenir',
+                                                    color: '#373737',
+                                                    fontWeight: '700',
+                                                    flex: 1,
+                                                    marginTop: 2,
+                                                }}>
+                                                {`${subject.subject} ${subject.jenjang}`}
+                                            </Text>
+
+                                            <Image
+                                                source={SD.includes(subject.jenjang) ? require('../../assets/images/badge_sd.png') : SMP.includes(subject.jenjang) ? require('../../assets/images/badge_smp.png') : SMA.includes(subject.jenjang) ? require('../../assets/images/badge_sma.png') : null}
+                                                style={{width: SD.includes(subject.jenjang) ? 42 : 50, resizeMode: 'contain', marginRight: SD.includes(subject.jenjang) ? 6 : 0}}
+                                            />
+                                        </View>
+
+                                        <View style={{flexDirection: 'row'}}>
+                                            <MaterialIcons name={'date-range'} size={16} color={'#66666680'}/>
+
+                                            <View style={{marginLeft: 5}}>
+                                                <Text
+                                                    style={{fontFamily: 'Avenir', color: '#909090', fontSize: 13}}>
+                                                    31 Dec 2020 - 30 Jan 2021
+                                                </Text>
+
+                                                <Text
+                                                    style={{
+                                                        fontFamily: 'Avenir',
+                                                        fontWeight: '600',
+                                                        color: '#666666',
+                                                        fontSize: 13,
+                                                    }}>
+                                                    16:00 - 17:30 WIB
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <View style={{flexDirection: 'row', marginTop: 6}}>
+                                            <MaterialIcons name={'people'} size={16} color={'#66666680'}/>
+
+                                            <Text
+                             t                   style={{
+                                                    fontFamily: 'Avenir',
+                                                    color: '#909090',
+                                                    fontSize: 13,
+                                                    marginLeft: 5,
+                                                }}>
+                                                {subject.jumlah_murid ? subject.jumlah_murid : '0'} Murid
+                                            </Text>
+                                        </View>
+
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontFamily: 'Avenir',
+                                                fontWeight: '700',
+                                                color: '#3066D2',
+                                                marginTop: 10,
+                                            }}>
+                                            Rp{subject?.tarif?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                                        </Text>
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableWithoutFeedback>
+                        )
+                    })
+                }
 
-                            <View style={{flexDirection: 'row', marginTop: 6}}>
-                                <MaterialIcons name={'people'} size={16} color={'#66666680'}/>
 
-                                <Text
-                                    style={{
-                                        fontFamily: 'Avenir',
-                                        color: '#909090',
-                                        fontSize: 13,
-                                        marginLeft: 5,
-                                    }}>
-                                    10 Murid
-                                </Text>
-                            </View>
-
-                            <Text
-                                style={{
-                                    fontSize: 16,
-                                    fontFamily: 'Avenir',
-                                    fontWeight: '700',
-                                    color: '#3066D2',
-                                    marginTop: 10,
-                                }}>
-                                Rp250.000
-                            </Text>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-                <View
-                    style={{
-                        backgroundColor: 'white',
-                        shadowColor: '#000',
-                        shadowOffset: {width: 0, height: 0},
-                        shadowOpacity: 0.1,
-                        elevation: 3,
-                        shadowRadius: 3,
-                        borderRadius: 10,
-                        paddingLeft: 20,
-                        paddingRight: 10,
-                        paddingVertical: 15,
-                        marginTop: 15,
-                        flexDirection: 'row',
-                        marginHorizontal: 16,
-                    }}>
-                    <Image
-                        source={require('../../assets/images/example_class_cover_photo.jpg')}
-                        style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 4,
-                            marginRight: 20,
-                        }}
-                    />
-
-                    <View style={{flex: 1}}>
-                        <View style={{flexDirection: 'row'}}>
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    color: '#373737',
-                                    fontWeight: '700',
-                                    flex: 1,
-                                    marginTop: 2,
-                                }}>
-                                Matematika kelas 6
-                            </Text>
-
-                            <Image
-                                source={require('../../assets/images/badge_sd.png')}
-                                style={{width: 50, resizeMode: 'contain', marginRight: 10}}
-                            />
-                        </View>
-
-                        <View style={{flexDirection: 'row'}}>
-                            <MaterialIcons name={'date-range'} size={16} color={'#66666680'}/>
-
-                            <View style={{marginLeft: 5}}>
-                                <Text
-                                    style={{fontFamily: 'Avenir', color: '#909090', fontSize: 13}}>
-                                    31 Dec 2020 - 30 Jan 2021
-                                </Text>
-
-                                <Text
-                                    style={{
-                                        fontFamily: 'Avenir',
-                                        fontWeight: '600',
-                                        color: '#666666',
-                                        fontSize: 13,
-                                    }}>
-                                    16:00 - 17:30 WIB
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={{flexDirection: 'row', marginTop: 6}}>
-                            <MaterialIcons name={'people'} size={16} color={'#66666680'}/>
-
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    color: '#909090',
-                                    fontSize: 13,
-                                    marginLeft: 5,
-                                }}>
-                                10 Murid
-                            </Text>
-                        </View>
-
-                        <Text
-                            style={{
-                                fontSize: 16,
-                                fontFamily: 'Avenir',
-                                fontWeight: '700',
-                                color: '#3066D2',
-                                marginTop: 10,
-                            }}>
-                            Rp270.000
-                        </Text>
-                    </View>
-                </View>
-
-                <View
-                    style={{
-                        backgroundColor: 'white',
-                        shadowColor: '#000',
-                        shadowOffset: {width: 0, height: 0},
-                        shadowOpacity: 0.1,
-                        elevation: 3,
-                        shadowRadius: 3,
-                        borderRadius: 10,
-                        paddingLeft: 20,
-                        paddingRight: 10,
-                        paddingVertical: 15,
-                        marginTop: 15,
-                        flexDirection: 'row',
-                        marginHorizontal: 16,
-                    }}>
-                    <Image
-                        source={require('../../assets/images/example_class_cover_photo.jpg')}
-                        style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 4,
-                            marginRight: 20,
-                        }}
-                    />
-
-                    <View style={{flex: 1}}>
-                        <View style={{flexDirection: 'row'}}>
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    color: '#373737',
-                                    fontWeight: '700',
-                                    flex: 1,
-                                    marginTop: 2,
-                                }}>
-                                Matematika kelas 7
-                            </Text>
-
-                            <Image
-                                source={require('../../assets/images/badge_smp.png')}
-                                style={{width: 50, resizeMode: 'contain', marginRight: 10}}
-                            />
-                        </View>
-
-                        <View style={{flexDirection: 'row'}}>
-                            <MaterialIcons name={'date-range'} size={16} color={'#66666680'}/>
-
-                            <View style={{marginLeft: 5}}>
-                                <Text
-                                    style={{fontFamily: 'Avenir', color: '#909090', fontSize: 13}}>
-                                    31 Dec 2020 - 30 Jan 2021
-                                </Text>
-
-                                <Text
-                                    style={{
-                                        fontFamily: 'Avenir',
-                                        fontWeight: '600',
-                                        color: '#666666',
-                                        fontSize: 13,
-                                    }}>
-                                    16:00 - 17:30 WIB
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={{flexDirection: 'row', marginTop: 6}}>
-                            <MaterialIcons name={'people'} size={16} color={'#66666680'}/>
-
-                            <Text
-                                style={{
-                                    fontFamily: 'Avenir',
-                                    color: '#909090',
-                                    fontSize: 13,
-                                    marginLeft: 5,
-                                }}>
-                                10 Murid
-                            </Text>
-                        </View>
-
-                        <Text
-                            style={{
-                                fontSize: 16,
-                                fontFamily: 'Avenir',
-                                fontWeight: '700',
-                                color: '#3066D2',
-                                marginTop: 10,
-                            }}>
-                            Rp300.000
-                        </Text>
-                    </View>
-                </View>
 
                 <View style={{flexDirection: 'row'}}>
                     <View
