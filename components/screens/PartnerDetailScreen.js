@@ -57,6 +57,11 @@ export default function PartnerDetailScreen(props) {
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
 
+        console.log(JSON.stringify({
+            access_token: user.access_token,
+            user_id: props.navigation.getParam('id')
+        }))
+
         new Promise(
             await HttpRequest.set(
                 '/users/detailmitra',
@@ -87,7 +92,7 @@ export default function PartnerDetailScreen(props) {
             <View
                 style={{
                     backgroundColor: 'white',
-                    paddingTop: Platform.OS ? 16 : 60,
+                    paddingTop: Platform.OS === 'android' ? 16 : 60,
                     shadowColor: '#000',
                     shadowOffset: {width: 0, height: 0},
                     shadowOpacity: 0.15,

@@ -80,7 +80,7 @@ export default function LearningMaterialMenuScreen(props) {
                 <TouchableWithoutFeedback onPress={() => {
                     props.navigation.navigate('WebViewScreen', {
                         url: 'https://cp.unison.id/interactivemath',
-                        hideHeader: true
+                        simpleHeader: Platform.OS === 'ios'
                     });
                 }}>
                     <View style={{

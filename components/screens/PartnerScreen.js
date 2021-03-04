@@ -74,6 +74,8 @@ export default function PartnerScreen(props) {
         ).then(res => {
             console.log(res)
         }).catch(err => {
+            console.log('err', err)
+
             if (Array.isArray(err)) {
                 setPartners(err);
             }
@@ -522,7 +524,9 @@ export default function PartnerScreen(props) {
                     }}>
                     {
                         partners.map(partner => {
-                            if(!partner.name.toLowerCase().includes(keyword.toLowerCase())) return null;
+                            console.log('subject', partner.subject.length)
+
+                            if(!partner.name.toLowerCase().includes(keyword.toLowerCase()) || partner.subject.length === 0) return null;
 
                             const subjects = [];
                             const districts = [];

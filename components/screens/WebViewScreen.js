@@ -32,7 +32,7 @@ export default function WebViewScreen(props) {
 
     return (
         <View style={{flex: 1}}>
-            {!props.navigation.getParam('hideHeader') &&
+            {!props.navigation.getParam('hideHeader') && !props.navigation.getParam('simpleHeader') &&
             <View
                 style={{backgroundColor: '#3e67d6', paddingTop: Platform.OS === 'ios' ? 60 : 15, paddingBottom: 12}}>
                 <Ionicons
@@ -42,6 +42,13 @@ export default function WebViewScreen(props) {
                     style={{marginLeft: 10}}
                     onPress={() => props.navigation.goBack(null)}
                 />
+            </View>
+            }
+
+            {props.navigation.getParam('simpleHeader') &&
+            <View
+                style={{backgroundColor: '#5454a4', paddingTop: 25, paddingBottom: 12}}>
+            
             </View>
             }
 
