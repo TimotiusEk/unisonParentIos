@@ -77,7 +77,12 @@ export default function LearningMaterialMenuScreen(props) {
                     </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => {
+                    props.navigation.navigate('WebViewScreen', {
+                        url: 'https://cp.unison.id/interactivemath',
+                        hideHeader: true
+                    });
+                }}>
                     <View style={{
                         backgroundColor: '#1B53BE',
                         margin: 16,

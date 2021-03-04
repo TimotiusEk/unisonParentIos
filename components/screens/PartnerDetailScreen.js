@@ -13,10 +13,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from "@react-native-community/async-storage";
 import HttpRequest from "../../util/HttpRequest";
 
+
 export default function PartnerDetailScreen(props) {
     const [detail, setDetail] = useState({});
     const [districts, setDistricts] = useState([]);
     const [user, setUser] = useState({});
+
 
     const SD = [
         "Kelas 1",
@@ -67,6 +69,8 @@ export default function PartnerDetailScreen(props) {
         ).then(res => {
             console.log('res', res)
         }).catch(err => {
+            console.log('err', err)
+
             const districtsTemp = [];
 
             err.location.map(location => {

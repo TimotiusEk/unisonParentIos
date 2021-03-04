@@ -5,12 +5,16 @@ import {
     Text,
     Image,
     TouchableWithoutFeedback,
-    TextInput,
+    TextInput, Platform,
+    TouchableOpacity
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Rating} from 'react-native-ratings';
+import HttpRequest from "../../util/HttpRequest";
+import AsyncStorage from "@react-native-community/async-storage";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 export default function ClassDetailScreen(props) {
     const SD = [
@@ -34,28 +38,163 @@ export default function ClassDetailScreen(props) {
         "Kelas 12",
     ]
 
+    const [locations, setLocations] = useState(['Pancoran', 'Kebon Jeruk', 'Tanjung Duren Selatan'])
+
     const [detail, setDetail] = useState({});
     const [districts, setDistricts] = useState([]);
     const [subject, setSubject] = useState({});
-
+    const rbSheetRef = useRef(null);
     const fullyBooked = false;
+    const [selectedLocation, setSelectedLocation] = useState({});
 
     useEffect(() => {
-        console.log(props.navigation.getParam('class'))
+
 
         const districtsTemp = [];
 
-        props.navigation.getParam('class').location.map(location => {
+        props.navigation.getParam('class').location.forEach(location => {
             if (!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
         })
 
+        console.log('districtsTemp', districtsTemp)
+
         setDistricts(districtsTemp);
+
+        console.log(props.navigation.getParam('subject'))
         setSubject(props.navigation.getParam('subject'));
         setDetail(props.navigation.getParam('class'));
     }, [])
 
+    const booking = async () => {
+        if (!fullyBooked) {
+            console.log(selectedLocation)
+
+            // let user = await AsyncStorage.getItem('user');
+            // user = JSON.parse(user);
+            //
+            // new Promise(
+            //     await HttpRequest.set(
+            //         '/partner/orders/save',
+            //         'POST',
+            //         JSON.stringify({
+            //             access_token: user.access_token,
+            //             partner_id: detail.user.id,
+            //             totalamount: subject.tarif,
+            //             partnerschdule_id: null,
+            //             partnersubject_id: null,
+            //             partnerclass_id: null,
+            //             lat: selectedLocation.latitude,
+            //             lng:  selectedLocation.longitude
+            //         }),
+            //     ),
+            // ).then(res => {
+            //     console.log('res', res)
+            // }).catch(err => {
+            //     console.log('err', err)
+            //
+            //     const districtsTemp = [];
+            //
+            //     err.location.map(location => {
+            //         if (!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
+            //     })
+            //
+            //     setDistricts(districtsTemp);
+            //     setDetail(err);
+            // })
+            // props.navigation.navigate('PaymentSummaryScreen')
+        }
+    }
+
     return (
         <View style={{flex: 1}}>
+            <RBSheet
+                customStyles={{
+                    container: {
+                        borderTopLeftRadius: 30,
+                        borderTopRightRadius: 30
+                    }
+                }}
+                ref={rbSheetRef}
+                closeOnDragDown={true}
+                height={250}
+                openDuration={250}>
+                <View style={{flex: 1}}>
+                    <Text style={{
+                        fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                        fontWeight: Platform.OS === 'android' ? undefined : '700',
+                        textAlign: 'center',
+                        color: '#373737',
+                        fontSize: 16,
+                        marginTop: 16
+                    }}>
+                        Pilih Lokasi Tutor
+                    </Text>
+
+                    <View style={{height: 1, width: '100%', backgroundColor: '#e0e0e0', margin: 16}}/>
+
+                    <ScrollView contentContainerStyle={{
+                        flexGrow: 1,
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        paddingLeft: 8,
+                        paddingRight: 24
+                    }}>
+                        {
+                            props.navigation.getParam('class').location.map(location => {
+                                console.log(location)
+
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => {
+                                        setSelectedLocation(location)
+                                    }}>
+                                        <View style={{
+                                            borderWidth: 1,
+                                            borderColor: selectedLocation.id === location.id ? '#3066D2' : '#bcbcbc',
+                                            backgroundColor: selectedLocation.id === location.id ? '#3066D24D' : 'white',
+                                            paddingHorizontal: 16,
+                                            paddingVertical: 10,
+                                            borderRadius: 70,
+                                            marginLeft: 16,
+                                            marginBottom: 16
+                                        }}>
+                                            <Text style={{
+                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-65-Medium' : 'Avenir',
+                                                fontSize: 14,
+                                                fontWeight: '600',
+                                                color: selectedLocation.id === location.id ? '#3066D2' : '#909090'
+                                            }}>
+                                                {location.district}
+                                            </Text>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                )
+                            })
+                        }
+                    </ScrollView>
+
+                    <TouchableOpacity
+                        onPress={booking}
+                        disabled={!selectedLocation.id}>
+                        <View style={{
+                            backgroundColor: '#3066D2',
+                            paddingVertical: 11,
+                            marginHorizontal: 16,
+                            borderRadius: 8,
+                            opacity: selectedLocation.id ? 1 : .3
+                        }}>
+                            <Text style={{
+                                fontFamily: 'Avenir',
+                                fontWeight: '700',
+                                color: 'white',
+                                textAlign: 'center'
+                            }}>
+                                Booking Sekarang
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </RBSheet>
+
             <View
                 style={{
                     backgroundColor: 'white',
@@ -156,7 +295,11 @@ export default function ClassDetailScreen(props) {
 
                         <Image
                             source={SD.includes(subject.jenjang) ? require('../../assets/images/badge_sd.png') : SMP.includes(subject.jenjang) ? require('../../assets/images/badge_smp.png') : SMA.includes(subject.jenjang) ? require('../../assets/images/badge_sma.png') : null}
-                            style={{width: SD.includes(subject.jenjang) ? 50 : 60, resizeMode: 'contain', marginRight:  SD.includes(subject.jenjang) ? 10 : 0}}
+                            style={{
+                                width: SD.includes(subject.jenjang) ? 50 : 60,
+                                resizeMode: 'contain',
+                                marginRight: SD.includes(subject.jenjang) ? 10 : 0
+                            }}
                         />
                     </View>
 
@@ -463,8 +606,14 @@ export default function ClassDetailScreen(props) {
 
                         <View style={{flex: 1}}>
                             <TouchableWithoutFeedback
-                                onPress={() => {
-                                    if (!fullyBooked) props.navigation.navigate('PaymentSummaryScreen')
+                                onPress={async () => {
+                                    rbSheetRef.current.open()
+
+                                    // if(subject.metode !== 'online') {
+                                    //     rbSheetRef.current.open()
+                                    // } else {
+                                    //     booking()
+                                    // }
                                 }}>
                                 <View
                                     style={{

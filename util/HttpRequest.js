@@ -4,8 +4,10 @@ import axios from 'axios';
 
 export default class HttpRequest {
   static set = async (endpoint, method, body) => {
+    console.log(endpoint)
+
     return (resolve, reject) => {
-      fetch('https://api.unison.id' + endpoint, {
+      fetch(endpoint.includes('https') || endpoint.includes('http') ? endpoint : 'https://api.unison.id' + endpoint, {
         method,
         headers: {
           Accept: 'application/json',
@@ -14,8 +16,6 @@ export default class HttpRequest {
         body,
       })
         .then((response) => {
-          // console.log('response', response)
-
           return response.json();
         })
         .then((data) => {
@@ -40,19 +40,19 @@ export default class HttpRequest {
         if (Array.isArray(body[name])) {
           body[name].map((file) => {
             request.push({name, data: file});
-            
+
 
             formData.append(file);
           });
         } else {
           request.push({name, data: body[name]});
           typeof body[name] !== 'undefined' &&
-         
+
             formData.append(name, body[name]);
         }
       }
 
-      
+
 
       // RNFetchBlob.fetch(method, 'https://api.unison.id' + endpoint, {
       //   'Content-Type': 'multipart/form-data'

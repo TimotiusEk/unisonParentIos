@@ -16,6 +16,13 @@ export default function NotificationScreen(props) {
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
 
+
+        console.log({
+            access_token: user.access_token,
+            numberOfRows: 10,
+            pages: 1
+        })
+
         new Promise(
             await HttpRequest.set("/notifications", 'POST', JSON.stringify({
                 access_token: user.access_token,

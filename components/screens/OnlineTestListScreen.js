@@ -48,9 +48,9 @@ export default function OnlineTestListScreen(props) {
     const [message, setMessage] = useState(null);
     const [messageColor, setMessageColor] = useState(null);
     const [isParent, setParent] = useState(true);
+    const [onlineExams, setOnlineExams] = useState([]);
 
     useEffect(() => {
-        console.log('a');
         if (selectedChild.student_id) {
             if (selectedSubject.subject_id) {
                 getOnlineExamList()
@@ -60,8 +60,32 @@ export default function OnlineTestListScreen(props) {
         }
     }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
 
-    const getOnlineExamList = () => {
+    const getOnlineExamList = async () => {
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
 
+        console.log(JSON.stringify({
+            access_token: user.access_token,
+            class_id: selectedChild.class_id,
+            student_id: selectedChild.student_id,
+            pages: 1
+        }))
+
+        new Promise(
+            await HttpRequest.set(
+                '/exams/online/parent',
+                'POST',
+                JSON.stringify({
+                    access_token: user.access_token,
+                    class_id: selectedChild.class_id,
+                    student_id: selectedChild.student_id,
+                    pages: 1
+                }),
+            ),
+        ).then(res => {
+            console.log(res)
+            setOnlineExams(res.data)
+        }).catch(err => console.log(err))
     }
 
     const getMyChildren = async () => {
@@ -475,93 +499,136 @@ export default function OnlineTestListScreen(props) {
                     </View>
                 </View>
 
-                <View
-                    style={{flexDirection: 'row', marginTop: 15, marginHorizontal: 15}}>
-                    <View style={{flex: 1}}>
-                        <Text style={{fontFamily: 'Montserrat-Regular'}}>Online Test</Text>
-                        <Text
-                            style={{
-                                color: '#425AC2',
-                                fontFamily: 'Montserrat-Regular',
-                            }}>
-                            {selectedStartDate
-                                ? moment(selectedStartDate).format('DD MMM YYYY')
-                                : moment().format('DD MMM YYYY')}{' '}
-                            {selectedEndDate &&
-                            ` - ${moment(selectedEndDate).format('DD MMM YYYY')}`}
-                        </Text>
-                    </View>
+                {/*<View*/}
+                {/*    style={{flexDirection: 'row', marginTop: 15, marginHorizontal: 15}}>*/}
+                {/*    <View style={{flex: 1}}>*/}
+                {/*        <Text style={{fontFamily: 'Montserrat-Regular'}}>Online Test</Text>*/}
+                {/*        <Text*/}
+                {/*            style={{*/}
+                {/*                color: '#425AC2',*/}
+                {/*                fontFamily: 'Montserrat-Regular',*/}
+                {/*            }}>*/}
+                {/*            {selectedStartDate*/}
+                {/*                ? moment(selectedStartDate).format('DD MMM YYYY')*/}
+                {/*                : moment().format('DD MMM YYYY')}{' '}*/}
+                {/*            {selectedEndDate &&*/}
+                {/*            ` - ${moment(selectedEndDate).format('DD MMM YYYY')}`}*/}
+                {/*        </Text>*/}
+                {/*    </View>*/}
 
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            rbSheetRef.current.open();
+                {/*    <TouchableWithoutFeedback*/}
+                {/*        onPress={() => {*/}
+                {/*            rbSheetRef.current.open();*/}
 
-                            setSelect('date');
-                        }}>
-                        <View
-                            style={{
-                                borderWidth: 2,
-                                borderColor: '#f3f3f3',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                alignSelf: 'flex-start',
-                                borderRadius: 10,
-                                paddingHorizontal: 10,
-                                paddingVertical: 5,
-                            }}>
-                            <Text
-                                style={{
-                                    fontFamily: 'Montserrat-Regular',
-                                    fontSize: 12,
-                                    textDecorationLine: 'underline',
-                                }}>
-                                {' '}
-                                Choose Date
-                            </Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
+                {/*            setSelect('date');*/}
+                {/*        }}>*/}
+                {/*        <View*/}
+                {/*            style={{*/}
+                {/*                borderWidth: 2,*/}
+                {/*                borderColor: '#f3f3f3',*/}
+                {/*                alignItems: 'center',*/}
+                {/*                justifyContent: 'center',*/}
+                {/*                alignSelf: 'flex-start',*/}
+                {/*                borderRadius: 10,*/}
+                {/*                paddingHorizontal: 10,*/}
+                {/*                paddingVertical: 5,*/}
+                {/*            }}>*/}
+                {/*            <Text*/}
+                {/*                style={{*/}
+                {/*                    fontFamily: 'Montserrat-Regular',*/}
+                {/*                    fontSize: 12,*/}
+                {/*                    textDecorationLine: 'underline',*/}
+                {/*                }}>*/}
+                {/*                {' '}*/}
+                {/*                Choose Date*/}
+                {/*            </Text>*/}
+                {/*        </View>*/}
+                {/*    </TouchableWithoutFeedback>*/}
+                {/*</View>*/}
 
-                <TouchableWithoutFeedback onPress={() => props.navigation.navigate('OnlineExamSwitch')}>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            borderWidth: 1,
-                            borderColor: '#2DBBBBBB',
-                            borderRadius: 8,
-                            margin: 8,
-                        }}>
-                        <View style={{flex: 1, marginStart: 16, marginTop: 16}}>
-                            <Text style={{
-                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                fontWeight: Platform.OS === 'android' ? undefined : '700'
-                            }}>
-                               Geografi
-                            </Text>
-                            <Text
-                                style={{
-                                    fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                    marginTop: 8,
-                                    marginBottom: 8,
-                                    fontSize: 12,
-                                    color: '#878787',
-                                }}>
-                                60 Menit • 10 Soal
-                            </Text>
-                        </View>
+                {
+                    onlineExams.map(exam => {
+                        return (
+                            <TouchableWithoutFeedback onPress={() => {
+                                console.log('exam', exam)
 
-                        <Text
-                            style={{
-                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
-                                color: '#878787',
-                                fontSize: 12,
-                                marginTop: 10,
-                                marginEnd: 10,
+                                if (!exam.total_nilai) {
+                                    const isBeforeTodayDate = moment(moment(exam.exam_date).format('DD MMM YYYY')).isBefore(moment(moment().format('DD MMM YYYY')));
+                                    const isAfterTodayDate = moment(moment(exam.exam_date).format('DD MMM YYYY')).isAfter(moment(moment().format('DD MMM YYYY')));
+
+                                    if (isBeforeTodayDate || isAfterTodayDate) {
+                                        if (isBeforeTodayDate) {
+                                            setMessage('Ujian online telah berlalu')
+                                        } else {
+                                            setMessage('Ujian online belum dimulai')
+                                        }
+
+                                        setTimeout(() => {
+                                            setMessage(null);
+                                        }, 3000);
+                                    } else {
+                                        props.navigation.navigate('OnlineExamSwitch', {
+                                            studentId: selectedChild.student_id,
+                                            examId: exam.id
+                                        })
+                                    }
+                                } else {
+                                    props.navigation.navigate('OnlineTestReviewScreen', {
+                                        studentId: selectedChild.student_id,
+                                        examId: exam.id
+                                    })
+                                }
                             }}>
-                          21 Jan
-                        </Text>
-                    </View>
-                </TouchableWithoutFeedback>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        borderWidth: 1,
+                                        borderColor: '#2DBBBBBB',
+                                        borderRadius: 8,
+                                        margin: 8,
+                                    }}>
+                                    <View style={{flex: 1, marginStart: 16, marginTop: 16}}>
+                                        <Text style={{
+                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                            fontWeight: Platform.OS === 'android' ? undefined : '700'
+                                        }}>
+                                            {exam.subject}
+                                        </Text>
+                                        <Text
+                                            style={{
+                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                marginTop: 8,
+                                                marginBottom: 8,
+                                                fontSize: 12,
+                                                color: '#878787',
+                                            }}>
+                                            {exam.durasi} Menit
+                                        </Text>
+                                    </View>
+
+                                    <View>
+                                        <Text
+                                            style={{
+                                                fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-55-Roman' : 'Avenir',
+                                                color: '#878787',
+                                                fontSize: 12,
+                                                marginTop: 10,
+                                                marginEnd: 10,
+                                                textAlign: 'right'
+                                            }}>
+                                            {moment(exam.exam_date).format('DD MMM')}
+                                        </Text>
+
+                                        <Text style={{textAlign: 'right', marginTop: 10, marginEnd: 10, fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                            fontWeight:  Platform.OS === 'android' ? undefined: '700', fontSize: 17, color: '#3066D2'}}>
+                                            {exam.total_nilai}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        )
+                    })
+                }
             </ScrollView>
         </AppContainer>
     );

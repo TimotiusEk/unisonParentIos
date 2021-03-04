@@ -1,12 +1,34 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, Platform} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {View, Text, ActivityIndicator, Platform, BackHandler} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {WebView} from 'react-native-webview';
 
 export default function WebViewScreen(props) {
+    const [canGoBack, setCanGoBack] = useState(false);
+    const webViewRef = useRef(null);
+
     useEffect(() => {
-        console.log('url', props.navigation.getParam('url'));
-    }, []);
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
+        }
+
+        return () => {
+            if (Platform.OS === 'android') {
+                BackHandler.removeEventListener('hardwareBackPress');
+            }
+        }
+    }, [canGoBack]);
+
+    const onAndroidBackPress = () => {
+        if (webViewRef.current && canGoBack) {
+            webViewRef.current.goBack()
+
+            return true;
+        } else {
+            props.navigation.goBack(null)
+        }
+        return false;
+    }
 
     return (
         <View style={{flex: 1}}>
@@ -24,10 +46,14 @@ export default function WebViewScreen(props) {
             }
 
             <WebView
+                ref={webViewRef}
                 useWebKit={true}
                 style={{flex: 1}}
                 source={{uri: props.navigation.getParam('url')}}
                 startInLoadingState={true}
+                onNavigationStateChange={(navState) => {
+                    setCanGoBack(navState.canGoBack)
+                }}
                 renderLoading={() => (
                     <ActivityIndicator
                         size="large"

@@ -60,6 +60,7 @@ import OnlineTestScreen from "./components/screens/OnlineTestScreen";
 import OnlineTestIntroScreen from "./components/screens/OnlineTestIntroScreen";
 import OnlineTestListScreen from "./components/screens/OnlineTestListScreen";
 import LearningMaterialMenuScreen from "./components/screens/LearningMaterialMenuScreen";
+import OnlineTestReviewScreen from "./components/screens/OnlineTestReviewScreen";
 
 export default function App() {
     const ForgotPasswordSwitch = createSwitchNavigator({
@@ -134,7 +135,8 @@ export default function App() {
             VideoPlayerScreen,
             OnlineExamSwitch,
             OnlineTestListScreen,
-            LearningMaterialMenuScreen
+            LearningMaterialMenuScreen,
+            OnlineTestReviewScreen
         },
         {
             headerMode: "none",
