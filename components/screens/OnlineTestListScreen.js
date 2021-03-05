@@ -29,22 +29,12 @@ const {config, fs} = RNFetchBlob;
 export default function OnlineTestListScreen(props) {
     const [myChildren, setMyChildren] = useState([]);
     const [selectedChild, setSelectedChild] = useState({});
-    const [selectedSubject, setSelectedSubject] = useState({});
-    const [isLoadingShown, setLoadingShown] = useState(false);
     const rbSheetRef = useRef(null);
-    const uploadRbSheetRef = useRef(null);
-    const selectUploadRbSheetRef = useRef(null);
     const [select, setSelect] = useState(null);
-    const [subjects, setSubjects] = useState([]);
     const [selectedStartDate, setSelectedStartDate] = useState(null);
     const [selectedEndDate, setSelectedEndDate] = useState(null);
     const [selectedStartDateTemp, setSelectedStartDateTemp] = useState(null);
     const [selectedEndDateTemp, setSelectedEndDateTemp] = useState(null);
-    const [exams, setExams] = useState([]);
-    const [isExamErrorModalShown, setExamErrorModalShown] = useState(false);
-    const [uploadFileIdx, setUploadFileIdx] = useState(null);
-    const [selectedExam, setSelectedExam] = useState({});
-    const [note, setNote] = useState(null);
     const [message, setMessage] = useState(null);
     const [messageColor, setMessageColor] = useState(null);
     const [isParent, setParent] = useState(true);
@@ -52,13 +42,11 @@ export default function OnlineTestListScreen(props) {
 
     useEffect(() => {
         if (selectedChild.student_id) {
-            if (selectedSubject.subject_id) {
                 getOnlineExamList()
-            }
         } else {
             getMyChildren();
         }
-    }, [selectedChild, selectedSubject, selectedStartDate, selectedEndDate]);
+    }, [selectedChild, selectedStartDate, selectedEndDate]);
 
     const getOnlineExamList = async () => {
         let user = await AsyncStorage.getItem('user');
@@ -141,60 +129,11 @@ export default function OnlineTestListScreen(props) {
         }
     };
 
-    const fetchAndOpenSheet = async () => {
-        let user = await AsyncStorage.getItem('user');
-        user = JSON.parse(user);
-
-        setSelect('subject');
-        setLoadingShown(true);
-
-        new Promise(
-            await HttpRequest.set(
-                '/subjects/class',
-                'POST',
-                JSON.stringify({
-                    access_token: user.access_token,
-                    class_id: selectedChild.class_id,
-                }),
-            ),
-        )
-            .then((res) => {
-                setLoadingShown(false);
-
-                setSubjects(res.data);
-                rbSheetRef.current.open();
-            })
-            .catch((err) => {
-                setLoadingShown(false);
-
-                console.log('err', err);
-            });
-    };
-
     return (
         <AppContainer
             navigation={props.navigation}
             message={message}
             messageColor={messageColor}>
-            <Dialog.Container visible={isExamErrorModalShown}>
-                <Dialog.Title style={{fontFamily: 'Poppins-Regular', fontSize: 17}}>
-                    Message
-                </Dialog.Title>
-
-                <Dialog.Description
-                    style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>
-                    You are not allowed to view details yet exam!
-                </Dialog.Description>
-
-                <Dialog.Button
-                    label="OK"
-                    style={{fontFamily: 'Poppins-Regular'}}
-                    onPress={() => {
-                        setExamErrorModalShown(false);
-                    }}
-                />
-            </Dialog.Container>
-
             <ScrollView>
                 <RBSheet
                     ref={rbSheetRef}
@@ -276,38 +215,6 @@ export default function OnlineTestListScreen(props) {
                                 </View>
                             )}
 
-                            {select === 'subject' &&
-                            subjects.map((subject) => {
-                                return (
-                                    <>
-                                        <TouchableWithoutFeedback
-                                            onPress={() => {
-                                                setSelectedSubject(subject);
-
-                                                rbSheetRef.current.close();
-                                            }}>
-                                            <View style={{padding: 15}}>
-                                                <Text
-                                                    style={{
-                                                        fontFamily: 'Montserrat-Regular',
-                                                        fontSize: 16,
-                                                    }}>
-                                                    {subject.subject}
-                                                </Text>
-                                            </View>
-                                        </TouchableWithoutFeedback>
-
-                                        <View
-                                            style={{
-                                                width: '100%',
-                                                height: 1,
-                                                backgroundColor: '#f3f3f3',
-                                            }}
-                                        />
-                                    </>
-                                );
-                            })}
-
                             {select === 'class' &&
                             myChildren.map((child) => {
                                 return (
@@ -315,8 +222,7 @@ export default function OnlineTestListScreen(props) {
                                         <TouchableWithoutFeedback
                                             onPress={() => {
                                                 setSelectedChild(child);
-                                                setSelectedSubject({});
-                                                fetchAndOpenSheet();
+                                                rbSheetRef.current.close();
                                             }}>
                                             <View style={{padding: 15}}>
                                                 <Text
@@ -444,54 +350,7 @@ export default function OnlineTestListScreen(props) {
                             </View>
                         </TouchableWithoutFeedback>
 
-
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                if (selectedChild) {
-                                    fetchAndOpenSheet();
-                                } else {
-                                    setSelect('class');
-                                    rbSheetRef.current.open();
-                                }
-                            }}>
-                            <View style={{flex: 1, marginTop: 20}}>
-                                <View
-                                    style={{
-                                        backgroundColor: 'white',
-                                        borderRadius: 4,
-                                        marginStart: 8,
-                                        marginTop: 4,
-                                        flexDirection: 'row',
-                                    }}>
-                                    <Text
-                                        numberOfLines={1}
-                                        ellipsizeMode={'tail'}
-                                        style={{
-                                            fontFamily: 'Montserrat-Regular',
-                                            color: 'grey',
-                                            marginStart: 16,
-                                            marginTop: 8,
-                                            marginBottom: 8,
-                                            flex: 1,
-                                        }}>
-                                        {selectedSubject && selectedSubject.subject
-                                            ? selectedSubject.subject
-                                            : 'Subject'}
-                                    </Text>
-
-                                    <Fontisto
-                                        name={'angle-down'}
-                                        style={{
-                                            color: 'grey',
-                                            marginEnd: 8,
-                                            marginTop: 8,
-                                            marginBottom: 8,
-                                        }}
-                                        size={16}
-                                    />
-                                </View>
-                            </View>
-                        </TouchableWithoutFeedback>
+                        <View style={{flex: 1}}/>
 
                         <Image
                             source={require('../../assets/images/ic_exam_activity.png')}
@@ -558,7 +417,11 @@ export default function OnlineTestListScreen(props) {
 
                                     if (isBeforeTodayDate || isAfterTodayDate) {
                                         if (isBeforeTodayDate) {
-                                            setMessage('Ujian online telah berlalu')
+                                            if (exam.exam_start_time) {
+                                                setMessage('Ujian Anda sedang dalam proses penilaian')
+                                            } else {
+                                                setMessage('Ujian online telah berlalu')
+                                            }
                                         } else {
                                             setMessage('Ujian online belum dimulai')
                                         }

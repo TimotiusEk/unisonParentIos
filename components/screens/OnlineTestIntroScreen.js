@@ -36,10 +36,8 @@ export default function OnlineTestIntroScreen(props) {
     }, [])
 
     useEffect(() => {
-        if(savedState) {
-            if(duration > 0) {
-                goToOnlineTestScreen()
-            }
+        if (savedState) {
+            goToOnlineTestScreen()
         }
     }, [selectedQuestion, multipleChoices, essays, duration, examDetail])
 
@@ -188,7 +186,7 @@ export default function OnlineTestIntroScreen(props) {
             <Modal visible={isLoading} transparent={true}>
                 <View style={{flex: 1, backgroundColor: '#00000066', alignItems: 'center', justifyContent: 'center'}}>
                     <View style={{backgroundColor: 'white', padding: 20, borderRadius: 5}}>
-                        <ActivityIndicator size="large" color="#4287f5" />
+                        <ActivityIndicator size="large" color="#4287f5"/>
                     </View>
                 </View>
             </Modal>
@@ -341,7 +339,7 @@ export default function OnlineTestIntroScreen(props) {
                                 }),
                             ),
                         ).then(response => {
-                            if(response.result) {
+                            if (response.result) {
                                 goToOnlineTestScreen()
                             }
                             console.log('response', response)

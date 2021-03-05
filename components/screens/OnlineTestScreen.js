@@ -34,12 +34,12 @@ export default function OnlineTestScreen(props) {
     }, [])
 
     useEffect(() => {
-        if (duration === 0) {
+        if (duration === 0 && intervalId) {
             setFinishModalVisible(true)
 
             clearInterval(intervalId)
         }
-    }, [duration])
+    }, [duration, intervalId])
 
     useEffect(() => {
         return () => {
@@ -1102,6 +1102,7 @@ export default function OnlineTestScreen(props) {
                                         selectedQuestion.type === 'ESSAY' &&
                                         selectedQuestion.idx === essays.length - 1) ? (
                                         <TouchableOpacity
+                                            onPress={() => props.navigation.goBack(null)}
                                             disabled={
                                                 calculateAnsweredQuestions() !==
                                                 multipleChoices.length + essays.length
