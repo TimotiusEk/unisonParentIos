@@ -305,6 +305,7 @@ export default function PartnerDetailScreen(props) {
                                 fontWeight: '300',
                                 color: '#666666',
                                 marginTop: 20,
+                                marginBottom: 15
                             }}>
                             {detail?.user?.tentang_saya}
                         </Text>
@@ -348,9 +349,9 @@ export default function PartnerDetailScreen(props) {
                     <View
                         style={{
                             borderWidth: 1,
-                            borderColor: '#3066D2',
+                            borderColor: detail.metode === 'Online' ? '#3066D2' : '#909090',
                             alignSelf: 'flex-start',
-                            backgroundColor: '#3066D24D',
+                            backgroundColor: detail.metode === 'Online' ? '#3066D24D' : 'transparent',
                             paddingHorizontal: 20,
                             paddingVertical: 9,
                             borderRadius: 70,
@@ -358,7 +359,7 @@ export default function PartnerDetailScreen(props) {
                         <Text
                             style={{
                                 borderRadius: 70,
-                                color: '#3066D2',
+                                color: detail.metode === 'Online' ? '#3066D2' : '#909090',
                                 fontFamily: 'Avenir',
                                 fontWeight: '600',
                             }}>
@@ -369,7 +370,8 @@ export default function PartnerDetailScreen(props) {
                     <View
                         style={{
                             borderWidth: 1,
-                            borderColor: '#909090',
+                            borderColor: detail.metode !== 'Online' ? '#3066D2' : '#909090',
+                            backgroundColor: detail.metode !== 'Online' ? '#3066D24D' : 'transparent',
                             alignSelf: 'flex-start',
                             paddingHorizontal: 20,
                             paddingVertical: 9,
@@ -379,7 +381,7 @@ export default function PartnerDetailScreen(props) {
                         <Text
                             style={{
                                 borderRadius: 70,
-                                color: '#909090',
+                                color: detail.metode !== 'Online' ? '#3066D2' : '#909090',
                                 fontFamily: 'Avenir',
                                 fontWeight: '600',
                             }}>

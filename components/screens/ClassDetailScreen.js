@@ -66,41 +66,44 @@ export default function ClassDetailScreen(props) {
     }, [])
 
     const booking = async () => {
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
+
         if (!fullyBooked) {
             console.log(selectedLocation)
 
-            // let user = await AsyncStorage.getItem('user');
-            // user = JSON.parse(user);
-            //
-            // new Promise(
-            //     await HttpRequest.set(
-            //         '/partner/orders/save',
-            //         'POST',
-            //         JSON.stringify({
-            //             access_token: user.access_token,
-            //             partner_id: detail.user.id,
-            //             totalamount: subject.tarif,
-            //             partnerschdule_id: null,
-            //             partnersubject_id: null,
-            //             partnerclass_id: null,
-            //             lat: selectedLocation.latitude,
-            //             lng:  selectedLocation.longitude
-            //         }),
-            //     ),
-            // ).then(res => {
-            //     console.log('res', res)
-            // }).catch(err => {
-            //     console.log('err', err)
-            //
-            //     const districtsTemp = [];
-            //
-            //     err.location.map(location => {
-            //         if (!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
-            //     })
-            //
-            //     setDistricts(districtsTemp);
-            //     setDetail(err);
-            // })
+            let user = await AsyncStorage.getItem('user');
+            user = JSON.parse(user);
+
+            new Promise(
+                await HttpRequest.set(
+                    '/partner/orders/save',
+                    'POST',
+                    JSON.stringify({
+                        access_token: user.access_token,
+                        partner_id: detail.user.id,
+                        totalamount: subject.tarif,
+                        partnerschdule_id: null,
+                        partnersubject_id: null,
+                        partnerclass_id: null,
+                        lat: selectedLocation.latitude ?  selectedLocation.latitude : null,
+                        lng:  selectedLocation.longitude ? selectedLocation.longitude : null,
+                    }),
+                ),
+            ).then(res => {
+                console.log('res', res)
+            }).catch(err => {
+                console.log('err', err)
+
+                const districtsTemp = [];
+
+                err.location.map(location => {
+                    if (!districtsTemp.includes(location.district)) districtsTemp.push(location.district)
+                })
+
+                setDistricts(districtsTemp);
+                setDetail(err);
+            })
             // props.navigation.navigate('PaymentSummaryScreen')
         }
     }
@@ -607,13 +610,11 @@ export default function ClassDetailScreen(props) {
                         <View style={{flex: 1}}>
                             <TouchableWithoutFeedback
                                 onPress={async () => {
-                                    rbSheetRef.current.open()
-
-                                    // if(subject.metode !== 'online') {
-                                    //     rbSheetRef.current.open()
-                                    // } else {
-                                    //     booking()
-                                    // }
+                                    if(detail.metode !== 'Online') {
+                                        rbSheetRef.current.open()
+                                    } else {
+                                        booking()
+                                    }
                                 }}>
                                 <View
                                     style={{

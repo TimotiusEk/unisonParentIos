@@ -9,7 +9,7 @@ import {
     Modal,
     TouchableOpacity,
     FlatList,
-    Dimensions
+    Dimensions, ActivityIndicator
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Collapsible from 'react-native-collapsible';
@@ -18,10 +18,14 @@ import AppContainer from '../reusables/AppContainer';
 import AsyncStorage from "@react-native-community/async-storage";
 import HttpRequest from "../../util/HttpRequest";
 import Image from 'react-native-scalable-image';
+import LoadingModal from "../reusables/LoadingModal";
+import { NavigationEvents } from 'react-navigation';
+import OnlineExamFinishModal from "../reusables/OnlineExamFinishModal";
 
 export default function OnlineTestScreen(props) {
     const [duration, setDuration] = useState(props.navigation.getParam('duration')); //in seconds
     const [intervalId, setIntervalId] = useState(null);
+    const [isLoading, setLoading] = useState(false)
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -35,9 +39,7 @@ export default function OnlineTestScreen(props) {
 
     useEffect(() => {
         if (duration === 0 && intervalId) {
-            setFinishModalVisible(true)
-
-            clearInterval(intervalId)
+            submitTest()
         }
     }, [duration, intervalId])
 
@@ -79,7 +81,7 @@ export default function OnlineTestScreen(props) {
     }
 
     const updateAnswer = async (examDetailsId, answer, cb) => {
-        console.log('save answer with API than update UI if successful')
+        // console.log('save answer with API than update UI if successful')
 
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
@@ -96,99 +98,52 @@ export default function OnlineTestScreen(props) {
                 }),
             ),
         ).then(res => {
-            console.log(res)
+            // console.log(res)
 
             cb();
         }).catch(err => {
-            console.log(err)
+            // console.log(err)
         })
+    }
+
+    const submitTest = async () => {
+        setLoading(true)
+        clearInterval(intervalId)
+
+        let user = await AsyncStorage.getItem('user');
+        user = JSON.parse(user);
+
+        new Promise(
+            await HttpRequest.set(
+                '/exams/submit',
+                'POST',
+                JSON.stringify({
+                    access_token: user.access_token,
+                    exam_id: props.navigation.getParam('examId'),
+                    student_id: props.navigation.getParam('studentId'),
+                }),
+            ),
+        ).then(res => {
+            setLoading(false)
+
+            if(res.result) setFinishModalVisible(true)
+            // console.log(res)
+        }).catch(err => {
+            setLoading(false)
+            // console.log(err)
+        })
+
+        clearInterval(intervalId)
     }
 
     return (
         <View style={{flex: 1}}>
-            <Modal visible={showFinishModal} transparent={true}>
-                <View
-                    style={{
-                        flex: 1,
-                        backgroundColor: '#00000040',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 24,
-                    }}>
-                    <View
-                        style={{
-                            backgroundColor: 'white',
-                            width: '100%',
-                            borderRadius: 20,
-                            alignItems: 'center',
-                            paddingLeft: 16,
-                            paddingRight: 16,
-                            paddingBottom: 16,
-                            paddingTop: 30
-                        }}>
-                        <Image
-                            source={require('../../assets/images/ic-okay.png')}
-                            // style={{width: 140, resizeMode: 'contain'}}
-                            width={140}
-                        />
+            <LoadingModal visible={isLoading}/>
 
-                        <Text
-                            style={{
-                                textAlign: 'center',
-                                fontFamily:
-                                    Platform.OS === 'android'
-                                        ? 'Avenir-LT-Std-95-Black'
-                                        : 'Avenir',
-                                fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                color: '#333333',
-                                fontSize: 20,
-                                marginTop: 20
-                            }}>
-                            Terimakasih
-                        </Text>
-                        <Text
-                            style={{
-                                textAlign: 'center',
-                                fontFamily:
-                                    Platform.OS === 'android'
-                                        ? 'Avenir-LT-Std-55-Roman'
-                                        : 'Avenir',
-                                marginTop: 4,
-                                color: '#666666',
-                            }}>
-                            Kamu telah menyelesaikan Ujian Online
-                        </Text>
-
-                        <TouchableOpacity style={{width: '100%'}} onPress={() => {
-                            setFinishModalVisible(false)
-                            props.navigation.goBack(null)
-                        }}>
-                            <View
-                                style={{
-                                    backgroundColor: '#3066D2',
-                                    width: '100%',
-                                    marginTop: 24,
-                                    borderRadius: 8,
-                                    paddingTop: 14,
-                                    paddingBottom: 14,
-                                }}>
-                                <Text
-                                    style={{
-                                        textAlign: 'center',
-                                        fontFamily:
-                                            Platform.OS === 'android'
-                                                ? 'Avenir-LT-Std-95-Black'
-                                                : 'Avenir',
-                                        fontWeight: Platform.OS === 'android' ? undefined : '700',
-                                        color: 'white',
-                                    }}>
-                                    Oke
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+            <OnlineExamFinishModal visible={showFinishModal} onClose={() => {
+                setFinishModalVisible(false)
+                props.navigation.goBack(null)
+            }}/>
 
             <View
                 style={{
@@ -443,8 +398,6 @@ export default function OnlineTestScreen(props) {
                                                     data={essays}
                                                     numColumns={8}
                                                     renderItem={(item) => {
-                                                        console.log(item);
-
                                                         return (
                                                             <TouchableWithoutFeedback
                                                                 onPress={() => {
@@ -1102,7 +1055,7 @@ export default function OnlineTestScreen(props) {
                                         selectedQuestion.type === 'ESSAY' &&
                                         selectedQuestion.idx === essays.length - 1) ? (
                                         <TouchableOpacity
-                                            onPress={() => props.navigation.goBack(null)}
+                                            onPress={submitTest}
                                             disabled={
                                                 calculateAnsweredQuestions() !==
                                                 multipleChoices.length + essays.length

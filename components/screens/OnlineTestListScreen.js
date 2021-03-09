@@ -23,6 +23,7 @@ import * as ImagePicker from 'react-native-image-picker/src';
 import DocumentPicker from 'react-native-document-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import {Platform} from 'react-native';
+import {NavigationEvents} from "react-navigation";
 
 const {config, fs} = RNFetchBlob;
 
@@ -42,7 +43,7 @@ export default function OnlineTestListScreen(props) {
 
     useEffect(() => {
         if (selectedChild.student_id) {
-                getOnlineExamList()
+            getOnlineExamList()
         } else {
             getMyChildren();
         }
@@ -51,13 +52,6 @@ export default function OnlineTestListScreen(props) {
     const getOnlineExamList = async () => {
         let user = await AsyncStorage.getItem('user');
         user = JSON.parse(user);
-
-        console.log(JSON.stringify({
-            access_token: user.access_token,
-            class_id: selectedChild.class_id,
-            student_id: selectedChild.student_id,
-            pages: 1
-        }))
 
         new Promise(
             await HttpRequest.set(
@@ -71,9 +65,11 @@ export default function OnlineTestListScreen(props) {
                 }),
             ),
         ).then(res => {
-            console.log(res)
+            // console.log(res)
             setOnlineExams(res.data)
-        }).catch(err => console.log(err))
+        }).catch(err => {
+            // console.log(err)
+        })
     }
 
     const getMyChildren = async () => {
@@ -93,7 +89,9 @@ export default function OnlineTestListScreen(props) {
                 ),
             ).then(res => {
                 setSelectedChild(res.data[0]);
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                // console.log(err)
+            })
         } else {
             let myChildren = await AsyncStorage.getItem('myChildren');
 
@@ -117,7 +115,7 @@ export default function OnlineTestListScreen(props) {
                         await AsyncStorage.setItem('myChildren', JSON.stringify(res.data));
                     })
                     .catch((err) => {
-                        console.log(err);
+                        // console.log(err);
                     });
             } else {
                 if (JSON.parse(myChildren).length > 0) {
@@ -129,12 +127,24 @@ export default function OnlineTestListScreen(props) {
         }
     };
 
+    const showMessage = (message) => {
+        setMessage(message)
+
+        setTimeout(() => {
+            setMessage(null);
+        }, 3000);
+    }
+
     return (
         <AppContainer
             navigation={props.navigation}
             message={message}
             messageColor={messageColor}>
             <ScrollView>
+                <NavigationEvents
+                    onDidFocus={getOnlineExamList}
+                />
+
                 <RBSheet
                     ref={rbSheetRef}
                     closeOnDragDown={true}
@@ -190,8 +200,6 @@ export default function OnlineTestListScreen(props) {
                                             setSelectedStartDate(selectedStartDateTemp);
                                             setSelectedEndDate(selectedEndDateTemp);
                                             rbSheetRef.current.close();
-                                            console.log('start', selectedStartDateTemp);
-                                            console.log('end', selectedEndDateTemp);
                                         }}>
                                         <View
                                             style={{
@@ -409,26 +417,18 @@ export default function OnlineTestListScreen(props) {
                     onlineExams.map(exam => {
                         return (
                             <TouchableWithoutFeedback onPress={() => {
-                                console.log('exam', exam)
-
                                 if (!exam.total_nilai) {
                                     const isBeforeTodayDate = moment(moment(exam.exam_date).format('DD MMM YYYY')).isBefore(moment(moment().format('DD MMM YYYY')));
                                     const isAfterTodayDate = moment(moment(exam.exam_date).format('DD MMM YYYY')).isAfter(moment(moment().format('DD MMM YYYY')));
 
-                                    if (isBeforeTodayDate || isAfterTodayDate) {
+                                    if (exam.is_finish === "true") {
+                                        showMessage('Ujian Anda sedang dalam proses penilaian')
+                                    } else if (isBeforeTodayDate || isAfterTodayDate) {
                                         if (isBeforeTodayDate) {
-                                            if (exam.exam_start_time) {
-                                                setMessage('Ujian Anda sedang dalam proses penilaian')
-                                            } else {
-                                                setMessage('Ujian online telah berlalu')
-                                            }
+                                            showMessage('Ujian online telah berlalu')
                                         } else {
-                                            setMessage('Ujian online belum dimulai')
+                                            showMessage('Ujian online belum dimulai')
                                         }
-
-                                        setTimeout(() => {
-                                            setMessage(null);
-                                        }, 3000);
                                     } else {
                                         props.navigation.navigate('OnlineExamSwitch', {
                                             studentId: selectedChild.student_id,
@@ -482,8 +482,15 @@ export default function OnlineTestListScreen(props) {
                                             {moment(exam.exam_date).format('DD MMM')}
                                         </Text>
 
-                                        <Text style={{textAlign: 'right', marginTop: 10, marginEnd: 10, fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
-                                            fontWeight:  Platform.OS === 'android' ? undefined: '700', fontSize: 17, color: '#3066D2'}}>
+                                        <Text style={{
+                                            textAlign: 'right',
+                                            marginTop: 10,
+                                            marginEnd: 10,
+                                            fontFamily: Platform.OS === 'android' ? 'Avenir-LT-Std-95-Black' : 'Avenir',
+                                            fontWeight: Platform.OS === 'android' ? undefined : '700',
+                                            fontSize: 17,
+                                            color: '#3066D2'
+                                        }}>
                                             {exam.total_nilai}
                                         </Text>
                                     </View>

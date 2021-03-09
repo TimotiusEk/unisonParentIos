@@ -13,6 +13,7 @@ import moment from "moment";
 import Dialog from "react-native-dialog";
 import HttpRequest from "../../util/HttpRequest";
 import AsyncStorage from "@react-native-community/async-storage";
+import LoadingModal from "../reusables/LoadingModal";
 
 export default function OnlineTestIntroScreen(props) {
     const [savedState, setSavedState] = useState(false)
@@ -25,32 +26,17 @@ export default function OnlineTestIntroScreen(props) {
 
     useEffect(() => {
         getExamState()
-
-        const startTimeExample = moment('2021-02-19 13:00:00');
-
-        //make sure this is not minus
-        console.log(startTimeExample.diff(moment(), 'minutes'))
-
-        console.log('fetch start time and compare with current time')
-        console.log('fetch exam basic info if state does not exist and redirect if exist and exam still running')
     }, [])
 
     useEffect(() => {
-        if (savedState) {
+        if (savedState && Object.keys(examDetail).length > 0) {
             goToOnlineTestScreen()
         }
     }, [selectedQuestion, multipleChoices, essays, duration, examDetail])
 
     const goToOnlineTestScreen = () => {
-        // return console.log({
-        //     selectedQuestion,
-        //     multipleChoices,
-        //     essays,
-        //     duration,
-        //     examDetail
-        // })
-
         props.navigation.navigate('OnlineTestScreen', {
+            examId: props.navigation.getParam('examId'),
             selectedQuestion,
             multipleChoices,
             essays,
@@ -74,6 +60,8 @@ export default function OnlineTestIntroScreen(props) {
                 }),
             ),
         ).then(response => {
+            console.log('state', response)
+
             setSavedState(true)
             getExam(moment().diff(moment(moment.utc(response.data[0].exam_start_time).format('DD MMM YYYY, HH:mm:ss')), 'seconds'), response.data[0])
         }).catch(err => {
@@ -143,8 +131,6 @@ export default function OnlineTestIntroScreen(props) {
 
                     if (savedAnswers) {
                         savedAnswers.forEach(savedAnswer => {
-                            console.log('save')
-
                             if (savedAnswer.exam_details_id === essay.id) {
                                 answer = savedAnswer.jawaban_student;
                             }
@@ -167,8 +153,6 @@ export default function OnlineTestIntroScreen(props) {
 
                 setEssays(essaysTemp)
 
-                console.log('examDetail', response.data[0])
-
                 if (runningDuration) setDuration(response.data[0].durasi * 60 - runningDuration > 0 ? response.data[0].durasi * 60 - runningDuration : 0);
                 else setDuration(response.data[0].durasi * 60);
 
@@ -183,13 +167,7 @@ export default function OnlineTestIntroScreen(props) {
 
     return (
         <View style={{flex: 1}}>
-            <Modal visible={isLoading} transparent={true}>
-                <View style={{flex: 1, backgroundColor: '#00000066', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{backgroundColor: 'white', padding: 20, borderRadius: 5}}>
-                        <ActivityIndicator size="large" color="#4287f5"/>
-                    </View>
-                </View>
-            </Modal>
+            <LoadingModal visible={isLoading}/>
 
             <View
                 style={{
@@ -342,9 +320,8 @@ export default function OnlineTestIntroScreen(props) {
                             if (response.result) {
                                 goToOnlineTestScreen()
                             }
-                            console.log('response', response)
                         }).catch(err => {
-                            console.log('err', err)
+                            // console.log('err', err)
                         })
                     } else {
                         goToOnlineTestScreen()
